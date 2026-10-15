@@ -31,8 +31,8 @@ const img = (name, alt, { eager = false, sizes = '(max-width: 900px) 100vw, 560p
   `<img src="/img/${name}-1280.webp" srcset="/img/${name}-640.webp 640w, /img/${name}-1280.webp 1280w" sizes="${sizes}" width="1280" height="720" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}${cls ? ` class="${cls}"` : ''}>`;
 
 function heroButtons() {
-  if (storeLive) return buyButtons({ compact: true }) + `<p class="note" style="margin-top:14px">Or <a href="/play/">play the free demos</a> built with the kit.</p>`;
-  return `<div class="btns"><a class="btn" href="#newsletter">Get the free Prompt Pack</a><a class="btn alt" href="/play/">Play the free demos</a></div><p class="note" style="margin-top:14px">Store pages on Gumroad and itch.io are launching soon.</p>`;
+  if (storeLive) return buyButtons({ compact: true }) + `<p class="note" style="margin-top:14px">Or <a href="/play/">play the free demos</a> built with the kit, and <a href="#newsletter">get the free Core Keepers demo</a>.</p>`;
+  return `<div class="btns"><a class="btn" href="#newsletter">Get the free Core Keepers demo</a><a class="btn alt" href="/play/">Play the previews</a></div><p class="note" style="margin-top:14px">Store pages on Gumroad and itch.io are launching soon.</p>`;
 }
 function buyButtons({ compact = false } = {}) {
   const b = [];
@@ -42,7 +42,7 @@ function buyButtons({ compact = false } = {}) {
       ? `<a class="btn${key === 'itch' ? ' alt' : ''}" href="${esc(href)}" rel="noopener">Buy on ${label} · ${PRICE}</a>`
       : `<span class="btn soon" role="note" aria-label="${label} store page launching soon">${label}: launching soon</span>`);
   }
-  if (!storeLive && !compact) b.push(`<a class="btn ghost" href="#newsletter">Get the free pack</a>`);
+  if (!storeLive && !compact) b.push(`<a class="btn ghost" href="#newsletter">Get the free Core Keepers demo</a>`);
   return `<div class="btns">${b.join('')}</div>`;
 }
 
@@ -59,9 +59,9 @@ const productLd = {
   image: [url('/img/og-cover.jpg')], brand: { '@type': 'Brand', name: cfg.brand }, sku: 'bgsk-v1',
   offers: {
     '@type': 'Offer', price: String(P.price), priceCurrency: P.currency, url: cfg.stores.gumroad || cfg.stores.itch || url('/#pricing'),
-    availability: storeLive ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+    availability: storeLive ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
     seller: { '@id': url('/#org') },
-    hasMerchantReturnPolicy: { '@type': 'MerchantReturnPolicy', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 7, refundType: 'https://schema.org/FullRefund' },
+    hasMerchantReturnPolicy: { '@type': 'MerchantReturnPolicy', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 7, refundType: 'https://schema.org/FullRefund', merchantReturnLink: url('/license/') },
   },
 };
 const faqLd = (items) => ({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })) });
@@ -123,7 +123,7 @@ const factsBlock = () => `<section id="facts" aria-labelledby="facts-h"><div cla
 <dt>What's included</dt><dd>Phaser 3 + Vite starter game, AI rules files (<code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.cursorrules</code>), 6 genre prompt sequences (60+ prompts), Fix Loop debugging guide, publishing guide, visual theme, one-page GDD template, GUIDE.pdf</dd>
 <dt>Genres</dt><dd>Platformer, top-down roguelite, idle/clicker, endless runner, puzzle, tower defense</dd>
 <dt>License</dt><dd>Use the starter code in your own games, including commercial ones. Don't resell or redistribute the kit. <a href="/license/">Full terms</a></dd>
-<dt>Refund</dt><dd>Full refund if requested within 7 days of purchase, no questions asked</dd>
+<dt>Refund</dt><dd>7-day refund if the kit didn't work for you (may be declined if the kit has clearly been copied or reused)</dd>
 <dt>Updates</dt><dd>Free for life</dd>
 <dt>Requirements</dt><dd>Mac, Windows, or Linux; Node.js 18+; Git; an AI coding tool (Cursor, Claude Code, Windsurf, or Copilot work best)</dd>
 <dt>Where to buy</dt><dd>Gumroad and itch.io${storeLive ? '' : ' (store pages launching soon)'}</dd>
@@ -133,19 +133,21 @@ const factsBlock = () => `<section id="facts" aria-labelledby="facts-h"><div cla
 const faqBlock = (items) => `<div class="faq">${items.map(([q, a]) => `<details><summary>${esc(q)}</summary><div class="a"><p>${md(a)}</p></div></details>`).join('')}</div>`;
 
 const newsletterBlock = () => `<section id="newsletter" class="band" aria-labelledby="news-h"><div class="wrap news">
-<div><h2 id="news-h">Get the free <span class="gold">Prompt Pack</span></h2><p class="sub">One real genre prompt from the kit plus a "first game in 30 minutes" guide, sent to your inbox. After that, two short emails over the next week (a practical tip, then a note about the full kit). Unsubscribe anytime with one click.</p></div>
+<div><h2 id="news-h">Get the free <span class="gold">Core Keepers demo</span></h2><p class="sub">Enter your email and we send you a private link to play the full Core Keepers tower defense demo, plus a short "first game in 30 minutes" teaser guide. After that, two short emails over the next week (a practical tip, then a note about the full kit). Unsubscribe anytime with one click.</p></div>
 <form action="${esc(cfg.newsletter.endpoint)}" method="post" data-newsletter novalidate>
 <label for="nl-email">Email address</label>
 <input id="nl-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
 <input type="hidden" name="source" value="site"><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0">
-<button class="btn" type="submit">Send me the free pack</button>
+<button class="btn" type="submit">Send me the free demo</button>
 <p class="msg" role="status" aria-live="polite"></p>
 </form></div></section>
 
 `;
 const genreCards = () => `<div class="grid g3">${C.genres.map((g) => `<article class="card genre">${img('g-' + g.demo, `${g.name} demo built with the kit`, { sizes: '(max-width: 640px) 100vw, (max-width: 900px) 50vw, 370px' })}<div class="body"><h3><a class="stretch" href="/genres/${g.slug}/">${esc(g.name)}</a></h3><p>${md(g.summary)}</p><span class="more cyan">${g.prompts.length}${g.optional ? ` + ${g.optional.length} optional` : ''} prompts →</span></div></article>`).join('')}</div>`;
 
+const GATED = 'towerdefense'; // Core Keepers: served privately via /api/demo/ with a signed link from the welcome email
 const demoEmbed = (g, { eager = false } = {}) => {
+  if (g.demo === GATED) return `<div class="demo">${img('g-' + g.demo, `${g.game} screenshot`, { eager, sizes: '(max-width: 1160px) 100vw, 1116px' })}<a class="btn play" href="#newsletter">Get the free ${esc(g.game)} demo</a></div>`;
   const ok = demoAvailable(g.demo);
   return `<div class="demo">${img('g-' + g.demo, `${g.game} screenshot`, { eager, sizes: '(max-width: 1160px) 100vw, 1116px' })}${ok
     ? `<button class="btn play" type="button" data-demo="/play/${g.demo}/" data-title="${esc(g.game)} demo">▶ Play ${esc(g.game)}</button>`
@@ -223,15 +225,15 @@ ${demoEmbed(td)}
 
 <section id="pricing" aria-labelledby="price-h"><div class="wrap pricing">
 <div><p class="eyebrow">Pricing</p><h2 id="price-h">One kit. One price. <span class="gold">Yours to keep.</span></h2>
-<p class="lead">Pay once and get every future update free. If it doesn't work for you, ask for a refund within 7 days.</p>
+<p class="lead">Pay once and get every future update free. If the kit didn't work for you, ask for a refund within 7 days (refunds may be declined if the kit has clearly been copied or reused).</p>
 <h3>License in one minute</h3>
 <ul class="checks"><li>Use the starter code in any number of your own games, including commercial ones.</li><li>Publish your finished game's source code, as long as it's a game and not a kit or template.</li></ul>
 <ul class="checks no"><li>Don't resell, share, or redistribute the kit, the prompts, or the guides, even for free.</li></ul>
 <p><a href="/license/">Read the full license →</a></p></div>
 <div class="price-card"><p class="eyebrow" style="margin:0 0 8px">${esc(P.name)}</p><p class="amt">${PRICE}</p><p class="note">USD, one-time</p>
-<ul class="checks"><li>Phaser 3 + Vite starter game</li><li>AI rules files for Cursor, Claude Code, Windsurf, Copilot</li><li>6 genre sequences, 60+ prompts</li><li>Fix Loop, publishing guide, THEME.md, GDD template</li><li>GUIDE.pdf (20+ pages)</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day full refund</strong>, no questions asked</li></ul>
+<ul class="checks"><li>Phaser 3 + Vite starter game</li><li>AI rules files for Cursor, Claude Code, Windsurf, Copilot</li><li>6 genre sequences, 60+ prompts</li><li>Fix Loop, publishing guide, THEME.md, GDD template</li><li>GUIDE.pdf (20+ pages)</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day refund if the kit didn't work for you (may be declined if clearly copied or reused)</strong>, no questions asked</li></ul>
 ${buyButtons({ compact: true })}
-${storeLive ? '' : '<p class="note" style="margin:14px 0 0">Store pages are launching soon. <a href="#newsletter">Get the free pack</a>.</p>'}
+${storeLive ? '' : '<p class="note" style="margin:14px 0 0">Store pages are launching soon. <a href="#newsletter">Get the free Core Keepers demo</a>.</p>'}
 </div></div></section>
 
 ${factsBlock()}
@@ -252,7 +254,7 @@ add('/play/', {
   body: `<section class="page-hero"><div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Play</nav>
 <h1>Play the <span class="gold">demos</span></h1>
-<p class="lead">Each game below was built by following one genre's prompt sequence from the kit, one step at a time, with an automated browser test after each step. They're free to play in your browser.</p>
+<p class="lead">Each game below was built by following one genre's prompt sequence from the kit, one step at a time, with an automated browser test after each step. Five are free to play right here; the Core Keepers demo is free by email.</p>
 <p class="note">Best on desktop with a mouse and keyboard. Click a game to load it, then click inside it to give it keyboard focus. Each demo loads about 1.5 MB.</p>
 </div></section>
 ${C.genres.map((g, i) => `<section aria-labelledby="d-${g.demo}"${i % 2 ? '' : ' class="band"'} style="padding:48px 0"><div class="wrap">
@@ -335,6 +337,7 @@ add('/license/', {
 <h2>In short</h2><p>Make and sell your own games with the starter code. Don't sell or share the kit itself.</p>
 <h2>You may</h2><ul class="checks">${C.licenseMay.map((x) => `<li>${md(x)}</li>`).join('')}</ul>
 <h2>You may not</h2><ul class="checks no">${C.licenseMayNot.map((x) => `<li>${md(x)}</li>`).join('')}</ul>
+<h2>Refunds</h2><p>If the kit didn't work for you, you can request a refund within 7 days of purchase. Refunds may be declined if the kit has clearly been copied or reused. Updates are free for life.</p>
 <h2>No warranty</h2><p>${md(C.licenseWarranty)}</p>
 <h2>Questions</h2><p>Questions about a use not covered here? Contact ${esc(cfg.brand)} at promptforgekits.com, ${support}, or the store product page.</p>
 <p>© 2026 ${esc(cfg.brand)}. All rights reserved, except as granted above.</p>
@@ -372,8 +375,8 @@ ${newsletterBlock()}`,
 add('/free-pack/', {
   title: `${FP.title} | ${cfg.brand}`, description: FP.intro, noindex: true, noSitemap: true,
   body: `<section class="page-hero"><div class="wrap prose">
-<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Free Prompt Pack</nav>
-<h1>Free <span class="gold">Prompt Pack</span></h1><p class="lead">${esc(FP.intro)}</p>
+<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Free teaser guide</nav>
+<h1>Free <span class="gold">teaser guide</span></h1><p class="lead">${esc(FP.intro)}</p>
 <p><a class="btn" href="/downloads/prompt-forge-free-prompt-pack.pdf">Download the PDF</a></p>
 </div></section>
 <section style="padding-top:12px"><div class="wrap prose">${FP.sections.map((x) => `<h2>${esc(x.h)}</h2>${x.html}`).join('\n')}</div></section>`,
@@ -391,7 +394,7 @@ h1{font-size:26pt;margin:0 0 4pt;color:#1b1f2e}h1 span{color:#c98f00}h2{font-siz
 .hd{background:#1b1f2e;color:#fff;padding:16pt 18pt;border-radius:10pt;margin-bottom:10pt}.hd h1{color:#fff}.hd h1 span{color:#ffc93c}.hd p{margin:4pt 0 0;color:#e9edf5}
 pre{background:#e9edf5;border:2px solid #1b1f2e;border-radius:6pt;padding:8pt 10pt;white-space:pre-wrap;word-wrap:break-word;font-size:9pt;break-inside:avoid}
 code{font-family:Menlo,Consolas,monospace;font-size:9.5pt}a{color:#2a5bd7}.note{font-size:9pt;color:#4a5373}
-</style></head><body><div class="hd"><h1>Free <span>Prompt Pack</span></h1><p>${esc(FP.intro)}</p></div>
+</style></head><body><div class="hd"><h1>Free <span>teaser guide</span></h1><p>${esc(FP.intro)}</p></div>
 ${FP.sections.map((x) => `<h2>${esc(x.h)}</h2>${x.html}`).join('\n')}</body></html>`;
 fs.mkdirSync(path.join(ROOT, 'scripts'), { recursive: true });
 fs.writeFileSync(path.join(ROOT, 'scripts/freepack-print.html'), PRINT);
@@ -406,7 +409,7 @@ for (const pg of pages) {
 }
 const sm = pages.filter((p) => !p.noSitemap);
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sm.map((p) => `  <url><loc>${url(p.path)}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
-fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${url('/sitemap.xml')}\n`);
+fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /demo/\nDisallow: /api/\n\nSitemap: ${url('/sitemap.xml')}\n`);
 fs.writeFileSync(path.join(OUT, 'blog/rss.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>${esc(cfg.brand)} blog</title><link>${url('/blog/')}</link><description>${esc(cfg.description)}</description>\n${posts.map((po) => `<item><title>${esc(po.title)}</title><link>${url(`/blog/${po.slug}/`)}</link><guid>${url(`/blog/${po.slug}/`)}</guid><pubDate>${new Date(po.date + 'T12:00:00Z').toUTCString()}</pubDate><description>${esc(po.description)}</description></item>`).join('\n')}\n</channel></rss>\n`);
 
 // llms.txt + llms-full.txt
@@ -417,7 +420,7 @@ const factsTxt = `## Facts
 - Included: Phaser 3 + Vite starter game; AI rules files (AGENTS.md, CLAUDE.md, .cursorrules); Prompt Playbook with 6 genre sequences (60+ prompts); Fix Loop debugging guide; publishing guide (itch.io, GitHub Pages, Netlify); THEME.md visual theme; one-page GDD template; GUIDE.pdf (20+ pages)
 - Genres: platformer, top-down roguelite, idle/clicker, endless runner, Sokoban-style puzzle, tower defense ("Core Keepers")
 - License: use the starter code in your own games, including commercial games; do not resell, share, or redistribute the kit, prompts, or guides, or repackage them into another kit, template, course, or prompt pack
-- Refund: full refund if requested within 7 days of purchase, no questions asked
+- Refund: 7-day refund if the kit didn't work for you; may be declined if the kit has clearly been copied or reused; free updates
 - Updates: free for life
 - Requirements: Mac, Windows, or Linux; Node.js 18+; Git; an AI coding tool that opens a local folder (Cursor, Claude Code, Windsurf, or VS Code + Copilot). Lovable and Bolt are supported with caveats.
 - Assets: no image or sound files; art is drawn in code; bundled Lilita One font (SIL OFL 1.1)
@@ -437,6 +440,7 @@ ${C.genres.map((g) => `- [${g.name}](${url(`/genres/${g.slug}/`)}): ${plain(g.su
 - [FAQ](${url('/faq/')})
 - [License](${url('/license/')})
 - [Blog](${url('/blog/')})
+- [Free Core Keepers demo](${url('/#newsletter')}): email signup; the demo link is sent by email (not public)
 
 ## Optional
 - [Full text for LLMs](${url('/llms-full.txt')})

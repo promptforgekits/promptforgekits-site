@@ -12,9 +12,9 @@ Better, as four separate prompts:
 
 After each one: play it, check the browser console (F12) for red errors, then commit (git add -A && git commit -m "step works"). If three fixes in a row fail, roll back to your last commit and ask for a smaller step. Rolling back costs two minutes. Spiraling costs an evening.
 
-The Free Prompt Pack has a 30-minute walkthrough that puts this into practice: https://promptforgekits.com/free-pack/
+The free teaser guide has a 30-minute walkthrough that puts this into practice (and your welcome email has your private link to the Core Keepers demo): https://promptforgekits.com/free-pack/
 
-If you get stuck, the Fix Loop section in the pack walks you through recovering.
+If you get stuck, reply to this email and tell me where.
 
 Prompt Forge Kits
-You're getting this because you asked for the Free Prompt Pack at promptforgekits.com. Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
+You're getting this because you asked for the free Core Keepers demo at promptforgekits.com. Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}

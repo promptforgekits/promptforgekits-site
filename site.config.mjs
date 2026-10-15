@@ -33,9 +33,9 @@ export default {
   // "support email coming soon" and point to X instead.
   supportEmail: '', // PLACEHOLDER e.g. 'support@promptforgekits.com'
 
-  // Free Prompt Pack signup. The form POSTs JSON { email, source } to
+  // Free Core Keepers demo signup. The form POSTs JSON { email, source } to
   // /api/subscribe (Vercel function: adds to the Resend segment, sends the
-  // welcome email with the pack link). While `live` is false the form does
+  // welcome email with the signed demo link). While `live` is false the form does
   // not send anything and says signups are not open yet.
   newsletter: {
     endpoint: '/api/subscribe/',

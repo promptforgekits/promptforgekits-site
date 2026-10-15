@@ -88,9 +88,10 @@ export const faq = [
   ['Can I sell games I make with it?', 'Yes. You can use the starter code in your own games, including commercial ones. You can\u2019t resell or redistribute the kit itself (the starter as a template, the prompts, or the guides). Full terms are on the license page.'],
   ['Is there art or sound included?', 'No image or sound files, and nothing to license. The starter\u2019s art is drawn in code, so it\u2019s part of the starter code you can use in your games. The one bundled file is the Lilita One font, under the SIL Open Font License, which allows use in commercial games. The prompts show how to generate sound effects in code, and the guide shows how to swap in your own or CC0 art.'],
   ['Mac, Windows, or Linux?', 'All three. You need Node.js 18 or newer, plus Git and an AI coding tool.'],
-  ['What if it doesn\u2019t work for me?', 'Request a refund within 7 days of purchase for a full refund, no questions asked.'],
+  ['What if it doesn\u2019t work for me?', 'If the kit didn\u2019t work for you, request a refund within 7 days of purchase and you get your money back. Refunds may be declined if the kit has clearly been copied or reused. Updates stay free either way.'],
   ['Will it be updated?', 'Yes. Updates are free for life. When a new version ships, you get it through the store you bought from (for example, your Gumroad library).'],
-  ['Where can I buy it?', 'On Gumroad and itch.io. The store pages are launching soon; grab the free Prompt Pack and you will hear when they go live.'],
+  ['How do I get the free Core Keepers demo?', 'Enter your email in the signup form. We email you a private link to play the full Core Keepers tower defense demo, plus a short teaser guide. The link is personal; please don\u2019t share it.'],
+  ['Where can I buy it?', 'On Gumroad and itch.io. The store pages are launching soon; get the free Core Keepers demo by email and you will hear when they go live.'],
   ['Are the demos on this site made with the kit?', 'Yes. Each demo was built by following that genre\u2019s prompt sequence one step at a time, with an automated browser test after each step. They show what the sequences produce; your game will be your own.'],
 ];
 
