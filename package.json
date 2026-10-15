@@ -1,0 +1,14 @@
+{
+  "name": "promptforgekits-site",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Marketing site for Prompt Forge Kits (promptforgekits.com)",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "dev": "node src/build.mjs && npx --yes serve@14 dist -l 4321",
+    "preview": "npx --yes serve@14 dist -l 4321",
+    "sync-demos": "bash scripts/sync-demos.sh"
+  },
+  "engines": { "node": ">=18" }
+}
