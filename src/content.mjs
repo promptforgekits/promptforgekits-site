@@ -90,7 +90,7 @@ export const faq = [
   ['Mac, Windows, or Linux?', 'All three. You need Node.js 18 or newer, plus Git and an AI coding tool.'],
   ['What if it doesn\u2019t work for me?', 'Request a refund within 7 days of purchase for a full refund, no questions asked.'],
   ['Will it be updated?', 'Yes. Updates are free for life. When a new version ships, you get it through the store you bought from (for example, your Gumroad library).'],
-  ['Where can I buy it?', 'On Gumroad and itch.io. The store pages are launching soon; join the newsletter to hear when they go live.'],
+  ['Where can I buy it?', 'On Gumroad and itch.io. The store pages are launching soon; grab the free Prompt Pack and you will hear when they go live.'],
   ['Are the demos on this site made with the kit?', 'Yes. Each demo was built by following that genre\u2019s prompt sequence one step at a time, with an automated browser test after each step. They show what the sequences produce; your game will be your own.'],
 ];
 

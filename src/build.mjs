@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import cfg from '../site.config.mjs';
 import * as C from './content.mjs';
 import { posts } from './posts.mjs';
+import * as FP from './freepack.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'dist');
@@ -31,7 +32,7 @@ const img = (name, alt, { eager = false, sizes = '(max-width: 900px) 100vw, 560p
 
 function heroButtons() {
   if (storeLive) return buyButtons({ compact: true }) + `<p class="note" style="margin-top:14px">Or <a href="/play/">play the free demos</a> built with the kit.</p>`;
-  return `<div class="btns"><a class="btn" href="#newsletter">Get the launch email</a><a class="btn alt" href="/play/">Play the free demos</a></div><p class="note" style="margin-top:14px">Store pages on Gumroad and itch.io are launching soon.</p>`;
+  return `<div class="btns"><a class="btn" href="#newsletter">Get the free Prompt Pack</a><a class="btn alt" href="/play/">Play the free demos</a></div><p class="note" style="margin-top:14px">Store pages on Gumroad and itch.io are launching soon.</p>`;
 }
 function buyButtons({ compact = false } = {}) {
   const b = [];
@@ -41,7 +42,7 @@ function buyButtons({ compact = false } = {}) {
       ? `<a class="btn${key === 'itch' ? ' alt' : ''}" href="${esc(href)}" rel="noopener">Buy on ${label} · ${PRICE}</a>`
       : `<span class="btn soon" role="note" aria-label="${label} store page launching soon">${label}: launching soon</span>`);
   }
-  if (!storeLive && !compact) b.push(`<a class="btn ghost" href="#newsletter">Get notified</a>`);
+  if (!storeLive && !compact) b.push(`<a class="btn ghost" href="#newsletter">Get the free pack</a>`);
   return `<div class="btns">${b.join('')}</div>`;
 }
 
@@ -68,7 +69,7 @@ const crumbLd = (trail) => ({ '@context': 'https://schema.org', '@type': 'Breadc
 
 const NAV = [['/play/', 'Play demos'], ['/genres/', 'Genres'], ['/faq/', 'FAQ'], ['/license/', 'License'], ['/blog/', 'Blog']];
 
-function layout({ path: p, title, description, body, jsonld = [], ogType = 'website' }) {
+function layout({ path: p, title, description, body, jsonld = [], ogType = 'website', noindex = false }) {
   const nav = NAV.map(([h, l]) => `<a href="${h}"${p === h || (h !== '/' && p.startsWith(h)) ? ' aria-current="page"' : ''}>${l}</a>`).join('');
   return `<!doctype html>
 <html lang="en">
@@ -78,6 +79,7 @@ function layout({ path: p, title, description, body, jsonld = [], ogType = 'webs
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${url(p)}">
+${noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta name="theme-color" content="#1b1f2e">
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/fonts/lilita-one.woff2" as="font" type="font/woff2" crossorigin>
@@ -131,15 +133,16 @@ const factsBlock = () => `<section id="facts" aria-labelledby="facts-h"><div cla
 const faqBlock = (items) => `<div class="faq">${items.map(([q, a]) => `<details><summary>${esc(q)}</summary><div class="a"><p>${md(a)}</p></div></details>`).join('')}</div>`;
 
 const newsletterBlock = () => `<section id="newsletter" class="band" aria-labelledby="news-h"><div class="wrap news">
-<div><h2 id="news-h">Hear when it <span class="gold">ships</span></h2><p class="sub">One email when the store pages go live, then the occasional update when the kit gets new prompts or a new kit launches. No spam.</p></div>
+<div><h2 id="news-h">Get the free <span class="gold">Prompt Pack</span></h2><p class="sub">One real genre prompt from the kit plus a "first game in 30 minutes" guide, sent to your inbox. After that, two short emails over the next week (a practical tip, then a note about the full kit). Unsubscribe anytime with one click.</p></div>
 <form action="${esc(cfg.newsletter.endpoint)}" method="post" data-newsletter novalidate>
 <label for="nl-email">Email address</label>
 <input id="nl-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
-<input type="hidden" name="source" value="site">
-<button class="btn" type="submit">Notify me</button>
+<input type="hidden" name="source" value="site"><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0">
+<button class="btn" type="submit">Send me the free pack</button>
 <p class="msg" role="status" aria-live="polite"></p>
-</form></div></section>`;
+</form></div></section>
 
+`;
 const genreCards = () => `<div class="grid g3">${C.genres.map((g) => `<article class="card genre">${img('g-' + g.demo, `${g.name} demo built with the kit`, { sizes: '(max-width: 640px) 100vw, (max-width: 900px) 50vw, 370px' })}<div class="body"><h3><a class="stretch" href="/genres/${g.slug}/">${esc(g.name)}</a></h3><p>${md(g.summary)}</p><span class="more cyan">${g.prompts.length}${g.optional ? ` + ${g.optional.length} optional` : ''} prompts →</span></div></article>`).join('')}</div>`;
 
 const demoEmbed = (g, { eager = false } = {}) => {
@@ -228,7 +231,7 @@ ${demoEmbed(td)}
 <div class="price-card"><p class="eyebrow" style="margin:0 0 8px">${esc(P.name)}</p><p class="amt">${PRICE}</p><p class="note">USD, one-time</p>
 <ul class="checks"><li>Phaser 3 + Vite starter game</li><li>AI rules files for Cursor, Claude Code, Windsurf, Copilot</li><li>6 genre sequences, 60+ prompts</li><li>Fix Loop, publishing guide, THEME.md, GDD template</li><li>GUIDE.pdf (20+ pages)</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day full refund</strong>, no questions asked</li></ul>
 ${buyButtons({ compact: true })}
-${storeLive ? '' : '<p class="note" style="margin:14px 0 0">Store pages are launching soon. <a href="#newsletter">Get notified</a>.</p>'}
+${storeLive ? '' : '<p class="note" style="margin:14px 0 0">Store pages are launching soon. <a href="#newsletter">Get the free pack</a>.</p>'}
 </div></div></section>
 
 ${factsBlock()}
@@ -366,10 +369,32 @@ ${newsletterBlock()}`,
   });
 }
 
+add('/free-pack/', {
+  title: `${FP.title} | ${cfg.brand}`, description: FP.intro, noindex: true, noSitemap: true,
+  body: `<section class="page-hero"><div class="wrap prose">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Free Prompt Pack</nav>
+<h1>Free <span class="gold">Prompt Pack</span></h1><p class="lead">${esc(FP.intro)}</p>
+<p><a class="btn" href="/downloads/prompt-forge-free-prompt-pack.pdf">Download the PDF</a></p>
+</div></section>
+<section style="padding-top:12px"><div class="wrap prose">${FP.sections.map((x) => `<h2>${esc(x.h)}</h2>${x.html}`).join('\n')}</div></section>`,
+});
+
 add('/404.html', {
   title: `Page not found | ${cfg.brand}`, description: 'This page does not exist.', noSitemap: true,
   body: `<section class="page-hero"><div class="wrap prose"><h1>Game <span class="gold">over</span> (404)</h1><p class="lead">That page doesn't exist. Respawn at the <a href="/">home page</a> or <a href="/play/">play a demo</a>.</p></div></section>`,
 });
+
+// printable version for the PDF (light theme), written to dist/_print (removed before deploy output is final)
+const PRINT = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(FP.title)}</title><style>
+@page{size:A4;margin:18mm 16mm}body{font:11pt/1.5 Helvetica,Arial,sans-serif;color:#1b1f2e}
+h1{font-size:26pt;margin:0 0 4pt;color:#1b1f2e}h1 span{color:#c98f00}h2{font-size:15pt;margin:20pt 0 6pt;border-bottom:3px solid #1b1f2e;padding-bottom:3pt;break-after:avoid}
+.hd{background:#1b1f2e;color:#fff;padding:16pt 18pt;border-radius:10pt;margin-bottom:10pt}.hd h1{color:#fff}.hd h1 span{color:#ffc93c}.hd p{margin:4pt 0 0;color:#e9edf5}
+pre{background:#e9edf5;border:2px solid #1b1f2e;border-radius:6pt;padding:8pt 10pt;white-space:pre-wrap;word-wrap:break-word;font-size:9pt;break-inside:avoid}
+code{font-family:Menlo,Consolas,monospace;font-size:9.5pt}a{color:#2a5bd7}.note{font-size:9pt;color:#4a5373}
+</style></head><body><div class="hd"><h1>Free <span>Prompt Pack</span></h1><p>${esc(FP.intro)}</p></div>
+${FP.sections.map((x) => `<h2>${esc(x.h)}</h2>${x.html}`).join('\n')}</body></html>`;
+fs.mkdirSync(path.join(ROOT, 'scripts'), { recursive: true });
+fs.writeFileSync(path.join(ROOT, 'scripts/freepack-print.html'), PRINT);
 
 // ── write ──────────────────────────────────────────────────────────────────
 fs.rmSync(OUT, { recursive: true, force: true });

@@ -33,14 +33,13 @@ export default {
   // "support email coming soon" and point to X instead.
   supportEmail: '', // PLACEHOLDER e.g. 'support@promptforgekits.com'
 
-  // PLACEHOLDER: newsletter endpoint, to be wired to Resend later
-  // (e.g. a Vercel function that adds the address to a Resend audience).
-  // The form POSTs JSON { email, source } to this URL.
-  // While `live` is false the form does not send anything and tells the
-  // visitor signups are not open yet (honest, no fake success).
+  // Free Prompt Pack signup. The form POSTs JSON { email, source } to
+  // /api/subscribe (Vercel function: adds to the Resend segment, sends the
+  // welcome email with the pack link). While `live` is false the form does
+  // not send anything and says signups are not open yet.
   newsletter: {
-    endpoint: '/api/subscribe', // PLACEHOLDER endpoint path or URL
-    live: false, // PLACEHOLDER flip to true once the endpoint exists
+    endpoint: '/api/subscribe',
+    live: true,
   },
 
   // PLACEHOLDER: analytics, OFF by default. Paste the provider's snippet

@@ -1,0 +1,20 @@
+One prompt = one feature
+
+The single habit that separates AI-built games that ship from the ones that fall apart: ask for one thing at a time, then test it before you ask for the next.
+
+Bad prompt: "Add enemies, a score, three levels, sound, and a menu."
+
+Better, as four separate prompts:
+1. Add one red circle enemy that walks back and forth on the ground.
+2. Make the player lose when touching it. Show how to test.
+3. Let the player stomp it from above. Score +25.
+4. Add a score counter in the top-left corner.
+
+After each one: play it, check the browser console (F12) for red errors, then commit (git add -A && git commit -m "step works"). If three fixes in a row fail, roll back to your last commit and ask for a smaller step. Rolling back costs two minutes. Spiraling costs an evening.
+
+The Free Prompt Pack has a 30-minute walkthrough that puts this into practice: https://promptforgekits.com/free-pack/
+
+If you get stuck, the Fix Loop section in the pack walks you through recovering.
+
+Prompt Forge Kits
+You're getting this because you asked for the Free Prompt Pack at promptforgekits.com. Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}

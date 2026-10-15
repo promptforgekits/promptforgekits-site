@@ -8,7 +8,11 @@
     "build": "node src/build.mjs",
     "dev": "node src/build.mjs && npx --yes serve@14 dist -l 4321",
     "preview": "npx --yes serve@14 dist -l 4321",
-    "sync-demos": "bash scripts/sync-demos.sh"
+    "sync-demos": "bash scripts/sync-demos.sh",
+    "test": "node --test test/",
+    "pdf": "node src/build.mjs && google-chrome --headless --no-sandbox --no-pdf-header-footer --print-to-pdf=public/downloads/prompt-forge-free-prompt-pack.pdf file://$PWD/scripts/freepack-print.html"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }

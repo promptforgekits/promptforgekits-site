@@ -1,0 +1,18 @@
+The full kit, if you want it
+
+A week ago you grabbed the Free Prompt Pack. If you built something with it, nice. If you got stuck or just haven't had time, that's normal too.
+
+The free pack is one prompt from one genre. The Browser Game Starter Kit is the whole thing:
+- A working Phaser 3 + Vite starter game (menu, game, and game-over scenes, art drawn in code)
+- Rules files (AGENTS.md, CLAUDE.md, .cursorrules) so your AI tool follows the small-steps workflow automatically
+- Six genre sequences, 60+ copy-paste prompts with a test checkpoint after each: platformer, top-down roguelite, idle/clicker, endless runner, puzzle, tower defense
+- The full Fix Loop debugging guide, a publishing guide (itch.io, GitHub Pages, Netlify), and the Chunky Flat Toy visual theme
+
+It's $29, one-time. 7-day refund if it's not for you, and free updates. You can play demos of games built by following the sequences on the site before deciding. The Gumroad and itch.io store pages are still launching, so the site is the place to watch for them.
+
+See what's in the kit: https://promptforgekits.com/#pricing
+
+That's the last email in this sequence. Thanks for reading, and good luck shipping your game.
+
+Prompt Forge Kits
+You're getting this because you asked for the Free Prompt Pack at promptforgekits.com. Unsubscribe: {{{RESEND_UNSUBSCRIBE_URL}}}
