@@ -58,8 +58,8 @@
   ],
   "rewrites": [
     {
-      "source": "/demo/core-keepers/:path*",
-      "destination": "/api/demo?f=:path*"
+      "source": "/demo/core-keepers/(.*)",
+      "destination": "/api/demo/?f=$1"
     }
   ],
   "functions": {

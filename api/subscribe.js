@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     from: FROM, to: [email], reply_to: REPLY_TO, subject: m.subject, html: m.html, text: m.text,
     headers: { 'List-Unsubscribe': `<${unsubUrl(email)}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' },
     tags: [{ name: 'type', value: 'welcome' }, { name: 'source', value: source }],
-  }, { 'Idempotency-Key': `welcome-${email}-${day}` });
+  }, { 'Idempotency-Key': `welcome-demo-${email}-${day}` });
   if (!sent.ok) { console.error('welcome send failed', sent.status, sent.data?.message); return json(res, 502, { error: 'You were added, but the email could not be sent. Please try again later.' }); }
 
   // 3) start the day-3 / day-7 automation (best effort; automation may be disabled)
