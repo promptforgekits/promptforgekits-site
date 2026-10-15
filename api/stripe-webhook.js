@@ -49,12 +49,13 @@ export async function fulfill(session, { livemode }) {
 
   // 2) delivery email (must succeed, otherwise 500 so Stripe retries)
   const date = new Date((session.created || Date.now() / 1000) * 1000).toISOString().slice(0, 10);
-  const m = purchaseEmail({ email, order: session.id, amount: session.amount_total, currency: session.currency, date, url: downloadUrl(email, session.id) });
+  const m = purchaseEmail({ email, order: session.id, amount: session.amount_total, currency: session.currency, date, url: downloadUrl(email, session.id, { now: (session.created || Math.floor(Date.now() / 1000)) * 1000 }) });
   const sent = await resend('POST', '/emails', {
     from: FROM, to: [email], reply_to: REPLY_TO, subject: m.subject, html: m.html, text: m.text,
     tags: [{ name: 'type', value: 'purchase' }],
   }, { 'Idempotency-Key': `kit-delivery-${session.id}` });
-  if (!sent.ok) { console.error('delivery email failed', sent.status, sent.data?.message); return { status: 500, body: { error: 'email failed' } }; }
+  // 409 = this session's email was already sent (Resend idempotency): treat as delivered
+  if (!sent.ok && sent.status !== 409) { console.error('delivery email failed', sent.status, sent.data?.message); return { status: 500, body: { error: 'email failed' } }; }
 
   if (haveKey) await stripe('POST', `/v1/payment_intents/${pi}`, { metadata: { pfk_fulfilled: sent.data?.id || '1' } });
   return { status: 200, body: { ok: true, delivered: true } };

@@ -24,7 +24,7 @@ const { buildWatermarkedZip } = await import('../api/_kit.js');
 const mkRes = () => { const r = { code: 200, headers: {}, body: undefined, status(c) { r.code = c; return r; }, setHeader(k, v) { r.headers[k] = v; return r; }, json(b) { r.body = b; return r; }, send(b) { r.body = b; return r; }, end() { return r; } }; return r; };
 const sign = (raw, secret = 'whsec_test', t = Math.floor(Date.now() / 1000)) => `t=${t},v1=${crypto.createHmac('sha256', secret).update(`${t}.${raw}`).digest('hex')}`;
 const mkReq = (raw, sig) => ({ method: 'POST', headers: { 'stripe-signature': sig }, body: Buffer.from(raw) });
-const ev = (type = 'checkout.session.completed', o = {}) => JSON.stringify({ id: 'evt_1', type, livemode: false, data: { object: { id: 'cs_test_abc123', payment_status: 'paid', customer_details: { email: 'gregvirag@gmail.com' }, amount_total: 2900, currency: 'usd', created: 1790000000, payment_intent: 'pi_1', ...o } } });
+const ev = (type = 'checkout.session.completed', o = {}) => JSON.stringify({ id: 'evt_1', type, livemode: false, data: { object: { id: 'cs_test_abc123', payment_status: 'paid', customer_details: { email: 'gregvirag@gmail.com' }, amount_total: 2900, currency: 'usd', created: Math.floor(Date.now() / 1000), payment_intent: 'pi_1', ...o } } });
 
 test('download token: roundtrip, tamper, expiry, not interchangeable', () => {
   const t = lib.downloadToken('A@b.co', 'cs_1');
@@ -69,6 +69,14 @@ test('webhook: completed -> Customers segment + delivery email with signed link,
   assert.match(b.text, /29\.00 USD/);
   const url = b.text.match(/https:\/\/promptforgekits\.com\/api\/download\/\?token=([\w.-]+)/); assert.ok(url);
   assert.equal(lib.verifyDownloadToken(url[1]).e, 'gregvirag@gmail.com');
+});
+
+test('webhook: retries send an identical body (deterministic token); Resend 409 counts as already delivered', async () => {
+  calls.length = 0; respond = () => ({ ok: true, status: 200, data: { id: 'em', data: [{ id: 's', name: 'Customers' }] } });
+  const raw = ev(); await webhook(mkReq(raw, sign(raw)), mkRes()); await new Promise((r) => setTimeout(r, 1100)); await webhook(mkReq(raw, sign(raw)), mkRes());
+  const bodies = calls.filter((c) => c.url.endsWith('/emails')).map((c) => c.body); assert.equal(bodies.length, 2); assert.equal(bodies[0], bodies[1]);
+  respond = (url) => url.endsWith('/emails') ? { ok: false, status: 409, data: { message: 'idempotency' } } : { ok: true, status: 200, data: { data: [] } };
+  const r = mkRes(); await webhook(mkReq(raw, sign(raw)), r); assert.equal(r.code, 200);
 });
 
 test('webhook: creates Customers segment when missing; test-mode non-allowlisted email is not mailed; unpaid skipped; other events ignored', async () => {
