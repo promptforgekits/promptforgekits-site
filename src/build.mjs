@@ -34,8 +34,12 @@ function heroButtons() {
   if (storeLive) return buyButtons({ compact: true }) + `<p class="note" style="margin-top:14px">Or <a href="/play/">play the free demos</a> built with the kit, and <a href="#newsletter">get the free Core Keepers demo</a>.</p>`;
   return `<div class="btns"><a class="btn" href="#newsletter">Get the free Core Keepers demo</a><a class="btn alt" href="/play/">Play the previews</a></div><p class="note" style="margin-top:14px">Store pages on Gumroad and itch.io are launching soon.</p>`;
 }
+const directLive = !!cfg.stores.direct?.live;
+const directEndpoint = cfg.stores.direct?.endpoint || '/api/checkout/';
+const buyNowForm = (label = `Buy now (${PRICE})`) => `<form class="buy-direct" method="post" action="${esc(directEndpoint)}" style="display:inline"><button class="btn" type="submit">${esc(label)}</button> <span class="note" style="display:block;margin-top:8px">Secure checkout by Stripe. Instant email download. 7-day refund if the kit didn't work for you.</span></form>`;
 function buyButtons({ compact = false } = {}) {
   const b = [];
+  if (directLive) b.push(buyNowForm());
   for (const [key, label] of [['gumroad', 'Gumroad'], ['itch', 'itch.io']]) {
     const href = cfg.stores[key];
     b.push(href
@@ -231,7 +235,7 @@ ${demoEmbed(td)}
 <ul class="checks no"><li>Don't resell, share, or redistribute the kit, the prompts, or the guides, even for free.</li></ul>
 <p><a href="/license/">Read the full license →</a></p></div>
 <div class="price-card"><p class="eyebrow" style="margin:0 0 8px">${esc(P.name)}</p><p class="amt">${PRICE}</p><p class="note">USD, one-time</p>
-<ul class="checks"><li>Phaser 3 + Vite starter game</li><li>AI rules files for Cursor, Claude Code, Windsurf, Copilot</li><li>6 genre sequences, 60+ prompts</li><li>Grow Your Game chapter: add levels, enemies, weapons, and items</li><li>Fix Loop, publishing guide, THEME.md, GDD template</li><li>GUIDE.pdf (40+ pages)</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day refund if the kit didn't work for you (may be declined if clearly copied or reused)</strong>, no questions asked</li></ul>
+<ul class="checks"><li>Phaser 3 + Vite starter game</li><li>AI rules files for Cursor, Claude Code, Windsurf, Copilot</li><li>6 genre sequences, 60+ prompts</li><li>Grow Your Game chapter: add levels, enemies, weapons, and items</li><li>Fix Loop, publishing guide, THEME.md, GDD template</li><li>GUIDE.pdf (40+ pages)</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day refund if the kit didn't work for you (may be declined if clearly copied or reused)</strong></li></ul>
 ${buyButtons({ compact: true })}
 ${storeLive ? '' : '<p class="note" style="margin:14px 0 0">Store pages are launching soon. <a href="#newsletter">Get the free Core Keepers demo</a>.</p>'}
 </div></div></section>
@@ -372,6 +376,26 @@ ${newsletterBlock()}`,
   });
 }
 
+// Hidden pages for the Stripe checkout: linked nowhere, noindex, not in the sitemap.
+add('/buy-test/', {
+  title: `Checkout preview | ${cfg.brand}`, description: 'Private checkout preview.', noindex: true, noSitemap: true,
+  body: `<section class="page-hero"><div class="wrap prose">
+<h1>Checkout <span class="gold">preview</span></h1>
+<p class="lead">Private page for trying the Stripe checkout. While Stripe is in test mode, no real money moves: use test card <strong>4242 4242 4242 4242</strong>, any future expiry, any CVC and ZIP.</p>
+<p class="note">In test mode the delivery email is only sent to the allow-listed test address. After Stripe is switched to live mode, buying here is a real $29 purchase.</p>
+${buyNowForm('Buy now ($29) · test checkout')}
+</div></section>`,
+});
+add('/thanks/', {
+  title: `Thank you | ${cfg.brand}`, description: 'Thanks for your purchase.', noindex: true, noSitemap: true,
+  body: `<section class="page-hero"><div class="wrap prose">
+<h1>Thank <span class="gold">you</span></h1>
+<p class="lead">Payment received. Check your inbox: your personal download link for the Browser Game Starter Kit is on its way (it usually arrives within a minute; check spam if not).</p>
+<p>Your purchase includes free updates and a 7-day refund if the kit didn't work for you (may be declined if clearly copied or reused). Reply to the email if you need anything.</p>
+<p><a href="/">Back to the home page</a></p>
+</div></section>`,
+});
+
 add('/free-pack/', {
   title: `${FP.title} | ${cfg.brand}`, description: FP.intro, noindex: true, noSitemap: true,
   body: `<section class="page-hero"><div class="wrap prose">
@@ -409,7 +433,7 @@ for (const pg of pages) {
 }
 const sm = pages.filter((p) => !p.noSitemap);
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sm.map((p) => `  <url><loc>${url(p.path)}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
-fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /demo/\nDisallow: /api/\n\nSitemap: ${url('/sitemap.xml')}\n`);
+fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /demo/\nDisallow: /api/\nDisallow: /buy-test/\nDisallow: /thanks/\n\nSitemap: ${url('/sitemap.xml')}\n`);
 fs.writeFileSync(path.join(OUT, 'blog/rss.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>${esc(cfg.brand)} blog</title><link>${url('/blog/')}</link><description>${esc(cfg.description)}</description>\n${posts.map((po) => `<item><title>${esc(po.title)}</title><link>${url(`/blog/${po.slug}/`)}</link><guid>${url(`/blog/${po.slug}/`)}</guid><pubDate>${new Date(po.date + 'T12:00:00Z').toUTCString()}</pubDate><description>${esc(po.description)}</description></item>`).join('\n')}\n</channel></rss>\n`);
 
 // llms.txt + llms-full.txt

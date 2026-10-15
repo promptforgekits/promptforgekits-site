@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "installCommand": "",
+  "installCommand": "npm install --omit=dev --no-audit --no-fund",
   "framework": null,
   "trailingSlash": true,
   "headers": [
@@ -30,6 +30,19 @@
         {
           "key": "X-Robots-Tag",
           "value": "noindex"
+        }
+      ]
+    },
+    {
+      "source": "/(buy-test|thanks)/",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
         }
       ]
     },
@@ -65,6 +78,13 @@
   "functions": {
     "api/demo.js": {
       "includeFiles": "private/core-keepers/**"
+    },
+    "api/download.js": {
+      "includeFiles": "private/kit/**",
+      "maxDuration": 30
+    },
+    "api/stripe-webhook.js": {
+      "maxDuration": 30
     }
   }
 }

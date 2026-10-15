@@ -27,8 +27,13 @@ export default {
   stores: {
     gumroad: '', // PLACEHOLDER e.g. 'https://promptforgekits.gumroad.com/l/browser-game-starter-kit'
     itch: '', // PLACEHOLDER e.g. 'https://promptforgekits.itch.io/browser-game-starter-kit'
+    // Direct checkout by Stripe (/api/checkout). Keep live:false until approved: while false, the "Buy now"
+    // button is not rendered anywhere public. The hidden /buy-test/ page works regardless of this flag.
+    direct: { live: false, endpoint: '/api/checkout/' },
   },
 
+  // Direct checkout by Stripe (/api/checkout). Keep live:false until Gibs approves: while false, the
+  // "Buy now" button is not rendered anywhere public. The hidden /buy-test/ page works regardless.
   // PLACEHOLDER: support email is not set up yet. While empty, pages say
   // "support email coming soon" and point to X instead.
   supportEmail: '', // PLACEHOLDER e.g. 'support@promptforgekits.com'

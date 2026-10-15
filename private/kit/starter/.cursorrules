@@ -1,0 +1,76 @@
+# Cursor Rules for this project
+
+This is a **Phaser 3 + Vite** browser game written in plain JavaScript (ES modules). The person you are helping is a beginner. Optimize for a game that **always runs**, not for clever code.
+
+## Architecture
+
+```
+index.html            Page shell. Mounts the game into <div id="game">.
+vite.config.js        Build config. base: './' is REQUIRED for itch.io / GitHub Pages. Do not remove it.
+src/main.js           Creates the Phaser.Game and registers scenes. Keep it small.
+src/config.js         ALL tunable numbers and the 16-color PALETTE (speed, gravity, tile size, parallax, score values, storage keys).
+src/textures.js       ALL art, drawn in code with Graphics (flat shapes + thick outline). One draw function per sprite.
+src/ui.js             Shared look: addText() (bundled font + outline), addPanel(), parallax background helpers, and the info helpers addTag() / addLegend() / addBanner() / addTooltip().
+src/scenes/
+  BootScene.js        Draws all textures, creates animations, loads the font -> starts MenuScene.
+  MenuScene.js        Title screen -> starts GameScene.
+  GameScene.js        Gameplay. Level data (in tiles) at top of file, logic in small methods.
+  GameOverScene.js    Shows score + high score -> restart or back to menu.
+public/assets/fonts/  The bundled font (Lilita One, OFL). Put image/audio files in public/assets/.
+CREDITS.md            Where every asset came from and its license. Update it when adding assets.
+```
+
+Scene flow: `BootScene -> MenuScene -> GameScene -> GameOverScene -> (GameScene | MenuScene)`.
+New art: add a draw function in `textures.js` and register it with `save('key', w, h, ...)`; every scene can then use the key. (Image files also work: add a `preload()` to BootScene with `this.load.image('key', 'assets/file.png')`.)
+Texture keys: `player-idle-0/1`, `player-run-0/1`, `player-jump-0`, `enemy-0/1`, `coin-0..3`, `flag-0/1`, `spikes`, `tile-left`, `tile-mid`, `tile-right`, `tile-fill`, `bg-far`, `bg-near`, `spark`. Animations: `player-idle`, `player-run`, `player-jump`, `enemy-walk`, `coin-spin`, `flag-wave`.
+Pass data between scenes with `this.scene.start('SceneKey', { ... })` and read it in `init(data)`.
+
+## Conventions
+
+- Plain JavaScript, ES modules, no TypeScript, no extra frameworks (no React, no state libraries).
+- One scene per file in `src/scenes/`, class name = file name = scene key.
+- Magic numbers go in `src/config.js`, never inline in scene code.
+- Keep methods short: `create()` calls helpers like `createLevel()`, `createPlayer()`, `createHud()`.
+- Use Arcade Physics only (already configured in `main.js`).
+- New systems go in new files under `src/` (e.g. `src/systems/Spawner.js`), imported by the scene.
+- Art is drawn in code in `textures.js` ("Chunky Flat Toy" style: flat shapes, `OUTLINE`-px ink outline, one highlight, colors only from `PALETTE`). Draw new things the same way. Only add image/audio files you made or that are CC0 / licensed, and list them in `CREDITS.md`. Never add copyrighted assets.
+- Use `addText()` from `src/ui.js` for text so it uses the bundled font.
+- Keep the visual theme (`THEME.md` in the kit folder): color roles red = danger, gold = money/reward, cyan/blue = player/friendly/slowed, green = heal/poison, purple = magic/rare, white flash = hit; muted olive/slate backgrounds; panels from `addPanel()`.
+- Persist small data (high score, settings) with `localStorage`, using keys from `STORAGE_KEYS`.
+- **Every new item, enemy, pickup, obstacle or upgrade needs an on-screen name + a one-line description** (e.g. `Spike: avoid`, `Coin +10`; shop items and upgrade cards also show their cost/effect). Keep the strings in `src/config.js` (an `INFO` object), never inline in scenes. Show them with the `src/ui.js` helpers: `addTag()` (name above the first one on screen), `addLegend()` (icon + name list on the menu), `addBanner()` (short goal/controls line) and `addTooltip()` (hover info). Every HUD number gets a label. Keep it short: one line each, no walls of text.
+- Do not add npm dependencies unless the user explicitly asks.
+
+## How to work: small steps, test after each change
+
+1. **One feature per change.** If a request contains several features, do the first one and stop.
+2. **Touch the fewest files possible.** Say which files you will change before changing them.
+3. **Never rewrite a whole file** when a targeted edit will do. Never delete working features.
+4. **After every change, tell the user exactly how to test it**: what to press, what they should see.
+5. The game must still start with `npm run dev` and build with `npm run build` after every change.
+6. If something breaks, fix the error first; do not add new features on top of a broken build.
+7. If a fix fails 3 times, stop and suggest rolling back to the last git commit (`git checkout .`) and trying a simpler approach.
+8. Suggest a git commit after each working step: `git add -A && git commit -m "<what works now>"`.
+
+## Common pitfalls to avoid
+
+- Overlap callbacks fire every frame: guard one-time events with a flag (see `isOver` in GameScene).
+- Restarting a scene re-runs `create()`; reset all state there, not in the constructor.
+- Use `setScrollFactor(0)` for HUD text so it stays on screen when the camera moves.
+- Asset paths: files in `public/assets/` are loaded as `'assets/file.png'`, never `'/public/...'` or `'/assets/...'`.
+- Do not use absolute paths starting with `/` in asset URLs; they break on itch.io.
+- `this.scene.start()` / `restart()` without data reuses the previous data. When starting a new run (from the menu or game over), always pass fresh data explicitly, e.g. `{ levelIndex: 0, score: 0 }`.
+- Reset every flag and counter in `create()` (e.g. `isOver`, slow-motion or pause flags), or the next run starts broken.
+- One-shot actions (jump, double jump, undo, menu choices) must fire on a key press (`Phaser.Input.Keyboard.JustDown` or a `keydown-X` event), not every frame while `isDown` is true.
+- Progress that must survive between rooms/levels (stats, upgrades, HP) goes in one object passed in the scene data.
+- A scene-wide `this.input.on('pointerdown')` also fires when a button is clicked. Make only buttons interactive, and ignore map clicks that hit a UI object (the second argument of the handler lists the objects under the pointer).
+- Read anything you need from an object (velocity, position) before calling `destroy()` on it.
+- Destroy temporary objects (particle emitters, popup text, bullets) when they are done.
+- `time.timeScale` scales timers, not `this.time.now` or the `delta` in `update()`; scale those yourself for speed-up/slow-mo.
+- Don't center the canvas with CSS flexbox: Phaser's `Scale.CENTER_BOTH` already does it, and both together push it off-center on phones.
+
+## Commands
+
+- `npm install` - install once
+- `npm run dev` - local dev server with hot reload (http://localhost:5173)
+- `npm run build` - production build to `dist/`
+- `npm run preview` - serve the built `dist/` to test before publishing
