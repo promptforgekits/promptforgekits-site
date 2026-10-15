@@ -33,7 +33,7 @@ p{margin:0 0 1em}
 .chip.gold{background:var(--gold);color:var(--ink)}.chip.cyan{background:var(--cyan);color:var(--ink)}.chip.slate{background:var(--slate);color:var(--white)}
 .eyebrow{font:700 .82rem/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
 /* sections */
-section{padding:84px 0}main>section:not(.hero):not(.page-hero){content-visibility:auto;contain-intrinsic-size:auto 900px}
+section{padding:84px 0}main>section:not(.hero):not(.page-hero):not(#facts){content-visibility:auto;contain-intrinsic-size:auto 900px}
 .band{background:var(--slateDark);border-top:3px solid #12151f;border-bottom:3px solid #12151f}
 .lead{font-size:1.2rem;color:var(--cloud);max-width:64ch}
 .sub{color:var(--muted);max-width:64ch}

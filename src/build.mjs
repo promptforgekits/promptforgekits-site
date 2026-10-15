@@ -277,7 +277,7 @@ for (const g of C.genres) {
   const n = g.prompts.length;
   add(`/genres/${g.slug}/`, {
     title: `${g.name} game prompt sequence (${n} prompts) | ${cfg.brand}`,
-    description: `How the Browser Game Starter Kit's ${g.name.toLowerCase()} sequence works: ${plain(g.summary)} ${n} ordered prompts with a test after each.`.slice(0, 300),
+    description: `The ${g.name.replace(/ \(.*\)/, '').toLowerCase()} prompt sequence in the Browser Game Starter Kit: ${n} step-by-step prompts with a test after each, plus a free playable demo.`,
     jsonld: [crumbLd([['Home', '/'], ['Genres', '/genres/'], [g.name, `/genres/${g.slug}/`]])],
     body: `<section class="page-hero"><div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/genres/">Genres</a> / ${esc(g.name)}</nav>
