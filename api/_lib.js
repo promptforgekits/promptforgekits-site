@@ -11,7 +11,7 @@ export function unsubToken(email) {
   return crypto.createHmac('sha256', secret).update(email.toLowerCase()).digest('hex');
 }
 export function unsubUrl(email) {
-  return `${SITE}/api/unsubscribe?e=${encodeURIComponent(email)}&t=${unsubToken(email)}`;
+  return `${SITE}/api/unsubscribe/?e=${encodeURIComponent(email)}&t=${unsubToken(email)}`;
 }
 export function tokenOk(email, t) {
   try {

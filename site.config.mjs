@@ -38,7 +38,7 @@ export default {
   // welcome email with the pack link). While `live` is false the form does
   // not send anything and says signups are not open yet.
   newsletter: {
-    endpoint: '/api/subscribe',
+    endpoint: '/api/subscribe/',
     live: true,
   },
 

@@ -16,6 +16,6 @@ export default async function handler(req, res) {
     return res.status(200).send(page('You are unsubscribed', 'You will not get any more emails from us.'));
   }
   // GET: confirm button (prevents mail scanners from unsubscribing people by prefetching the link)
-  const action = `/api/unsubscribe?e=${encodeURIComponent(email)}&amp;t=${encodeURIComponent(String(q.t))}`;
+  const action = `/api/unsubscribe/?e=${encodeURIComponent(email)}&amp;t=${encodeURIComponent(String(q.t))}`;
   return res.status(200).send(page('Unsubscribe?', 'Click to stop receiving emails from Prompt Forge Kits.', `<form method="post" action="${action}"><button style="background:#ffc93c;border:3px solid #000;border-radius:10px;padding:12px 22px;font-weight:bold;font-size:16px;cursor:pointer" type="submit">Unsubscribe</button></form>`));
 }
