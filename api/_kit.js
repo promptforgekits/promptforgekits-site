@@ -15,13 +15,13 @@ export const buyerId = (email) => crypto.createHash('sha256').update(email.toLow
 export const slug = (email) => email.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export function stampText(text, email, id, date) {
-  return text.replace(/\s*$/, '') + `\n\n---\nLicensed to: ${email} (id ${id}, ${date}). Personal license, do not share.\n`;
+  return text.replace(/\s*$/, '') + `\n\n---\nLicensed to: ${email} (id ${id}, ${date}). Personal license, do not share. Support: support@promptforgekits.com\n`;
 }
 
 export async function stampPdf(bytes, email, id, date) {
   const pdf = await PDFDocument.load(bytes);
   const font = await pdf.embedFont(StandardFonts.Helvetica);
-  const label = `Licensed to ${email} | ${id} | Prompt Forge Kits`;
+  const label = `Licensed to ${email} | ${id} | Prompt Forge Kits | support@promptforgekits.com`;
   for (const page of pdf.getPages()) {
     const { width } = page.getSize();
     const size = 7, w = font.widthOfTextAtSize(label, size);

@@ -55,4 +55,4 @@ git commit -m "starter works"
 ---
 
 **Browser Game Starter Kit by Prompt Forge Kits** · [promptforgekits.com](https://promptforgekits.com) · X [@promptforgekits](https://x.com/promptforgekits)  
-Support: [promptforgekits.com](https://promptforgekits.com) or email **[TODO: support email]**
+Support: [promptforgekits.com](https://promptforgekits.com) or email **support@promptforgekits.com**

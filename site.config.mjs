@@ -34,9 +34,8 @@ export default {
 
   // Direct checkout by Stripe (/api/checkout). Keep live:false until Gibs approves: while false, the
   // "Buy now" button is not rendered anywhere public. The hidden /buy-test/ page works regardless.
-  // PLACEHOLDER: support email is not set up yet. While empty, pages say
-  // "support email coming soon" and point to X instead.
-  supportEmail: '', // PLACEHOLDER e.g. 'support@promptforgekits.com'
+  // Support address (footer, license, FAQ, llms.txt, JSON-LD, email reply-to).
+  supportEmail: 'support@promptforgekits.com',
 
   // Free Core Keepers demo signup. The form POSTs JSON { email, source } to
   // /api/subscribe (Vercel function: adds to the Resend segment, sends the

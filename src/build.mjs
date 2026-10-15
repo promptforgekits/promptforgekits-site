@@ -55,7 +55,7 @@ const orgLd = {
   '@context': 'https://schema.org', '@type': 'Organization', '@id': url('/#org'), name: cfg.brand, url: url('/'),
   logo: url('/img/mark-512.png'), description: cfg.description, slogan: cfg.tagline,
   sameAs: [`https://x.com/${cfg.xHandle}`, cfg.githubUrl],
-  ...(cfg.supportEmail ? { email: cfg.supportEmail } : {}),
+  ...(cfg.supportEmail ? { email: cfg.supportEmail, contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: cfg.supportEmail, url: url('/faq/') } } : {}),
 };
 const productLd = {
   '@context': 'https://schema.org', '@type': 'Product', '@id': url('/#product'), name: P.name,
@@ -341,7 +341,7 @@ add('/license/', {
 <h2>In short</h2><p>Make and sell your own games with the starter code. Don't sell or share the kit itself.</p>
 <h2>You may</h2><ul class="checks">${C.licenseMay.map((x) => `<li>${md(x)}</li>`).join('')}</ul>
 <h2>You may not</h2><ul class="checks no">${C.licenseMayNot.map((x) => `<li>${md(x)}</li>`).join('')}</ul>
-<h2>Refunds</h2><p>If the kit didn't work for you, you can request a refund within 7 days of purchase. Refunds may be declined if the kit has clearly been copied or reused. Updates are free for life.</p>
+<h2>Refunds</h2><p>If the kit didn't work for you, you can request a refund within 7 days of purchase. Refunds may be declined if the kit has clearly been copied or reused. Updates are free for life. To request a refund or get help, contact ${support}.</p>
 <h2>No warranty</h2><p>${md(C.licenseWarranty)}</p>
 <h2>Questions</h2><p>Questions about a use not covered here? Contact ${esc(cfg.brand)} at promptforgekits.com, ${support}, or the store product page.</p>
 <p>© 2026 ${esc(cfg.brand)}. All rights reserved, except as granted above.</p>

@@ -19,6 +19,6 @@ If the kit didn't work for you, you can request a refund within 7 days of purcha
 ## No warranty
 The kit is provided "as is", without warranty of any kind. Third-party tools and services it mentions (Phaser, Vite, itch.io, GitHub, Netlify, AI tools) are covered by their own licenses and terms. Phaser and Vite are MIT-licensed open-source projects and are not part of this license. The Lilita One font in `starter/public/assets/fonts/` is under the SIL Open Font License 1.1, which lets you bundle it with your games, including commercial ones (see `starter/CREDITS.md`). The starter's art is drawn in code and is part of the starter code.
 
-Questions about a use not covered here? Contact Prompt Forge Kits at [promptforgekits.com](https://promptforgekits.com), email **[TODO: support email]**, or the Gumroad product page.
+Questions about a use not covered here? Contact Prompt Forge Kits at [promptforgekits.com](https://promptforgekits.com), email **support@promptforgekits.com**, or the Gumroad product page.
 
 © 2026 Prompt Forge Kits. All rights reserved, except as granted above.

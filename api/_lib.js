@@ -2,7 +2,8 @@ import crypto from 'node:crypto';
 
 export const SITE = 'https://promptforgekits.com';
 export const FROM = 'Prompt Forge Kits <hello@promptforgekits.com>';
-export const REPLY_TO = 'hello@promptforgekits.com';
+export const SUPPORT_EMAIL = 'support@promptforgekits.com';
+export const REPLY_TO = SUPPORT_EMAIL;
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function unsubToken(email) {
@@ -178,6 +179,8 @@ Payment by Stripe. Any sales tax or VAT shown at checkout is included in your to
 
 Refunds: you have ${refund}. Just reply to this email.
 
+Support: ${SUPPORT_EMAIL}
+
 Prompt Forge Kits
 https://promptforgekits.com`;
   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
@@ -192,6 +195,7 @@ https://promptforgekits.com`;
 <p style="margin:18px 0 6px;font-size:15px;line-height:22px;font-weight:bold;">Receipt note (keep this email)</p>
 <p style="margin:0 0 14px;font-size:14px;line-height:21px;">Item: Browser Game Starter Kit by Prompt Forge Kits (v1.0, free updates)<br>Amount: ${paid}, one-time<br>Order: ${order}<br>Date: ${date}<br>Billed to: ${email}<br>Payment by Stripe. Any sales tax or VAT shown at checkout is included in your total.</p>
 <p style="margin:0;font-size:15px;line-height:22px;"><strong>Refunds:</strong> you have ${refund}. Just reply to this email.</p>
+<p style="margin:14px 0 0;font-size:14px;line-height:21px;">Support: <a href="mailto:${SUPPORT_EMAIL}" style="color:#1b1f2e;">${SUPPORT_EMAIL}</a></p>
 </td></tr></table></td></tr></table></body></html>`;
   return { subject, text, html };
 }
