@@ -1,6 +1,35 @@
 // Blog posts. Add a new object to publish a post (newest first).
 export const posts = [
   {
+    slug: 'grow-your-game-after-v1',
+    title: '7 tips for adding content to your AI-built game without breaking it',
+    date: '2026-10-15',
+    description: 'Make levels and enemies data instead of code, add one thing per prompt, play new content alone first, and keep your art style consistent. A free teaser from the Grow Your Game chapter.',
+    html: `
+<p>Your first version works. Now you want more levels, another enemy, a new weapon. This is where AI-built games usually fall apart: each new feature is another chance for the AI to rewrite something that was fine. These seven tips keep growth boring and safe. They come from the <em>Grow Your Game</em> chapter in the Browser Game Starter Kit.</p>
+<h2>1. Move content into data</h2>
+<p>If adding an enemy means editing five methods, the AI will eventually break one. If it means adding a row to a table, it can't. In the starter, the level is a handful of arrays (platforms, coins, enemies, spikes, goal) measured in tiles. Move them into their own file as an array of level objects, and a new level becomes one new object.</p>
+<pre><code>export const LEVELS = [
+  { name: 'Level 1', platforms: [...], coins: [...], enemies: [...], spikes: [...], goal: [65, 11] },
+  { name: 'Level 2', platforms: [...], coins: [...], enemies: [...], spikes: [...], goal: [65, 11] }
+];</code></pre>
+<h2>2. One prompt, one addition</h2>
+<p>One enemy, one level, one item. "Add three enemies and a boss" is five places to go wrong. Tell the AI which files it may change, and ask it to list what it changed and how to test it.</p>
+<h2>3. Play new content alone first</h2>
+<p>Build a tiny throwaway level with only the new enemy in it. If it reads clearly and feels fair in two minutes there, then put it in the real game.</p>
+<h2>4. Give every new thing a name on screen</h2>
+<p>A new enemy or item should show a short name and one line of description ("Runner: fast, avoid"). Keep the text in your config file, not scattered through scenes. Players can't enjoy content they can't read.</p>
+<h2>5. New enemies need a new look, not a new color</h2>
+<p>Give each enemy its own shape and speed or size so players recognize it at a glance. If your game uses color roles (red for danger, gold for money), keep them. A gold enemy reads as a coin.</p>
+<h2>6. Change one balance number at a time</h2>
+<p>Keep your numbers in one file. Change one, play, and only then change the next. Find the one lever that scales the whole game (enemy hp growth, speed ramp, cost growth) and tune that before the small stuff.</p>
+<h2>7. Commit before and after</h2>
+<p>Every addition gets a commit before you start and another when it works. If a prompt fails three times, roll back and split it into two smaller prompts.</p>
+<h2>Want the whole chapter?</h2>
+<p>The full <em>Grow Your Game</em> chapter in the <a href="/#pricing">Browser Game Starter Kit</a> goes further: data-table patterns for levels and enemies that we built and played in the starter, how to add weapons, items, upgrade cards and new modes, a balance and playtest loop, and copy-paste example prompts for all six genres. It is included in the kit at the same price, as <code>GROW-YOUR-GAME.md</code> and as a chapter in <code>GUIDE.pdf</code>.</p>
+`,
+  },
+  {
     slug: 'four-rules-vibe-coded-games-ship',
     title: 'The 4 rules that make vibe-coded games actually ship',
     date: '2026-10-14',

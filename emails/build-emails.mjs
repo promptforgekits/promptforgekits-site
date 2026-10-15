@@ -16,6 +16,7 @@ const day3 = {
     p('After each one: play it, check the browser console (F12) for red errors, then commit with <b>git add -A &amp;&amp; git commit -m "step works"</b>. If three fixes in a row fail, roll back to your last commit and ask for a smaller step. Rolling back costs two minutes. Spiraling costs an evening.') +
     p('If you haven\'t yet, the free teaser guide has a 30-minute walkthrough that puts this into practice (and your welcome email has your private link to the Core Keepers demo):') +
     btn('https://promptforgekits.com/free-pack/', 'Open the teaser guide') +
+    p('Already have a game running and want more content? Here are 7 free tips for adding levels, enemies, and items without breaking it: <a href="https://promptforgekits.com/blog/grow-your-game-after-v1/" style="color:#2a5bd7;">promptforgekits.com/blog/grow-your-game-after-v1/</a>') +
     p('If you get stuck, reply to this email and tell me where.', true)),
   text: `One prompt = one feature
 
@@ -32,6 +33,8 @@ Better, as four separate prompts:
 After each one: play it, check the browser console (F12) for red errors, then commit (git add -A && git commit -m "step works"). If three fixes in a row fail, roll back to your last commit and ask for a smaller step. Rolling back costs two minutes. Spiraling costs an evening.
 
 The free teaser guide has a 30-minute walkthrough that puts this into practice (and your welcome email has your private link to the Core Keepers demo): https://promptforgekits.com/free-pack/
+
+Already have a game running and want more content? Here are 7 free tips for adding levels, enemies, and items without breaking it: https://promptforgekits.com/blog/grow-your-game-after-v1/
 
 If you get stuck, reply to this email and tell me where.
 

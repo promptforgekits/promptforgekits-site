@@ -120,7 +120,7 @@ const factsBlock = () => `<section id="facts" aria-labelledby="facts-h"><div cla
 <div class="facts"><h2 id="facts-h">Facts</h2><dl>
 <dt>Product</dt><dd>${esc(P.name)} (v${P.version})</dd>
 <dt>Price</dt><dd>${PRICE} USD, one-time purchase</dd>
-<dt>What's included</dt><dd>Phaser 3 + Vite starter game, AI rules files (<code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.cursorrules</code>), 6 genre prompt sequences (60+ prompts), Fix Loop debugging guide, publishing guide, visual theme, one-page GDD template, GUIDE.pdf</dd>
+<dt>What's included</dt><dd>Phaser 3 + Vite starter game, AI rules files (<code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.cursorrules</code>), 6 genre prompt sequences (60+ prompts), Grow Your Game chapter (add levels, enemies, weapons, items, modes), Fix Loop debugging guide, publishing guide, visual theme, one-page GDD template, GUIDE.pdf</dd>
 <dt>Genres</dt><dd>Platformer, top-down roguelite, idle/clicker, endless runner, puzzle, tower defense</dd>
 <dt>License</dt><dd>Use the starter code in your own games, including commercial ones. Don't resell or redistribute the kit. <a href="/license/">Full terms</a></dd>
 <dt>Refund</dt><dd>7-day refund if the kit didn't work for you (may be declined if the kit has clearly been copied or reused)</dd>
@@ -196,7 +196,7 @@ ${heroButtons()}
 <div><p class="lead">A working Phaser 3 + Vite starter game, rules files for your AI coding tool, and 60+ copy-paste prompts to take you from idea to a published browser game.</p>
 <ul class="checks"><li>Starter runs with two commands: <code>npm install</code>, then <code>npm run dev</code></li><li>Built for Cursor, Claude Code, Windsurf, and Copilot; tips for Lovable and Bolt</li><li>Builds to static files: host free on itch.io, GitHub Pages, or Netlify</li><li>Plain JavaScript, no TypeScript or framework overhead</li></ul></div>
 </div>
-<div class="grid g4">${C.included.map(([t, d], i) => `<article class="card"><div class="ico ${['bg-cyan', 'bg-gold', 'bg-purple', 'bg-red', 'bg-green', 'bg-blue', 'bg-gold', 'bg-cyan'][i]}" aria-hidden="true">${i + 1}</div><h3>${esc(t)}</h3><p>${md(d)}</p></article>`).join('')}</div>
+<div class="grid g4">${C.included.map(([t, d], i) => `<article class="card"><div class="ico ${['bg-cyan', 'bg-gold', 'bg-purple', 'bg-green', 'bg-red', 'bg-green', 'bg-blue', 'bg-gold', 'bg-cyan'][i]}" aria-hidden="true">${i + 1}</div><h3>${esc(t)}</h3><p>${md(d)}</p></article>`).join('')}</div>
 </div></div></section>
 
 <section class="band" aria-labelledby="genres-h"><div class="wrap">
@@ -231,7 +231,7 @@ ${demoEmbed(td)}
 <ul class="checks no"><li>Don't resell, share, or redistribute the kit, the prompts, or the guides, even for free.</li></ul>
 <p><a href="/license/">Read the full license →</a></p></div>
 <div class="price-card"><p class="eyebrow" style="margin:0 0 8px">${esc(P.name)}</p><p class="amt">${PRICE}</p><p class="note">USD, one-time</p>
-<ul class="checks"><li>Phaser 3 + Vite starter game</li><li>AI rules files for Cursor, Claude Code, Windsurf, Copilot</li><li>6 genre sequences, 60+ prompts</li><li>Fix Loop, publishing guide, THEME.md, GDD template</li><li>GUIDE.pdf (20+ pages)</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day refund if the kit didn't work for you (may be declined if clearly copied or reused)</strong>, no questions asked</li></ul>
+<ul class="checks"><li>Phaser 3 + Vite starter game</li><li>AI rules files for Cursor, Claude Code, Windsurf, Copilot</li><li>6 genre sequences, 60+ prompts</li><li>Grow Your Game chapter: add levels, enemies, weapons, and items</li><li>Fix Loop, publishing guide, THEME.md, GDD template</li><li>GUIDE.pdf (40+ pages)</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day refund if the kit didn't work for you (may be declined if clearly copied or reused)</strong>, no questions asked</li></ul>
 ${buyButtons({ compact: true })}
 ${storeLive ? '' : '<p class="note" style="margin:14px 0 0">Store pages are launching soon. <a href="#newsletter">Get the free Core Keepers demo</a>.</p>'}
 </div></div></section>
@@ -379,7 +379,7 @@ add('/free-pack/', {
 <h1>Free <span class="gold">teaser guide</span></h1><p class="lead">${esc(FP.intro)}</p>
 <p><a class="btn" href="/downloads/prompt-forge-free-prompt-pack.pdf">Download the PDF</a></p>
 </div></section>
-<section style="padding-top:12px"><div class="wrap prose">${FP.sections.map((x) => `<h2>${esc(x.h)}</h2>${x.html}`).join('\n')}</div></section>`,
+<section style="padding-top:12px"><div class="wrap prose">${FP.sections.map((x) => `<h2>${esc(x.h)}</h2>${x.html}`).join('\n')}<h2>After your first game</h2><p>Finished v1 and want more levels, enemies, or items? Read <a href="/blog/grow-your-game-after-v1/">7 tips for adding content to your game without breaking it</a>.</p></div></section>`,
 });
 
 add('/404.html', {
@@ -417,7 +417,7 @@ const factsTxt = `## Facts
 - Product: ${P.name} (v${P.version})
 - Seller: ${cfg.brand} (${cfg.siteUrl}, X @${cfg.xHandle})
 - Price: ${PRICE} USD, one-time purchase
-- Included: Phaser 3 + Vite starter game; AI rules files (AGENTS.md, CLAUDE.md, .cursorrules); Prompt Playbook with 6 genre sequences (60+ prompts); Fix Loop debugging guide; publishing guide (itch.io, GitHub Pages, Netlify); THEME.md visual theme; one-page GDD template; GUIDE.pdf (20+ pages)
+- Included: Phaser 3 + Vite starter game; AI rules files (AGENTS.md, CLAUDE.md, .cursorrules); Prompt Playbook with 6 genre sequences (60+ prompts); Grow Your Game chapter (adding levels, enemies, weapons, items, modes); Fix Loop debugging guide; publishing guide (itch.io, GitHub Pages, Netlify); THEME.md visual theme; one-page GDD template; GUIDE.pdf (40+ pages)
 - Genres: platformer, top-down roguelite, idle/clicker, endless runner, Sokoban-style puzzle, tower defense ("Core Keepers")
 - License: use the starter code in your own games, including commercial games; do not resell, share, or redistribute the kit, prompts, or guides, or repackage them into another kit, template, course, or prompt pack
 - Refund: 7-day refund if the kit didn't work for you; may be declined if the kit has clearly been copied or reused; free updates

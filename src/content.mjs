@@ -5,11 +5,12 @@ export const included = [
   ['A working Phaser 3 + Vite starter game', 'A playable platformer with menu, gameplay, and game-over scenes, plus a high score. Clean, commented code built to be extended by AI. Art is drawn in code, so there are no image files to license.'],
   ['AI rules files', '`.cursorrules`, `CLAUDE.md`, and `AGENTS.md`. Your AI tool reads the architecture and the "small steps, test after each change" rules, so it makes focused changes instead of rewriting your game.'],
   ['Prompt Playbook: 6 genres, 60+ prompts', 'Platformer, top-down roguelite, idle/clicker, endless runner, puzzle, and tower defense. Each genre has a kickoff prompt plus ordered prompts, with a test checkpoint after every step.'],
+  ['Grow Your Game chapter', 'What to do after v1: data tables so adding a level, enemy, weapon, or item is adding a row, the one-prompt-per-feature rule, theme and balance tips, a playtest loop, and example prompts for every genre.'],
   ['The Fix Loop', 'The 3-tries-then-rollback rule, beginner-friendly git commands, 7 debug prompt templates, and a table of common Phaser bugs.'],
   ['Publishing guide', 'Step by step to itch.io, GitHub Pages (with a ready-made deploy workflow), and Netlify drag-and-drop.'],
   ['A visual theme (THEME.md)', 'One 16-color palette, the Lilita One font, and a UI style with fixed color meanings, plus how to draw each of the 6 genres in it with code.'],
   ['One-page Game Design Doc template', 'So you scope a game you can actually finish.'],
-  ['GUIDE.pdf', 'A 20+ page guide with everything in one place, plus a quick start.'],
+  ['GUIDE.pdf', 'A 40+ page guide with everything in one place, including the Grow Your Game chapter, plus a quick start.'],
 ];
 
 export const audience = [
