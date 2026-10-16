@@ -244,7 +244,7 @@ ${newsletterBlock()}`,
 
 add('/play/', {
   title: `Play free browser game demos built with AI prompts | ${cfg.brand}`,
-  description: 'Six free, playable browser games built by following the Browser Game Starter Kit prompt sequences: tower defense, platformer, roguelite, idle, runner, and puzzle.',
+  description: 'Five free playable browser game demos (platformer, roguelite, idle, runner, puzzle) plus Core Keepers tower defense free by email — all built with the Browser Game Starter Kit prompt sequences.',
   jsonld: [crumbLd([['Home', '/'], ['Play', '/play/']])],
   body: `<section class="page-hero"><div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Play</nav>
@@ -450,7 +450,7 @@ const llms = `# ${cfg.brand}
 ${factsTxt}
 ## Pages
 - [Home](${url('/')}): what the kit is, what's inside, who it's for, how it works, pricing
-- [Play demos](${url('/play/')}): six free browser games built by following the kit's prompt sequences
+- [Play demos](${url('/play/')}): five free on-site demos (platformer, roguelite, idle, runner, puzzle); Core Keepers tower defense is free by email
 - [Genres](${url('/genres/')}): overview of the six prompt sequences
 ${C.genres.map((g) => `- [${g.name}](${url(`/genres/${g.slug}/`)}): ${plain(g.summary)}`).join('\n')}
 - [FAQ](${url('/faq/')})
