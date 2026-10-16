@@ -159,3 +159,16 @@ test('site: Buy now button shown when stores.direct.live is true; hidden pages a
     assert.doesNotMatch(fs.readFileSync(new URL('../dist/sitemap.xml', import.meta.url), 'utf8'), /buy-test|thanks/);
   }
 });
+
+test('site: no gumroad/itch purchase links; single big Buy now; JSON-LD offer is own URL', () => {
+  const dist = new URL('../dist/', import.meta.url);
+  if (!fs.existsSync(new URL('index.html', dist))) return;
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? (e.name === 'play' ? [] : walk(new URL(e.name + '/', d))) : /\.(html|txt|xml)$/.test(e.name) ? [new URL(e.name, d)] : []);
+  for (const f of walk(dist)) {
+    const t = fs.readFileSync(f, 'utf8');
+    assert.doesNotMatch(t, /gumroad\.com|itch\.io\/|Also on (Gumroad|itch)|Buy on (Gumroad|itch)|launching soon/i, f.pathname);
+  }
+  const idx = fs.readFileSync(new URL('index.html', dist), 'utf8');
+  assert.match(idx, /buy-big/);
+  assert.match(idx, /"url":"https:\/\/promptforgekits\.com\/#pricing"/);
+});

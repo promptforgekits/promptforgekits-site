@@ -21,7 +21,7 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const md = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
 const plain = (s) => String(s).replace(/`/g, '');
 const url = (p) => cfg.siteUrl + p;
-const storeLive = !!(cfg.stores.gumroad || cfg.stores.itch);
+const storeLive = !!cfg.stores.direct?.live;
 const support = cfg.supportEmail
   ? `<a href="mailto:${esc(cfg.supportEmail)}">${esc(cfg.supportEmail)}</a>`
   : 'support email coming soon';
@@ -31,23 +31,14 @@ const img = (name, alt, { eager = false, sizes = '(max-width: 900px) 100vw, 560p
   `<img src="/img/${name}-1280.webp" srcset="/img/${name}-640.webp 640w, /img/${name}-1280.webp 1280w" sizes="${sizes}" width="1280" height="720" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}${cls ? ` class="${cls}"` : ''}>`;
 
 function heroButtons() {
-  if (storeLive) return buyButtons({ compact: true }) + `<p class="note" style="margin-top:14px">Or <a href="/play/">play the free demos</a> built with the kit, and <a href="#newsletter">get the free Core Keepers demo</a>.</p>`;
+  if (storeLive) return buyButtons() + `<p class="note" style="margin-top:14px">Or <a href="/play/">play the free demos</a> built with the kit, and <a href="#newsletter">get the free Core Keepers demo</a>.</p>`;
   return `<div class="btns"><a class="btn" href="#newsletter">Get the free Core Keepers demo</a><a class="btn alt" href="/play/">Play the previews</a></div><p class="note" style="margin-top:14px">Store pages on Gumroad and itch.io are launching soon.</p>`;
 }
 const directLive = !!cfg.stores.direct?.live;
 const directEndpoint = cfg.stores.direct?.endpoint || '/api/checkout/';
-const buyNowForm = (label = `Buy now · ${PRICE}`) => `<form class="buy-direct" method="post" action="${esc(directEndpoint)}" style="display:inline"><button class="btn" type="submit">${esc(label)}</button> <span class="note" style="display:block;margin-top:8px">Secure checkout by Stripe. Instant email download. 7-day refund if the kit didn't work for you.</span></form>`;
-function buyButtons({ compact = false } = {}) {
-  const b = [];
-  if (directLive) b.push(buyNowForm());
-  for (const [key, label] of [['gumroad', 'Gumroad'], ['itch', 'itch.io']]) {
-    const href = cfg.stores[key];
-    b.push(href
-      ? `<a class="btn${directLive || key === 'itch' ? ' alt' : ''}" href="${esc(href)}" rel="noopener">${directLive ? 'Also on' : 'Buy on'} ${label} · ${PRICE}</a>`
-      : `<span class="btn soon" role="note" aria-label="${label} store page launching soon">${label}: launching soon</span>`);
-  }
-  if (!storeLive && !compact) b.push(`<a class="btn ghost" href="#newsletter">Get the free Core Keepers demo</a>`);
-  return `<div class="btns">${b.join('')}</div>`;
+const buyNowForm = (label = `Buy now · ${PRICE}`) => `<form class="buy-direct" method="post" action="${esc(directEndpoint)}"><button class="btn buy-big" type="submit">${esc(label)}</button> <span class="note" style="display:block;margin-top:8px">Secure checkout by Stripe. Instant email download. 7-day refund if the kit didn't work for you.</span></form>`;
+function buyButtons() {
+  return `<div class="btns buy-wrap">${buyNowForm()}</div>`;
 }
 
 const ld = (o) => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, '\\u003c')}</script>`;
@@ -62,7 +53,7 @@ const productLd = {
   description: 'A working Phaser 3 + Vite starter game, rules files for your AI coding tool, and 60+ copy-paste prompts across 6 genres to take you from idea to a published browser game.',
   image: [url('/img/og-cover.jpg')], brand: { '@type': 'Brand', name: cfg.brand }, sku: 'bgsk-v1',
   offers: {
-    '@type': 'Offer', price: String(P.price), priceCurrency: P.currency, url: cfg.stores.gumroad || cfg.stores.itch || url('/#pricing'),
+    '@type': 'Offer', price: String(P.price), priceCurrency: P.currency, url: cfg.siteUrl + '/#pricing',
     availability: storeLive ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
     seller: { '@id': url('/#org') },
     hasMerchantReturnPolicy: { '@type': 'MerchantReturnPolicy', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 7, refundType: 'https://schema.org/FullRefund', merchantReturnLink: url('/license/') },
@@ -130,7 +121,7 @@ const factsBlock = () => `<section id="facts" aria-labelledby="facts-h"><div cla
 <dt>Refund</dt><dd>7-day refund if the kit didn't work for you (may be declined if the kit has clearly been copied or reused)</dd>
 <dt>Updates</dt><dd>Free for life</dd>
 <dt>Requirements</dt><dd>Mac, Windows, or Linux; Node.js 18+; Git; an AI coding tool (Cursor, Claude Code, Windsurf, or Copilot work best)</dd>
-<dt>Where to buy</dt><dd>Gumroad and itch.io${storeLive ? '' : ' (store pages launching soon)'}</dd>
+<dt>Where to buy</dt><dd>Direct from this site (secure checkout by Stripe)</dd>
 <dt>Seller</dt><dd>${esc(cfg.brand)}, ${esc(cfg.siteUrl.replace('https://', ''))}, ${xLink}</dd>
 </dl></div></div></section>`;
 
@@ -142,7 +133,7 @@ const newsletterBlock = () => `<section id="newsletter" class="band" aria-labell
 <label for="nl-email">Email address</label>
 <input id="nl-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
 <input type="hidden" name="source" value="site"><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0">
-<button class="btn" type="submit">Send me the free demo</button>
+<button class="btn buy-big" type="submit">Send me the free demo</button>
 <p class="msg" role="status" aria-live="polite"></p>
 </form></div></section>
 
@@ -236,7 +227,7 @@ ${demoEmbed(td)}
 <p><a href="/license/">Read the full license →</a></p></div>
 <div class="price-card"><p class="eyebrow" style="margin:0 0 8px">${esc(P.name)}</p><p class="amt">${PRICE}</p><p class="note">USD, one-time</p>
 <ul class="checks"><li>Phaser 3 + Vite starter game</li><li>AI rules files for Cursor, Claude Code, Windsurf, Copilot</li><li>6 genre sequences, 60+ prompts</li><li>Grow Your Game chapter: add levels, enemies, weapons, and items</li><li>Fix Loop, publishing guide, THEME.md, GDD template</li><li>GUIDE.pdf (40+ pages)</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day refund if the kit didn't work for you (may be declined if clearly copied or reused)</strong></li></ul>
-${buyButtons({ compact: true })}
+${buyButtons()}
 ${storeLive ? '' : '<p class="note" style="margin:14px 0 0">Store pages are launching soon. <a href="#newsletter">Get the free Core Keepers demo</a>.</p>'}
 </div></div></section>
 
@@ -449,7 +440,7 @@ const factsTxt = `## Facts
 - Updates: free for life
 - Requirements: Mac, Windows, or Linux; Node.js 18+; Git; an AI coding tool that opens a local folder (Cursor, Claude Code, Windsurf, or VS Code + Copilot). Lovable and Bolt are supported with caveats.
 - Assets: no image or sound files; art is drawn in code; bundled Lilita One font (SIL OFL 1.1)
-- Where to buy: Gumroad and itch.io${storeLive ? ` (${[cfg.stores.gumroad, cfg.stores.itch].filter(Boolean).join(', ')})` : ' (store pages launching soon)'}
+- Where to buy: directly at ${cfg.siteUrl}/#pricing (secure checkout by Stripe)
 - Support: ${cfg.supportEmail || 'X @' + cfg.xHandle + ' (support email coming soon)'}
 `;
 const llms = `# ${cfg.brand}
