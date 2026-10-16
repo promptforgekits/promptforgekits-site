@@ -8,8 +8,10 @@ The free demo shows one finished game. The Browser Game Starter Kit is the whole
 - Six genre sequences, 60+ copy-paste prompts with a test checkpoint after each: platformer, top-down roguelite, idle/clicker, endless runner, puzzle, tower defense
 - The full Fix Loop debugging guide, a publishing guide (itch.io, GitHub Pages, Netlify), and the Chunky Flat Toy visual theme
 
-It's $29, one-time. 7-day refund if it didn't work for you, and free updates. You can play demos of games built by following the sequences on the site before deciding. The Gumroad and itch.io store pages are still launching, so the site is the place to watch for them.
+It's $29, one-time. 7-day refund if it didn't work for you, and free updates. You can play demos of games built by following the sequences on the site before deciding. Get it on Gumroad or itch.io, whichever you prefer.
 
+Gumroad: https://promptforgekits.gumroad.com/l/browser-game-starter-kit
+itch.io: https://promptforgekits.itch.io/browser-game-starter-kit
 See what's in the kit: https://promptforgekits.com/#pricing
 
 That's the last email in this sequence. Thanks for reading, and good luck shipping your game.

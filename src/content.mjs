@@ -92,7 +92,7 @@ export const faq = [
   ['What if it doesn\u2019t work for me?', 'If the kit didn\u2019t work for you, request a refund within 7 days of purchase and you get your money back. Refunds may be declined if the kit has clearly been copied or reused. Updates stay free either way.'],
   ['Will it be updated?', 'Yes. Updates are free for life. When a new version ships, you get it through the store you bought from (for example, your Gumroad library).'],
   ['How do I get the free Core Keepers demo?', 'Enter your email in the signup form. We email you a private link to play the full Core Keepers tower defense demo, plus a short teaser guide. The link is personal; please don\u2019t share it.'],
-  ['Where can I buy it?', 'On Gumroad and itch.io. The store pages are launching soon; get the free Core Keepers demo by email and you will hear when they go live.'],
+  ['Where can I buy it?', 'On Gumroad and itch.io, both $29 one-time. Pick whichever store you prefer; the kit is the same. You can also get the free Core Keepers demo by email first.'],
   ['Are the demos on this site made with the kit?', 'Yes. Each demo was built by following that genre\u2019s prompt sequence one step at a time, with an automated browser test after each step. They show what the sequences produce; your game will be your own.'],
 ];
 

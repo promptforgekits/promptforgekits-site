@@ -44,7 +44,7 @@ Mapping: `towerdefense-ck -> towerdefense`, and `platformer`, `roguelite`, `idle
 
 ## Before launch
 
-1. Fill `stores.gumroad` / `stores.itch` in `site.config.mjs` (buy buttons switch from "launching soon" to live links; Product JSON-LD switches to InStock).
+1. Fill `stores.gumroad` / `stores.itch` in `site.config.mjs` (done; buy buttons are live links and Product JSON-LD is InStock).
 2. Set `supportEmail`.
 3. Build the newsletter endpoint (Resend), set `newsletter.endpoint`, flip `newsletter.live: true`. The form POSTs JSON `{ email, source }`.
 4. Optional: paste an analytics snippet into `analytics.headSnippet` and set `enabled: true`.

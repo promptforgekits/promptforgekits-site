@@ -21,12 +21,10 @@ export default {
     version: '1.0',
   },
 
-  // PLACEHOLDER: store links are not live yet. Leave '' until the listing is
-  // published; while empty, buy buttons render as a clearly labeled
-  // "launching soon" state instead of a broken link.
+  // Store listings are live. Clearing a value falls back to a "launching soon" state for that store.
   stores: {
-    gumroad: '', // PLACEHOLDER e.g. 'https://promptforgekits.gumroad.com/l/browser-game-starter-kit'
-    itch: '', // PLACEHOLDER e.g. 'https://promptforgekits.itch.io/browser-game-starter-kit'
+    gumroad: 'https://promptforgekits.gumroad.com/l/browser-game-starter-kit',
+    itch: 'https://promptforgekits.itch.io/browser-game-starter-kit',
     // Direct checkout by Stripe (/api/checkout). Keep live:false until approved: while false, the "Buy now"
     // button is not rendered anywhere public. The hidden /buy-test/ page works regardless of this flag.
     direct: { live: false, endpoint: '/api/checkout/' },

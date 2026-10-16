@@ -48,8 +48,9 @@ const day7 = {
     p('A week ago you grabbed the free Core Keepers demo. If you built something after the teaser guide, nice. If you got stuck or just haven\'t had time, that\'s normal too.') +
     p('The free demo shows one finished game. The <b>Browser Game Starter Kit</b> is the whole thing:') +
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:14px;">${li('A working Phaser 3 + Vite starter game (menu, game, and game-over scenes, art drawn in code)')}${li('Rules files (AGENTS.md, CLAUDE.md, .cursorrules) so your AI tool follows the small-steps workflow automatically')}${li('Six genre sequences, 60+ copy-paste prompts with a test checkpoint after each: platformer, top-down roguelite, idle/clicker, endless runner, puzzle, tower defense')}${li('The full Fix Loop debugging guide, a publishing guide (itch.io, GitHub Pages, Netlify), and the Chunky Flat Toy visual theme')}</table>` +
-    p('It\'s <b>$29</b>, one-time. <b>7-day refund</b> if it didn\'t work for you, and <b>free updates</b>. You can play demos of games built by following the sequences on the site before deciding. The Gumroad and itch.io store pages are still launching, so the site is the place to watch for them.') +
-    btn('https://promptforgekits.com/#pricing', 'See what\'s in the kit') +
+    p('It\'s <b>$29</b>, one-time. <b>7-day refund</b> if it didn\'t work for you, and <b>free updates</b>. You can play demos of games built by following the sequences on the site before deciding. Get it on Gumroad or itch.io, whichever you prefer.') +
+    btn('https://promptforgekits.gumroad.com/l/browser-game-starter-kit', 'Get the kit on Gumroad') +
+    p('Prefer itch.io? <a href="'+'https://promptforgekits.itch.io/browser-game-starter-kit'+'" style="color:#1b1f2e;">Get it there instead</a>, or <a href="https://promptforgekits.com/#pricing" style="color:#1b1f2e;">see what\'s in the kit</a>.')  +
     p('That\'s the last email in this sequence. Thanks for reading, and good luck shipping your game.', true)),
   text: `The full kit, if you want it
 
@@ -61,8 +62,10 @@ The free demo shows one finished game. The Browser Game Starter Kit is the whole
 - Six genre sequences, 60+ copy-paste prompts with a test checkpoint after each: platformer, top-down roguelite, idle/clicker, endless runner, puzzle, tower defense
 - The full Fix Loop debugging guide, a publishing guide (itch.io, GitHub Pages, Netlify), and the Chunky Flat Toy visual theme
 
-It's $29, one-time. 7-day refund if it didn't work for you, and free updates. You can play demos of games built by following the sequences on the site before deciding. The Gumroad and itch.io store pages are still launching, so the site is the place to watch for them.
+It's $29, one-time. 7-day refund if it didn't work for you, and free updates. You can play demos of games built by following the sequences on the site before deciding. Get it on Gumroad or itch.io, whichever you prefer.
 
+Gumroad: https://promptforgekits.gumroad.com/l/browser-game-starter-kit
+itch.io: https://promptforgekits.itch.io/browser-game-starter-kit
 See what's in the kit: https://promptforgekits.com/#pricing
 
 That's the last email in this sequence. Thanks for reading, and good luck shipping your game.
