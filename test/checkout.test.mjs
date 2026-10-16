@@ -150,11 +150,11 @@ test('download: bad/expired token -> 403 noindex; valid -> watermarked zip', asy
   const files = unzipSync(new Uint8Array(r.body)); assert.match(Buffer.from(files['browser-game-starter-kit/LICENSE.md']).toString(), /a@b\.co/);
 });
 
-test('site: Buy now button hidden while stores.direct.live is false; hidden pages are noindex', async () => {
+test('site: Buy now button shown when stores.direct.live is true; hidden pages are noindex', async () => {
   const cfg = (await import('../site.config.mjs')).default;
-  assert.equal(cfg.stores.direct.live, false);
+  assert.equal(cfg.stores.direct.live, true);
   if (fs.existsSync(new URL('../dist/index.html', import.meta.url))) {
-    assert.doesNotMatch(fs.readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8'), /api\/checkout/);
+    assert.match(fs.readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8'), /api\/checkout[\s\S]*Buy now · \$29/);
     for (const p of ['buy-test', 'thanks']) assert.match(fs.readFileSync(new URL(`../dist/${p}/index.html`, import.meta.url), 'utf8'), /name="robots" content="noindex"/);
     assert.doesNotMatch(fs.readFileSync(new URL('../dist/sitemap.xml', import.meta.url), 'utf8'), /buy-test|thanks/);
   }

@@ -36,14 +36,14 @@ function heroButtons() {
 }
 const directLive = !!cfg.stores.direct?.live;
 const directEndpoint = cfg.stores.direct?.endpoint || '/api/checkout/';
-const buyNowForm = (label = `Buy now (${PRICE})`) => `<form class="buy-direct" method="post" action="${esc(directEndpoint)}" style="display:inline"><button class="btn" type="submit">${esc(label)}</button> <span class="note" style="display:block;margin-top:8px">Secure checkout by Stripe. Instant email download. 7-day refund if the kit didn't work for you.</span></form>`;
+const buyNowForm = (label = `Buy now · ${PRICE}`) => `<form class="buy-direct" method="post" action="${esc(directEndpoint)}" style="display:inline"><button class="btn" type="submit">${esc(label)}</button> <span class="note" style="display:block;margin-top:8px">Secure checkout by Stripe. Instant email download. 7-day refund if the kit didn't work for you.</span></form>`;
 function buyButtons({ compact = false } = {}) {
   const b = [];
   if (directLive) b.push(buyNowForm());
   for (const [key, label] of [['gumroad', 'Gumroad'], ['itch', 'itch.io']]) {
     const href = cfg.stores[key];
     b.push(href
-      ? `<a class="btn${key === 'itch' ? ' alt' : ''}" href="${esc(href)}" rel="noopener">Buy on ${label} · ${PRICE}</a>`
+      ? `<a class="btn${directLive || key === 'itch' ? ' alt' : ''}" href="${esc(href)}" rel="noopener">${directLive ? 'Also on' : 'Buy on'} ${label} · ${PRICE}</a>`
       : `<span class="btn soon" role="note" aria-label="${label} store page launching soon">${label}: launching soon</span>`);
   }
   if (!storeLive && !compact) b.push(`<a class="btn ghost" href="#newsletter">Get the free Core Keepers demo</a>`);
@@ -381,16 +381,17 @@ add('/buy-test/', {
   title: `Checkout preview | ${cfg.brand}`, description: 'Private checkout preview.', noindex: true, noSitemap: true,
   body: `<section class="page-hero"><div class="wrap prose">
 <h1>Checkout <span class="gold">preview</span></h1>
-<p class="lead">Private page for trying the Stripe checkout. While Stripe is in test mode, no real money moves: use test card <strong>4242 4242 4242 4242</strong>, any future expiry, any CVC and ZIP.</p>
-<p class="note">In test mode the delivery email is only sent to the allow-listed test address. After Stripe is switched to live mode, buying here is a real $29 purchase.</p>
-${buyNowForm('Buy now ($29) · test checkout')}
+<p class="lead">Private page. Checkout is live: buying here is a real ${PRICE} purchase.</p>
+${buyNowForm()}
 </div></section>`,
 });
 add('/thanks/', {
   title: `Thank you | ${cfg.brand}`, description: 'Thanks for your purchase.', noindex: true, noSitemap: true,
   body: `<section class="page-hero"><div class="wrap prose">
 <h1>Thank <span class="gold">you</span></h1>
-<p class="lead">Payment received. Check your inbox: your personal download link for the Browser Game Starter Kit is on its way (it usually arrives within a minute; check spam if not).</p>
+<p class="lead">Payment received. Check your inbox: your download starts automatically (or use the button below), and a personal link for the Browser Game Starter Kit is also on its way to your inbox (it usually arrives within a minute; check spam if not).</p>
+<p id="dl" hidden><a class="btn" id="dl-btn" href="#">Download your kit (.zip)</a></p>
+<script>(function(){var m=location.search.match(/[?&]session_id=(cs_[A-Za-z0-9_]+)/);if(!m)return;var u='/api/claim/?session_id='+m[1];document.getElementById('dl-btn').href=u;document.getElementById('dl').hidden=false;setTimeout(function(){location.href=u},600)})();</script>
 <p>Your purchase includes free updates and a 7-day refund if the kit didn't work for you (may be declined if clearly copied or reused). Reply to the email if you need anything.</p>
 <p><a href="/">Back to the home page</a></p>
 </div></section>`,

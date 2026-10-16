@@ -25,13 +25,10 @@ export default {
   stores: {
     gumroad: 'https://promptforgekits.gumroad.com/l/browser-game-starter-kit',
     itch: 'https://promptforgekits.itch.io/browser-game-starter-kit',
-    // Direct checkout by Stripe (/api/checkout). Keep live:false until approved: while false, the "Buy now"
-    // button is not rendered anywhere public. The hidden /buy-test/ page works regardless of this flag.
-    direct: { live: false, endpoint: '/api/checkout/' },
+    // Direct checkout by Stripe (/api/checkout). Live (real purchase + refund verified). Set live:false to hide the "Buy now" button.
+    direct: { live: true, endpoint: '/api/checkout/' },
   },
 
-  // Direct checkout by Stripe (/api/checkout). Keep live:false until Gibs approves: while false, the
-  // "Buy now" button is not rendered anywhere public. The hidden /buy-test/ page works regardless.
   // Support address (footer, license, FAQ, llms.txt, JSON-LD, email reply-to).
   supportEmail: 'support@promptforgekits.com',
 

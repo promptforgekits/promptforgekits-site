@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   const params = {
     mode: 'payment',
     line_items: [{ price, quantity: 1 }],
-    success_url: `${SITE}/thanks/`,
+    success_url: `${SITE}/thanks/?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${SITE}/#pricing`,
     billing_address_collection: 'auto',
     customer_creation: 'always',
