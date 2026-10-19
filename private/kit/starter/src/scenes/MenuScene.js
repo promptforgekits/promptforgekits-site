@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
+import { startWithHowTo } from './HowToScene.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS, STORAGE_KEYS, PARALLAX, INFO } from '../config.js';
 import { addText, addPanel, addLegend, createParallax, updateParallax } from '../ui.js';
+import { storage } from '../storage.js';
 
 export default class MenuScene extends Phaser.Scene {
   constructor() {
@@ -22,13 +24,13 @@ export default class MenuScene extends Phaser.Scene {
     addLegend(this, INFO.legend, cx, cy - 34, { cols: 2, colW: 290, rowH: 36 });
 
     addText(this, cx, cy + 50, INFO.controls, 18);
-    const best = Number(localStorage.getItem(STORAGE_KEYS.highScore) || 0);
+    const best = Number(storage.get(STORAGE_KEYS.highScore) || 0);
     addText(this, cx, cy + 80, `Best: ${best}`, 20, COLORS.accent);
 
     const start = addText(this, cx, cy + 124, 'PRESS SPACE OR CLICK TO START', 22);
     this.tweens.add({ targets: start, alpha: 0.35, duration: 600, yoyo: true, repeat: -1 });
 
-    const go = () => this.scene.start('GameScene');
+    const go = () => startWithHowTo(this, 'GameScene');
     this.input.keyboard.once('keydown-SPACE', go);
     this.input.once('pointerdown', go);
   }

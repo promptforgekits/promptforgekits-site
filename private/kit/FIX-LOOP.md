@@ -146,3 +146,7 @@ The game gets slow after <30 seconds / many enemies>. Check for: objects created
 ```
 Stop. Only change what I ask. Do not refactor, rename, or reformat other code. Re-read AGENTS.md and follow the "small steps" rules.
 ```
+
+
+## Saves and private browsing
+The starter ships `src/storage.js`: every localStorage/sessionStorage call is wrapped in try/catch with an in-memory fallback, so the game keeps running in Incognito and sandboxed iframes (Poki and CrazyGames require this). If a fix prompt touches saving, say: "Use only `storage` / `session` from src/storage.js; never call localStorage or sessionStorage directly." Test it: DevTools > Application > block site data (or open in a private window) and play a full round.

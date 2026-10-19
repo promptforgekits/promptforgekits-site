@@ -22,6 +22,12 @@ Text in `<angle brackets>` is yours to customize. Prompt 0 is the same for every
 > ```
 > **Test:** The summary mentions the 3 scenes and config.js. The plan sounds right to you.
 
+> **Prompt 0b (controls screen, optional check):** the starter already shows a **HOW TO PLAY** panel the first time you press Play (keyboard, mouse and touch rows, a big START button, Space / Enter / tap also work). The first prompt of each genre below tells the AI to rewrite its text. If you ever lose it, paste this:
+> ```
+> Add a HowToScene (src/scenes/HowToScene.js) shown right after the player first presses Play in MenuScene, before any gameplay. Toy look (addPanel, addText, PALETTE only), title "HOW TO PLAY", three rows KEYBOARD / MOUSE / TOUCH read from a HOWTO object in config.js ({ keyboard, mouse, touch }; say "Not used" or "Needs a keyboard" honestly), a large green START button (at least 44 px tall), and Space, Enter or a tap anywhere also start the game (ignore input for the first 300 ms so the Play press does not skip it). Register it in main.js. Use a helper startWithHowTo(scene, 'GameScene', data) in the menu; once seen this session (registry flag) it goes straight into the game. The game over screen restarts directly, without the panel.
+> ```
+> **Test:** Press Play: the panel shows first, START begins the game, and a second run in the same session skips it.
+
 ---
 
 ## 1. Platformer
@@ -31,8 +37,9 @@ Builds on the starter as-is. Goal: a 3-level platformer with good jump feel.
 **P1. Better jump feel**
 ```
 Improve jump feel in GameScene: add coyote time (100 ms after leaving a ledge you can still jump) and jump buffering (pressing jump up to 100 ms before landing still jumps). Put both values in config.js.
+Also rewrite HOWTO in config.js (the keyboard / mouse / touch lines) so they describe this game's real controls. The HOW TO PLAY panel (src/scenes/HowToScene.js, shown after the first Play press) must stay and still appear before play.
 ```
-Test: Run off a ledge and press jump slightly late. You still jump.
+Test: Run off a ledge and press jump slightly late. You still jump. After you press Play, the HOW TO PLAY panel lists this game's keyboard, mouse and touch controls, and START (or Space/Enter/tap) begins play.
 
 **P2. Variable jump height**
 ```
@@ -99,8 +106,9 @@ Replaces the platformer with a top-down arena: rooms, enemies, upgrades between 
 **P1. Top-down movement**
 ```
 Convert GameScene to top-down: turn gravity off for this scene, remove platforms, coins, enemies and goal. The player moves in 8 directions with WASD/arrows at constant speed (normalize diagonals). Add a rectangular room with walls around the screen edges the player collides with. Keep the menu and game over scenes, but change MenuScene's title to my game name: <name> (not "TINY PLATFORMER") and its controls line to the new controls.
+Also rewrite HOWTO in config.js (the keyboard / mouse / touch lines) so they describe this game's real controls. The HOW TO PLAY panel (src/scenes/HowToScene.js, shown after the first Play press) must stay and still appear before play.
 ```
-Test: You move in all 8 directions, diagonals aren't faster, walls block you.
+Test: You move in all 8 directions, diagonals aren't faster, walls block you. After you press Play, the HOW TO PLAY panel lists this game's keyboard, mouse and touch controls, and START (or Space/Enter/tap) begins play.
 
 **P2. Shooting**
 ```
@@ -122,21 +130,22 @@ Test: Kill all enemies, door opens; the door is closed while enemies are alive.
 
 **P5. Room progression**
 ```
-Walking through the open door loads a new room with a bigger wave (room number * 2 + 2 enemies). The player's current HP carries over to the next room; pass it in the scene data. Show the room number in the HUD with labels ("Room: 2   Cleared: 1"). Score = rooms cleared. Starting a new run from GameOverScene or the menu must pass fresh data explicitly (room 1, full HP), because scene.start() without data reuses the old data.
-```
-Test: Room 2 has more enemies than room 1; the HUD counter goes up.
+Walking through the open door loads a new room with a bigger wave (room number * 2 + 2 enemies, but never more than 14 on screen; the spare budget turns into elites in P6). The player's current HP carries over to the next room; pass it in the scene data. Show the room number in the HUD with labels ("Room: 2   Cleared: 1"). Score = rooms cleared. Starting a new run from GameOverScene or the menu must pass fresh data explicitly (room 1, full HP), because scene.start() without data reuses the old data.
+
+Put all difficulty scaling in one pure file src/balance.js (no Phaser imports) with functions of the room number: hpMult(room) = 1 + 0.14 * (room - 3) + 0.003 * (room - 3)^2 for rooms after 3 (1.0 up to room 3, so rooms 1-3 stay as friendly as now), speedMult(room) = min(1.4, 1 + 0.02 * (room - 1)), and wavePlan(room) returning one spec {type, elite, hp, speed, dmg} per enemy. Read the numbers from a BALANCE object in config.js. Every enemy you spawn from now on takes its HP and speed from wavePlan(), never from a hard-coded number.```
+Test: Room 2 has more enemies than room 1; the HUD counter goes up. In the console `wavePlan(1)` is 4 chasers with 3 HP; `wavePlan(12)` has 14 entries with HP above 10.
 
 **P6. Second enemy type**
 ```
-Add a shooter enemy that keeps its distance and fires slow bullets at the player every 2 seconds. Mix it into waves starting from room 3. Name the first shooter on screen ("Shooter: dodge its shots").
+Add a shooter enemy that keeps its distance and fires slow bullets at the player every 2 seconds. Mix it into waves starting from room 3 (every 3rd slot of wavePlan). Name the first shooter on screen ("Shooter: dodge its shots"). Keep up with the player: its fire interval shrinks by 60 ms per room after room 3 (never below 1100 ms) and its bullet speed grows 4 per room (max 240). Also add two more enemy types to wavePlan so late rooms are not just more chasers: a Dasher (red triangle, 2 HP; walks, pauses 0.6 s flashing white, dashes at where you were, recovers; from room 4; name "Dasher: dodge the rush") and a Brute (red square, scaled 1.7x, 9 HP, slow, touch = -2 HP; from room 8; name "Brute: slow, tough, -2 HP"). From room 7, spare enemy budget (room*2+2 minus the 14 cap) makes Elites: a normal enemy with 2.5x HP, 1.15x speed, 1.3x size, purple tint, touch = -2 HP, name "Elite: purple = tougher, -2 HP"; from room 10 there is always at least one more elite every 3rd room.
 ```
 Test: From room 3, some enemies shoot at you; their bullets damage you.
 
 **P7. Upgrade choice**
 ```
-After clearing a room, pause and show 3 random upgrade cards (e.g. +20% fire rate, +1 max HP and heal, +15% move speed, bullets pierce one enemy, +1 damage). Each card shows a short name and a one-line description ("Rapid Fire: Shoot 20% faster"), both kept in an UPGRADE_TEXT object in config.js. Clicking one applies it and resumes. While the cards are open, set a `choosing` flag and skip player shooting so the card click does not also fire a bullet. Put upgrade definitions in src/upgrades.js. Show "Upgrades: N" in the HUD, with a hover tooltip listing the upgrades taken. Keep the player's stats (max HP, fire rate, speed, damage, pierce, upgrades taken) in one `stats` object that is passed to the next room in the scene data, so upgrades persist between rooms; a new run starts from the default stats.
+After clearing a room, pause and show 3 random upgrade cards (e.g. +20% fire rate, +1 max HP and heal, +15% move speed, bullets pierce one enemy, +1 damage). Each card shows a short name and a one-line description ("Rapid Fire: Shoot 20% faster"), both kept in an UPGRADE_TEXT object in config.js. Clicking a card only SELECTS it (thick gold frame, a green "SELECTED" tag, the others dim); click another card to change your mind. A Confirm button below the cards (greyed out and saying "Select a card first" until a card is selected, then "Confirm: <card name>") applies the selected card and resumes. Keyboard: 1/2/3 or Left/Right arrows select, Enter or Space confirms; Confirm does nothing while nothing is selected. While the cards are open, set a `choosing` flag and skip player shooting so the card click does not also fire a bullet. Put upgrade definitions in src/upgrades.js. Power must not run away: every card has a pick limit in BALANCE.caps (Rapid Fire 6, Quick Feet 3, Piercing Shots 2, Heavy Rounds 3, Tough Heart 4) and a card at its limit is no longer offered; Rapid Fire has diminishing returns (pick n multiplies the fire rate by 1 + 0.2 * 0.9^n) and never goes below 100 ms between shots; Quick Feet adds 15% of the BASE speed per pick (additive, max +45%, never multiplicative); Tough Heart gives +1 max HP and heals only 2 (never a full heal); add a sixth card "Patch Up: Heal 3 HP" that is only offered while you are hurt. Count picks in stats.counts. Show "Upgrades: N" in the HUD, with a hover tooltip listing the upgrades taken. Keep the player's stats (max HP, fire rate, speed, damage, pierce, upgrades taken) in one `stats` object that is passed to the next room in the scene data, so upgrades persist between rooms; a new run starts from the default stats.
 ```
-Test: Every card has a name and a one-line description. Pick "+fire rate" and you visibly shoot faster; hovering "Upgrades: 1" lists it.
+Test: Every card has a name and a one-line description. Clicking a card highlights it but "Upgrades: 0" stays 0 until you press Confirm; clicking another card moves the highlight; Enter confirms too. Pick "+fire rate" and you visibly shoot faster; hovering "Upgrades: 1" lists it. After 3 Heavy Rounds picks that card no longer appears.
 
 **P8. Run summary**
 ```
@@ -146,9 +155,9 @@ Test: Die; the summary lists your upgrades and rooms reached.
 
 **P9. Boss room**
 ```
-Every 5th room is a boss room: one large enemy with 40 HP and a health bar at the top of the screen, which alternates between chasing and firing a ring of 8 bullets. Label the health bar "BOSS" and name the boss the first time it is on screen ("BOSS: 40 HP, dodge the ring").
+Every 5th room is a boss room: one large enemy and a health bar at the top of the screen, which alternates between chasing and firing a ring of bullets. Label the health bar "BOSS" and name the boss the first time it is on screen ("BOSS: dodge the rings, it changes at half HP"). Bosses get tougher every time: boss number N (room 5 = 1, room 10 = 2, ...) has 40 * (1 + 3.5 * (N - 1)) HP (40, 180, 320, 460), ring size 8 + 2 * (N - 1) bullets (max 16) and 8% more speed per boss, from bossStats(room) in balance.js. Give it three phases from bossPhase(hpRatio): above 66% HP chase + ring; 33-66% it also fires a 3-bullet aimed fan, moves 10% faster and summons 2 chasers once; below 33% it is ENRAGED (45% faster, shorter phases, a second ring offset by half a gap, a 5-bullet fan). Show "PHASE 2: it summons helpers!" / "ENRAGED!" text when a phase starts, draw two tick marks on the health bar at 33% and 66%, kill any helpers when the boss dies, and heal the player 3 HP for beating a boss.
 ```
-Test: Room 5 has the boss with a health bar; beating it opens the door.
+Test: Room 5 has the boss with a health bar; beating it opens the door. In the console set `boss.hp` to half its max: the phase text appears and two helpers spawn. Room 10's boss has 180 HP and a ring of 10.
 
 **P10. Juice**
 ```
@@ -156,7 +165,7 @@ Add juice: screen shake when the player is hit, small knockback on enemies when 
 ```
 Test: Combat feels punchier; no slowdowns over a few rooms.
 
-**Ship check:** Do a full run to room 6+ without errors.
+**Ship check:** Do a full run to room 6+ without errors. Then check the difficulty curve: write a small headless script (plain Node, imports balance.js and upgrades.js, no Phaser) that simulates a bot clearing rooms 1-20 and prints, per room, the clear time and the damage taken. Rooms 1-4 should cost about 0 HP, damage taken should climb from room 6, and the room 5/10/15/20 bosses should each last longer than the one before. If late rooms stay as easy as early ones, raise BALANCE.hpPerRoom first.
 
 ---
 
@@ -167,8 +176,9 @@ Replaces gameplay with a clicker economy. No physics needed.
 **P1. Click to earn**
 ```
 Replace GameScene with an idle clicker: a big circle in the center that gives +1 coin when clicked, with a small scale "bounce" tween on click. Show the coin total at the top, labeled ("Coins: 0"), and a bobbing "Click the coin!" hint above the circle until the first click. Remove the platformer code and the game over trigger for now.
+Also rewrite HOWTO in config.js (the keyboard / mouse / touch lines) so they describe this game's real controls. The HOW TO PLAY panel (src/scenes/HowToScene.js, shown after the first Play press) must stay and still appear before play.
 ```
-Test: Each click adds exactly 1 and the circle bounces.
+Test: Each click adds exactly 1 and the circle bounces. After you press Play, the HOW TO PLAY panel lists this game's keyboard, mouse and touch controls, and START (or Space/Enter/tap) begins play.
 
 **P2. Floating numbers**
 ```
@@ -196,7 +206,7 @@ Test: Ask the AI for a temporary debug key that adds 5,000,000 coins; press it a
 
 **P6. Save and load**
 ```
-Save the full game state to localStorage every 5 seconds and on page close. Load it on startup. Add a "Reset save" button in the menu with a confirm step. The starter menu starts the game on a click anywhere, so make only the start text (and the reset button) clickable, or clicking Reset will also start the game.
+Save the full game state every 5 seconds and on page close. Load it on startup. Use only the `storage` helper from src/storage.js (it wraps localStorage in try/catch with an in-memory fallback, so the game still runs in private browsing and sandboxed iframes like Poki/CrazyGames); never call localStorage directly, and parse saved JSON inside try/catch with defaults. Add a "Reset save" button in the menu with a confirm step. The starter menu starts the game on a click anywhere, so make only the start text (and the reset button) clickable, or clicking Reset will also start the game.
 ```
 Test: Earn coins, refresh the page; your progress is still there.
 
@@ -235,8 +245,9 @@ Auto-running, jump-to-survive, score = distance.
 **P1. Auto-run setup**
 ```
 Convert GameScene to an endless runner: the player stays at x=150 and the ground scrolls left (use a long TileSprite floor with tilePositionX increasing). Remove the level arrays. Space/Up/click jumps. Keep gravity. Change MenuScene's title and controls line, and add a one-line goal ("Run as far as you can. Hit nothing!").
+Also rewrite HOWTO in config.js (the keyboard / mouse / touch lines) so they describe this game's real controls. The HOW TO PLAY panel (src/scenes/HowToScene.js, shown after the first Play press) must stay and still appear before play.
 ```
-Test: The ground scrolls, the player runs in place and can jump.
+Test: The ground scrolls, the player runs in place and can jump. After you press Play, the HOW TO PLAY panel lists this game's keyboard, mouse and touch controls, and START (or Space/Enter/tap) begins play.
 
 **P2. Obstacles**
 ```
@@ -303,8 +314,9 @@ Grid-based, turn-based, with handcrafted levels.
 **P1. Grid and player**
 ```
 Convert GameScene to a grid puzzle: don't use physics bodies in this scene (set its gravity to 0). Draw a 10x8 grid of 48px tiles centered on screen. The player occupies one tile and moves one tile per key press (arrows/WASD) with a 100 ms tween. No diagonal moves.
+Also rewrite HOWTO in config.js (the keyboard / mouse / touch lines) so they describe this game's real controls. The HOW TO PLAY panel (src/scenes/HowToScene.js, shown after the first Play press) must stay and still appear before play.
 ```
-Test: One key press = exactly one tile, even if you hold the key.
+Test: One key press = exactly one tile, even if you hold the key. After you press Play, the HOW TO PLAY panel lists this game's keyboard, mouse and touch controls, and START (or Space/Enter/tap) begins play.
 
 **P2. Levels as text**
 ```
@@ -332,13 +344,13 @@ Test: Push a box, press Z: both player and box go back. R resets.
 
 **P6. Move counter**
 ```
-Count moves per level and show them in the HUD with labels ("Moves: 12   Best: 9"; Undo takes one move back). Save the best move count per level in localStorage and show it.
+Count moves per level and show them in the HUD with labels ("Moves: 12   Best: 9"; Undo takes one move back). Save the best move count per level with the `storage` helper from src/storage.js (never raw localStorage) and show it.
 ```
 Test: Solve a level; the best moves saves and shows on replay.
 
 **P7. Level select**
 ```
-Add a LevelSelectScene reachable from the menu with a button and the L key (the starter menu starts the game on any click, so make only the start text and this button clickable): a grid of level buttons, locked until the previous level is solved (progress saved in localStorage). Show the best moves on solved levels. Locked buttons say "LOCKED" and a hint line says how to unlock the next one.
+Add a LevelSelectScene reachable from the menu with a button and the L key (the starter menu starts the game on any click, so make only the start text and this button clickable): a grid of level buttons, locked until the previous level is solved (progress saved with the `storage` helper). Show the best moves on solved levels. Locked buttons say "LOCKED" and a hint line says how to unlock the next one.
 ```
 Test: Only level 1 is unlocked at first; solving it unlocks level 2 after a refresh.
 
@@ -350,9 +362,9 @@ Test: Run `node scripts/check-levels.mjs`, then play every level yourself. Remov
 
 **P9. Touch controls**
 ```
-Add swipe controls for mobile (swipe direction = move) and on-screen Undo/Restart buttons labeled with their keys ("UNDO (Z)", "RESTART (R)").
+Add swipe controls for mobile (swipe direction = move; ignore short taps under ~24 px so a tap is not a move) and on-screen Undo/Restart buttons labeled with their keys ("UNDO (Z)", "RESTART (R)"). On each button's pointerdown, call event.stopPropagation() and clear any in-progress swipe so the button tap does not also register as a swipe move.
 ```
-Test: In dev tools device mode, drag to move.
+Test: In dev tools device mode, drag to move; tapping UNDO/RESTART undoes or resets without moving the player.
 
 **P10. Juice**
 ```
@@ -360,7 +372,7 @@ Add juice: boxes squash slightly when pushed, a sparkle burst when a box lands o
 ```
 Test: Feedback for every action; nothing slows down undo.
 
-**Ship check:** Solve all levels from a fresh save (clear localStorage).
+**Ship check:** Solve all levels from a fresh save (clear site data).
 
 ---
 
@@ -377,8 +389,9 @@ Turn this starter into a tower defense game called "Core Keepers".
 - textures.js: add and export drawShape(g, shape, x, y, size, fill) that draws a 'circle', 'triangle', 'square', 'diamond' or 'hexagon' of radius size in color fill, with the 3 px ink OUTLINE and one small white highlight at 45% alpha near the top-left (see THEME.md).
 - MenuScene: title "CORE KEEPERS", instruction line "Click pads to build   Q: Overcharge". Replace the platformer sprites with three drawShape icons (cyan triangle, red circle, gold hexagon).
 Do not change unrelated code; list what you changed.
+Also rewrite HOWTO in config.js (the keyboard / mouse / touch lines) so they describe this game's real controls. The HOW TO PLAY panel (src/scenes/HowToScene.js, shown after the first Play press) must stay and still appear before play.
 ```
-Test: the menu says CORE KEEPERS at 960x540; clicking starts an olive screen; the console has no errors.
+Test: the menu says CORE KEEPERS at 960x540; clicking starts an olive screen; the console has no errors. After you press Play, the HOW TO PLAY panel lists this game's keyboard, mouse and touch controls, and START (or Space/Enter/tap) begins play.
 
 **P2. Path, vault, and build pads**
 ```
@@ -516,9 +529,10 @@ Add OVERCHARGE to settings.js: { rateMult: 3, duration: 5, cooldown: 30, key: 'Q
 - A round ability button at the bottom-right (purple, lightning icon, label "Q"). Pressing Q or clicking it arms Overcharge: the cursor shows a purple ring and the hint "Click a tower". Clicking a tower then gives it rateMult x fire rate (Frost: rateMult x aura damage) for duration seconds of game time; clicking anything else or pressing Q again cancels.
 - While overcharged the tower glows (pulsing purple ring) and its shots are a bit bigger. Play a short rising beep (Web Audio, no files).
 - Then the button shows a cooldown sweep (a dark pie that shrinks) for cooldown seconds of game time and ignores input.
+- Click conflicts (the common bug here): the click on the Overcharge button must only arm it; it must not also reach the map click handler (check the objects under the pointer, as in P4), or it arms and cancels in the same click. While armed, the map click handler does the Overcharge step and then stops: a click on a tower must NOT also select it or open its tower panel, and a click on an empty pad cancels Overcharge without opening the build menu.
 Do not change unrelated code; list what you changed.
 ```
-Test: press Q, click a Bolt: it fires about 3x as fast for 5 s; the button sweeps for 30 s; Q does nothing until it is ready.
+Test: press Q, click a Bolt: it fires about 3x as fast for 5 s (count its shots over 2 s: about 3 times as many) and no tower panel opens; the button sweeps for 30 s; Q does nothing until it is ready. When it is ready, click the Q button with the mouse: the purple ring and "Click a tower" stay on. Arm it again and click an empty pad: it cancels and no build menu opens; click the pad again and the build menu opens as normal.
 
 **P12. Juice and sound**
 ```
@@ -536,7 +550,7 @@ Test: a busy wave 10 still runs at about 60 fps; every event has a sound; M mute
 **P13. HUD polish, speed, pause, win and lose**
 ```
 - HUD top-left: cores, gold, wave (as before). Top-right: a 1x/2x speed button (sets this.speed, which already scales tick) and a pause button (P also toggles; dims the screen and shows PAUSED). Esc first closes whatever is open (build menu, tower panel, armed Overcharge) and only toggles pause when nothing is open. Pausing must stop enemies, cooldowns, countdown and Overcharge, because they all run on tick.
-- Surviving wave 20 (all enemies gone) goes to GameOverScene with won: true. Losing all cores goes there with won: false. Pass { won, wave, cores } explicitly. GameOverScene shows "YOU WIN!" or "GAME OVER", "Wave N", "Cores saved: N" and the best wave from localStorage (key 'core-keepers-best-wave', saved when higher).
+- Surviving wave 20 (all enemies gone) goes to GameOverScene with won: true. Losing all cores goes there with won: false. Pass { won, wave, cores } explicitly. GameOverScene shows "YOU WIN!" or "GAME OVER", "Wave N", "Cores saved: N" and the best wave from the `storage` helper (key 'core-keepers-best-wave', saved when higher).
 - Restart from GameOverScene and the menu must start a fresh run: this.scene.start('GameScene', { fresh: true }) and reset every field in create() (gold, cores, wave, towers, speed 1, paused false, Overcharge ready).
 - Menu shows "Best wave: N".
 - Remove the 1-6 debug spawn keys.

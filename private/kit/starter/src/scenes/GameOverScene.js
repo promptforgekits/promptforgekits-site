@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS, STORAGE_KEYS, INFO } from '../config.js';
 import { addText, addPanel, createParallax } from '../ui.js';
+import { storage } from '../storage.js';
 
 export default class GameOverScene extends Phaser.Scene {
   constructor() {
@@ -16,9 +17,9 @@ export default class GameOverScene extends Phaser.Scene {
     const cx = GAME_WIDTH / 2;
     const cy = GAME_HEIGHT / 2;
 
-    const oldBest = Number(localStorage.getItem(STORAGE_KEYS.highScore) || 0);
+    const oldBest = Number(storage.get(STORAGE_KEYS.highScore) || 0);
     const best = Math.max(this.finalScore, oldBest);
-    localStorage.setItem(STORAGE_KEYS.highScore, String(best));
+    storage.set(STORAGE_KEYS.highScore, String(best));
 
     createParallax(this);
     addPanel(this, 480, 270);

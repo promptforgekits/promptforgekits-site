@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT, PALETTE, WORLD } from './config.js';
 import BootScene from './scenes/BootScene.js';
 import MenuScene from './scenes/MenuScene.js';
+import HowToScene from './scenes/HowToScene.js';
 import GameScene from './scenes/GameScene.js';
 import GameOverScene from './scenes/GameOverScene.js';
 
@@ -20,7 +21,7 @@ const config = {
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
   // First scene in the list starts automatically.
-  scene: [BootScene, MenuScene, GameScene, GameOverScene]
+  scene: [BootScene, MenuScene, HowToScene, GameScene, GameOverScene]
 };
 
 const game = new Phaser.Game(config);

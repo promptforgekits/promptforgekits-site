@@ -16,11 +16,12 @@ src/scenes/
   MenuScene.js        Title screen -> starts GameScene.
   GameScene.js        Gameplay. Level data (in tiles) at top of file, logic in small methods.
   GameOverScene.js    Shows score + high score -> restart or back to menu.
+  HowToScene.js       "HOW TO PLAY" panel (keyboard / mouse / touch rows from HOWTO in config.js), shown after the first Play press.
 public/assets/fonts/  The bundled font (Lilita One, OFL). Put image/audio files in public/assets/.
 CREDITS.md            Where every asset came from and its license. Update it when adding assets.
 ```
 
-Scene flow: `BootScene -> MenuScene -> GameScene -> GameOverScene -> (GameScene | MenuScene)`.
+Scene flow: `BootScene -> MenuScene -> HowToScene (first Play only) -> GameScene -> GameOverScene -> (GameScene | MenuScene)`.
 New art: add a draw function in `textures.js` and register it with `save('key', w, h, ...)`; every scene can then use the key. (Image files also work: add a `preload()` to BootScene with `this.load.image('key', 'assets/file.png')`.)
 Texture keys: `player-idle-0/1`, `player-run-0/1`, `player-jump-0`, `enemy-0/1`, `coin-0..3`, `flag-0/1`, `spikes`, `tile-left`, `tile-mid`, `tile-right`, `tile-fill`, `bg-far`, `bg-near`, `spark`. Animations: `player-idle`, `player-run`, `player-jump`, `enemy-walk`, `coin-spin`, `flag-wave`.
 Pass data between scenes with `this.scene.start('SceneKey', { ... })` and read it in `init(data)`.
@@ -36,8 +37,9 @@ Pass data between scenes with `this.scene.start('SceneKey', { ... })` and read i
 - Art is drawn in code in `textures.js` ("Chunky Flat Toy" style: flat shapes, `OUTLINE`-px ink outline, one highlight, colors only from `PALETTE`). Draw new things the same way. Only add image/audio files you made or that are CC0 / licensed, and list them in `CREDITS.md`. Never add copyrighted assets.
 - Use `addText()` from `src/ui.js` for text so it uses the bundled font.
 - Keep the visual theme (`THEME.md` in the kit folder): color roles red = danger, gold = money/reward, cyan/blue = player/friendly/slowed, green = heal/poison, purple = magic/rare, white flash = hit; muted olive/slate backgrounds; panels from `addPanel()`.
-- Persist small data (high score, settings) with `localStorage`, using keys from `STORAGE_KEYS`.
+- Persist small data (high score, settings) ONLY through `storage` / `session` from `src/storage.js` (never call `localStorage` or `sessionStorage` directly: they throw in private browsing and sandboxed iframes, and the helper falls back to memory). Use keys from `STORAGE_KEYS`.
 - **Every new item, enemy, pickup, obstacle or upgrade needs an on-screen name + a one-line description** (e.g. `Spike: avoid`, `Coin +10`; shop items and upgrade cards also show their cost/effect). Keep the strings in `src/config.js` (an `INFO` object), never inline in scenes. Show them with the `src/ui.js` helpers: `addTag()` (name above the first one on screen), `addLegend()` (icon + name list on the menu), `addBanner()` (short goal/controls line) and `addTooltip()` (hover info). Every HUD number gets a label. Keep it short: one line each, no walls of text.
+- **Every game shows a HOW TO PLAY panel before play** (HowToScene, text in `HOWTO` in `src/config.js`: keyboard, mouse and touch lines, honest about what is not supported). Whenever controls change, update HOWTO. Start the game from the menu with `startWithHowTo(this, 'GameScene', data)`, never a bare `scene.start('GameScene')`.
 - Do not add npm dependencies unless the user explicitly asks.
 
 ## How to work: small steps, test after each change

@@ -145,10 +145,10 @@ A mode is a scene plus a rule change, not a new game. Examples, in order of effo
 | Mode | How to add it | Effort |
 |---|---|---|
 | **Endless / survival** | Reuse the content tables, keep generating after the last level or wave, track best in `STORAGE_KEYS` | Low |
-| **Time attack** | Add a timer to the HUD (`addText`, labeled "Time: ..."), best time in localStorage | Low |
+| **Time attack** | Add a timer to the HUD (`addText`, labeled "Time: ..."), best time via `storage` (src/storage.js) | Low |
 | **Daily challenge** | Seed your random picks with the date, so everyone gets the same run that day | Medium |
 | **Hard mode** | A multiplier object in `config.js` (enemy speed, hp, fewer pickups) read by the same scenes | Low |
-| **Level select** | A new `LevelSelectScene.js`: panels from `addPanel`, saved "unlocked up to" in localStorage | Medium |
+| **Level select** | A new `LevelSelectScene.js`: panels from `addPanel`, saved "unlocked up to" via `storage` (src/storage.js) | Medium |
 | **Local 2-player** | Only if you planned it in the GDD; it touches input, camera, and win rules | High |
 
 Rules for adding a scene: one scene per file, class name = file name = scene key, register it in `src/main.js`, start it with explicit data, and add a way back to the menu. Test the full loop menu -> mode -> game over -> menu every time.
@@ -235,7 +235,7 @@ Add one more generator to the data table in src/economy.js: "<Name>", <coins/s> 
 
 **Add prestige**
 ```
-Add a prestige button that appears once total coins earned reaches <threshold>. Pressing it resets coins and generators, and gives permanent "stars" (purple, magic/rare) that add +<N>% to all income each. Save stars in localStorage with a key in STORAGE_KEYS. Show stars in the HUD with a label. Put every number in economy.js.
+Add a prestige button that appears once total coins earned reaches <threshold>. Pressing it resets coins and generators, and gives permanent "stars" (purple, magic/rare) that add +<N>% to all income each. Save stars with the `storage` helper (src/storage.js) using a key in STORAGE_KEYS. Show stars in the HUD with a label. Put every number in economy.js.
 ```
 
 **Add an achievement**

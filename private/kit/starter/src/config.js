@@ -90,3 +90,10 @@ export const INFO = {
   tags: { coin: 'Coin +10', enemy: 'Walker: avoid', spikes: 'Spikes: avoid', goal: 'Goal: reach the flag' },
   tagSeconds: 6
 };
+
+// How-to-play panel shown once after the first Play press (src/scenes/HowToScene.js). One entry per input type.
+export const HOWTO = {
+  keyboard: 'Arrows or A / D: move\nSpace or Up: jump',
+  mouse: 'Not used in this game',
+  touch: 'Needs a keyboard (no on-screen buttons yet)'
+};
