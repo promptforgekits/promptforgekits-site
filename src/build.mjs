@@ -418,6 +418,12 @@ fs.writeFileSync(path.join(ROOT, 'scripts/freepack-print.html'), PRINT);
 // ── write ──────────────────────────────────────────────────────────────────
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.cpSync(PUB, OUT, { recursive: true });
+// Demo pages under /play/<demo>/ are raw game builds titled "My Browser Game": give each a real title, description and canonical (dist only).
+for (const g of C.genres.filter((x) => demoAvailable(x.demo))) {
+  const f = path.join(OUT, 'play', g.demo, 'index.html');
+  const head = `<title>${esc(g.game)} demo: free browser game built with AI prompts | ${esc(cfg.brand)}</title>\n    <meta name="description" content="${esc(`Play the free ${g.game.toLowerCase()} demo in your browser. It was built by following the ${g.name} prompt sequence in the Browser Game Starter Kit.`)}" />\n    <link rel="canonical" href="${url(`/play/${g.demo}/`)}" />`;
+  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/<title>[\s\S]*?<\/title>/, head));
+}
 for (const pg of pages) {
   const file = pg.path.endsWith('.html') ? path.join(OUT, pg.path) : path.join(OUT, pg.path, 'index.html');
   fs.mkdirSync(path.dirname(file), { recursive: true });
