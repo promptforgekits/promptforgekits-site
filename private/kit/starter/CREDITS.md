@@ -2,6 +2,8 @@
 
 All game art (player, enemies, coins, spikes, flag, platforms, backgrounds, particles) is drawn in code in `src/textures.js`. It is part of the starter code and covered by the kit's `LICENSE.md`. There are no image files.
 
+The background music `public/assets/audio/pfk-theme-v1-alt.ogg` / `.m4a` / `.mp3` ("PFK Theme (boss loop)") is original music by Prompt Forge Kits, made for this kit. You may use it in your own games, including commercial ones; the terms are in `public/assets/audio/LICENSE-MUSIC.txt` (also `LICENSE-MUSIC.txt` in the kit folder). No credit needed.
+
 The only third-party file is the font:
 
 | What | File | Source | License |

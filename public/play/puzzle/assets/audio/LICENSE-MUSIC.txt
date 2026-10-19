@@ -1,0 +1,13 @@
+PFK Theme (boss loop) - pfk-theme-v1-alt.ogg / .m4a / .mp3
+Original music by Prompt Forge Kits (promptforgekits.com), 2026. 128 BPM, 37.5 s seamless loop.
+Made from scratch in code (synthesized, no samples or third-party audio).
+
+License for buyers of the Browser Game Starter Kit:
+- You may use this music in any number of your own games, free or commercial
+  (itch.io, Steam, web portals, ads, app stores), and in trailers or videos of those games.
+- You may edit, cut, loop, remix or re-encode it for your games.
+- No credit is required (a "Music: Prompt Forge Kits" line is welcome).
+- You may not sell or share the music on its own (as a music pack, sample pack or asset pack),
+  or put it in another kit, template or course.
+
+You are also free to replace it with your own music: see "Add background music" in PROMPTS.md.

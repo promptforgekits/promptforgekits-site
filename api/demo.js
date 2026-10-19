@@ -7,7 +7,7 @@ import { demoTokenOk } from './_lib.js';
 // /demo/core-keepers/assets/... -> served only with that cookie. (vercel.json rewrites /demo/core-keepers/* here.)
 const ROOT = path.join(process.cwd(), 'private', 'core-keepers');
 const COOKIE = 'pfk_demo';
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf', '.png': 'image/png', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.wav': 'audio/wav' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf', '.png': 'image/png', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.m4a': 'audio/mp4', '.wav': 'audio/wav', '.txt': 'text/plain; charset=utf-8' };
 
 const gate = (res, code = 403) => {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');

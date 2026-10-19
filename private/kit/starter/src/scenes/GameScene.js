@@ -3,6 +3,9 @@ import {
   GAME_HEIGHT, TILE, PLAYER, ENEMY, WORLD, SCORE, COLORS, PALETTE, PARALLAX, PARTICLES, INFO, TEXT
 } from '../config.js';
 import { addText, addTag, addBanner, createParallax, updateParallax } from '../ui.js';
+import { addOptionsButton } from './OptionsScene.js';
+import { toggleSfx } from '../audio.js';
+import { sfx } from '../sfx.js';
 
 // Level layout, measured in tiles (1 tile = TILE pixels). Edit these to design your level.
 // Platforms: [tileX, tileY, widthInTiles]. Row 11 is the ground; smaller y = higher up.
@@ -41,6 +44,8 @@ export default class GameScene extends Phaser.Scene {
     this.createHints();
 
     this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
+    addOptionsButton(this); // gear during play: Music / Sound FX switches (O key too)
+    this.input.keyboard.on('keydown-M', () => toggleSfx()); // M: sound effects on/off
   }
 
   createLevel() {
@@ -146,6 +151,7 @@ export default class GameScene extends Phaser.Scene {
   collectCoin(player, coin) {
     this.burst(coin.x, coin.y, PARTICLES.coinBurst, PALETTE.gold);
     coin.destroy();
+    sfx.coin();
     this.score += SCORE.coin;
     this.scoreText.setText(this.scoreLabel());
     this.tweens.add({ targets: this.scoreText, scale: 1.3, duration: 80, yoyo: true });
@@ -156,6 +162,7 @@ export default class GameScene extends Phaser.Scene {
     this.isOver = true;
     this.physics.pause();
     this.player.anims.stop();
+    if (won) sfx.win(); else sfx.hurt();
     if (won) {
       this.burst(this.goal.x, this.goal.y - 30, PARTICLES.winBurst, PALETTE.gold);
     } else {
@@ -182,7 +189,7 @@ export default class GameScene extends Phaser.Scene {
     else if (right) this.player.setVelocityX(PLAYER.speed).setFlipX(false);
     else this.player.setVelocityX(0);
 
-    if (jump && onGround) this.player.setVelocityY(PLAYER.jumpVelocity);
+    if (jump && onGround) { this.player.setVelocityY(PLAYER.jumpVelocity); sfx.jump(); }
 
     this.updateAnimation(onGround, left || right);
 

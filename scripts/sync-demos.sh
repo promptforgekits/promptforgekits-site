@@ -6,7 +6,8 @@ set -euo pipefail
 SRC="${1:-/workspace/prompt-tests}"
 DEST="$(cd "$(dirname "$0")/.." && pwd)/public/play"
 # <demo folder on site>:<source project folder>
-MAP="towerdefense:towerdefense-ck platformer:platformer roguelite:roguelite idle:idle runner:runner puzzle:puzzle"
+# Core Keepers (towerdefense-ck) is NOT synced here: it is the email-gated demo in private/core-keepers/.
+MAP="platformer:platformer roguelite:roguelite idle:idle runner:runner puzzle:puzzle"
 for pair in $MAP; do
   demo="${pair%%:*}"; proj="${pair#*:}"
   if [ -f "$SRC/$proj/dist/index.html" ]; then

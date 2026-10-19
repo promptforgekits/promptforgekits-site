@@ -10,6 +10,9 @@ vite.config.js        Build config. base: './' is REQUIRED for itch.io / GitHub 
 src/main.js           Creates the Phaser.Game and registers scenes. Keep it small.
 src/config.js         ALL tunable numbers and the 16-color PALETTE (speed, gravity, tile size, parallax, score values, storage keys).
 src/textures.js       ALL art, drawn in code with Graphics (flat shapes + thick outline). One draw function per sprite.
+src/audio.js          ALL sound: Music + Sound FX switches (saved), beep() sound effects, playMusic(key). Unlocks audio on the first click/tap/key.
+src/sfx.js            The game's named sound effects (sfx.jump() ...), each one a beep() from audio.js.
+src/storage.js        Safe save helper (storage / session); never throws when the browser blocks storage.
 src/ui.js             Shared look: addText() (bundled font + outline), addPanel(), parallax background helpers, and the info helpers addTag() / addLegend() / addBanner() / addTooltip().
 src/scenes/
   BootScene.js        Draws all textures, creates animations, loads the font -> starts MenuScene.
@@ -17,11 +20,13 @@ src/scenes/
   GameScene.js        Gameplay. Level data (in tiles) at top of file, logic in small methods.
   GameOverScene.js    Shows score + high score -> restart or back to menu.
   HowToScene.js       "HOW TO PLAY" panel (keyboard / mouse / touch rows from HOWTO in config.js), shown after the first Play press.
+  OptionsScene.js     "OPTIONS" panel (MUSIC and SOUND FX ON/OFF) on top of the menu or the game; addOptionsButton() makes the button / gear.
 public/assets/fonts/  The bundled font (Lilita One, OFL). Put image/audio files in public/assets/.
+public/assets/audio/  The included background music (PFK Theme, ours; see LICENSE-MUSIC.txt). Replace it with your own if you like.
 CREDITS.md            Where every asset came from and its license. Update it when adding assets.
 ```
 
-Scene flow: `BootScene -> MenuScene -> HowToScene (first Play only) -> GameScene -> GameOverScene -> (GameScene | MenuScene)`.
+Scene flow: `BootScene -> MenuScene -> HowToScene (first Play only) -> GameScene -> GameOverScene -> (GameScene | MenuScene)`. `OptionsScene` opens on top of MenuScene or GameScene (pausing it) and resumes it on Back.
 New art: add a draw function in `textures.js` and register it with `save('key', w, h, ...)`; every scene can then use the key. (Image files also work: add a `preload()` to BootScene with `this.load.image('key', 'assets/file.png')`.)
 Texture keys: `player-idle-0/1`, `player-run-0/1`, `player-jump-0`, `enemy-0/1`, `coin-0..3`, `flag-0/1`, `spikes`, `tile-left`, `tile-mid`, `tile-right`, `tile-fill`, `bg-far`, `bg-near`, `spark`. Animations: `player-idle`, `player-run`, `player-jump`, `enemy-walk`, `coin-spin`, `flag-wave`.
 Pass data between scenes with `this.scene.start('SceneKey', { ... })` and read it in `init(data)`.
@@ -40,6 +45,8 @@ Pass data between scenes with `this.scene.start('SceneKey', { ... })` and read i
 - Persist small data (high score, settings) ONLY through `storage` / `session` from `src/storage.js` (never call `localStorage` or `sessionStorage` directly: they throw in private browsing and sandboxed iframes, and the helper falls back to memory). Use keys from `STORAGE_KEYS`.
 - **Every new item, enemy, pickup, obstacle or upgrade needs an on-screen name + a one-line description** (e.g. `Spike: avoid`, `Coin +10`; shop items and upgrade cards also show their cost/effect). Keep the strings in `src/config.js` (an `INFO` object), never inline in scenes. Show them with the `src/ui.js` helpers: `addTag()` (name above the first one on screen), `addLegend()` (icon + name list on the menu), `addBanner()` (short goal/controls line) and `addTooltip()` (hover info). Every HUD number gets a label. Keep it short: one line each, no walls of text.
 - **Every game shows a HOW TO PLAY panel before play** (HowToScene, text in `HOWTO` in `src/config.js`: keyboard, mouse and touch lines, honest about what is not supported). Whenever controls change, update HOWTO. Start the game from the menu with `startWithHowTo(this, 'GameScene', data)`, never a bare `scene.start('GameScene')`.
+- **Every game has an OPTIONS panel** (OptionsScene) with two separate switches, MUSIC ON/OFF and SOUND FX ON/OFF (both ON by default, saved through `src/audio.js` + `src/storage.js`). Keep the OPTIONS button on the menu (`addOptionsButton(this, { label: 'OPTIONS' })`) and the gear in GameScene (`addOptionsButton(this)`, move it with `{ x, y }` if it covers the HUD). Never remove them.
+- **All sound goes through `src/audio.js`.** Sound effects: add a line to `src/sfx.js` using `beep(freq, seconds, { type, vol, slideTo, delay })`, or `playSfx(this, 'key')` for a loaded file. Music: the theme is set up in `src/main.js` with `registerMusic('theme', fileMusic([...]))` + `playMusic('theme')` (a looping file, starts after the first click/tap/key); also `playMusic('key', this)` (loaded with `this.load.audio`) or `registerMusic()` for music made in code. Never create your own `AudioContext`, never call `this.sound.play()` directly, and never start sound before the first click / tap / key: audio.js handles the browser rules (iPhone Safari stays silent otherwise).
 - Do not add npm dependencies unless the user explicitly asks.
 
 ## How to work: small steps, test after each change

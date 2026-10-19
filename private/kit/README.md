@@ -49,6 +49,7 @@ git commit -m "starter works"
 | `FIX-LOOP.md` | Debugging and rollback system |
 | `PUBLISH.md` | Publishing to itch.io, GitHub Pages, Netlify |
 | `LICENSE.md` | What you can and can't do with the kit |
+| `LICENSE-MUSIC.txt` | The included background music (PFK Theme, our own): free to use in your games |
 
 ### The 4 rules that make vibe-coded games actually ship
 1. **One prompt = one feature.** Never ask for five things at once.

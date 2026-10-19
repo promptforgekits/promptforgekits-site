@@ -3,6 +3,7 @@ import { startWithHowTo } from './HowToScene.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS, STORAGE_KEYS, PARALLAX, INFO } from '../config.js';
 import { addText, addPanel, addLegend, createParallax, updateParallax } from '../ui.js';
 import { storage } from '../storage.js';
+import { addOptionsButton } from './OptionsScene.js';
 
 export default class MenuScene extends Phaser.Scene {
   constructor() {
@@ -33,6 +34,7 @@ export default class MenuScene extends Phaser.Scene {
     const go = () => startWithHowTo(this, 'GameScene');
     this.input.keyboard.once('keydown-SPACE', go);
     this.input.once('pointerdown', go);
+    addOptionsButton(this, { label: 'OPTIONS' }); // Music / Sound FX switches
   }
 
   update(time, delta) {

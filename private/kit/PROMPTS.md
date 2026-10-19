@@ -28,6 +28,12 @@ Text in `<angle brackets>` is yours to customize. Prompt 0 is the same for every
 > ```
 > **Test:** Press Play: the panel shows first, START begins the game, and a second run in the same session skips it.
 
+> **Prompt 0c (Options menu + sound switches, optional check):** the starter already has an **OPTIONS** panel: an OPTIONS button on the menu and a small gear during play (or press O) open it, with two separate switches, **MUSIC ON/OFF** and **SOUND FX ON/OFF**, both ON by default and saved. All sound goes through `src/audio.js`, which also waits for the player's first click / tap / key before making any sound (browsers, especially iPhone Safari, block audio until then). If you ever lose it, paste this:
+> ```
+> Add an OptionsScene (src/scenes/OptionsScene.js) that opens on top of the current scene and pauses it: from an OPTIONS button on the MenuScene and from a small gear button in a free corner of GameScene (the O key opens it too). Chunky toy look (PALETTE only, OUTLINE ink outlines, big readable labels): title "OPTIONS", two rows MUSIC and SOUND FX, each with a big green ON / red OFF toggle button (at least 44 px tall), and a BACK button (Esc / Enter also close it and resume the scene below). Clicks on these buttons must not reach the scene below (event.stopPropagation()). Register it in main.js. Keep the settings in src/audio.js: isMusicOn / isSfxOn / toggleMusic / toggleSfx, both default ON, saved ONLY through src/storage.js. audio.js creates ONE Web Audio context inside the player's first pointerdown / pointerup / touchend / keydown / click (and resumes it there), never earlier; beep(freq, seconds, { type, vol, slideTo, delay }) plays a sound effect only when Sound FX is ON; playMusic(key) plays music only when Music is ON and, if asked before the first click/tap/key, starts right after it. Every sound in the game must go through audio.js (no other new AudioContext). M in GameScene toggles Sound FX.
+> ```
+> **Test:** On the menu click OPTIONS: the panel opens and the game does not start. Switch SOUND FX to OFF, close, play: no sound effects. Refresh the page: OPTIONS still shows OFF. Turn it ON from the gear during play: sounds come back, and play resumes where it was.
+
 ---
 
 ## 1. Platformer
@@ -91,9 +97,9 @@ Test: All three effects visible; game still runs smoothly.
 
 **P10. Sound**
 ```
-Add simple sound effects for jump, coin, stomp, and death using the Web Audio API to generate short beeps (no audio files). Put them in src/sfx.js. Add an M key to mute during gameplay (GameScene only; GameOverScene keeps M for "menu"), saved in localStorage.
+Add simple sound effects for jump, coin, stomp, and death as short beeps (no audio files). Put them in src/sfx.js and make every sound with beep() from src/audio.js (never a new AudioContext), so the OPTIONS Sound FX switch and the first-click audio unlock work. The M key toggles Sound FX during gameplay (toggleSfx() from audio.js; GameScene only, GameOverScene keeps M for "menu").
 ```
-Test: You hear each sound; M toggles mute and survives a page refresh.
+Test: You hear each sound (also on a phone). M or the OPTIONS Sound FX switch turns them off, and that survives a page refresh.
 
 **Ship check:** Play all levels start to finish. Then follow PUBLISH.md.
 
@@ -133,6 +139,7 @@ Test: Kill all enemies, door opens; the door is closed while enemies are alive.
 Walking through the open door loads a new room with a bigger wave (room number * 2 + 2 enemies, but never more than 14 on screen; the spare budget turns into elites in P6). The player's current HP carries over to the next room; pass it in the scene data. Show the room number in the HUD with labels ("Room: 2   Cleared: 1"). Score = rooms cleared. Starting a new run from GameOverScene or the menu must pass fresh data explicitly (room 1, full HP), because scene.start() without data reuses the old data.
 
 Put all difficulty scaling in one pure file src/balance.js (no Phaser imports) with functions of the room number: hpMult(room) = 1 + 0.14 * (room - 3) + 0.003 * (room - 3)^2 for rooms after 3 (1.0 up to room 3, so rooms 1-3 stay as friendly as now), speedMult(room) = min(1.4, 1 + 0.02 * (room - 1)), and wavePlan(room) returning one spec {type, elite, hp, speed, dmg} per enemy. Read the numbers from a BALANCE object in config.js. Every enemy you spawn from now on takes its HP and speed from wavePlan(), never from a hard-coded number.```
+```
 Test: Room 2 has more enemies than room 1; the HUD counter goes up. In the console `wavePlan(1)` is 4 chasers with 3 HP; `wavePlan(12)` has 14 entries with HP above 10.
 
 **P6. Second enemy type**
@@ -230,7 +237,7 @@ Test: Use the debug key to pass 1M total earned, then prestige; you keep Stars a
 
 **P10. Polish**
 ```
-Add polish: generators pulse when they produce, the shop button flashes when a new upgrade becomes affordable, and a soft click sound via Web Audio. Change MenuScene's title to my game name: <name>. Make the menu say what to do: a one-line goal plus an icon + name legend for the big coin, coins and Stars.
+Add polish: generators pulse when they produce, the shop button flashes when a new upgrade becomes affordable, and a soft click sound (beep() from src/audio.js, so the OPTIONS Sound FX switch mutes it). Change MenuScene's title to my game name: <name>. Make the menu say what to do: a one-line goal plus an icon + name legend for the big coin, coins and Stars.
 ```
 Test: It feels alive while idle. Remove any debug keys before publishing.
 
@@ -368,7 +375,7 @@ Test: In dev tools device mode, drag to move; tapping UNDO/RESTART undoes or res
 
 **P10. Juice**
 ```
-Add juice: boxes squash slightly when pushed, a sparkle burst when a box lands on a target, a camera shake + "bonk" sound when bumping a wall, and a happy arpeggio on level solved (Web Audio).
+Add juice: boxes squash slightly when pushed, a sparkle burst when a box lands on a target, a camera shake + "bonk" sound when bumping a wall, and a happy arpeggio on level solved (beep() from src/audio.js, so the OPTIONS Sound FX switch mutes them).
 ```
 Test: Feedback for every action; nothing slows down undo.
 
@@ -542,10 +549,10 @@ Add juice, keeping the road and range circles readable (effects under 300 ms, ne
 - Gold "+N" pops at each kill, drifting toward the gold counter.
 - Mortar landings: a gold ring burst and a light camera shake (60 ms, 0.003). No other tower shakes the camera.
 - Core stolen: red flash on the vault; core lost: a red camera flash 150 ms; core returned: green sparkle.
-- src/sfx.js with tiny Web Audio blips: bolt shot, mortar boom, arc zap, kill, core stolen, core returned, wave start, build/sell. Limit each sound to 1 per 50 ms. M toggles mute (saved in localStorage) in GameScene only.
+- src/sfx.js with tiny blips made with beep() from src/audio.js (never a new AudioContext): bolt shot, mortar boom, arc zap, kill, core stolen, core returned, wave start, build/sell. Limit each sound to 1 per 50 ms. M toggles Sound FX (toggleSfx(), the same switch as the OPTIONS panel) in GameScene only.
 Do not change unrelated code; list what you changed.
 ```
-Test: a busy wave 10 still runs at about 60 fps; every event has a sound; M mutes and survives a refresh.
+Test: a busy wave 10 still runs at about 60 fps; every event has a sound; M (or OPTIONS > Sound FX) mutes and survives a refresh.
 
 **P13. HUD polish, speed, pause, win and lose**
 ```
@@ -578,6 +585,12 @@ Test: `node scripts/balance.mjs` prints the tables; nothing in src/ changed.
 **Add a pause menu**
 ```
 Add a pause menu toggled with Esc or P: dim the screen, show Resume / Restart / Menu buttons. Physics and timers must stop while paused.
+```
+
+**Add background music**
+The starter already plays our own original loop, **PFK Theme (boss loop)** (128 BPM, 37.5 s, in `starter/public/assets/audio/`). You may use it in your games, including commercial ones (see `LICENSE-MUSIC.txt`), or make / buy your own. Turn it off any time with OPTIONS > MUSIC. To use your own song, export it as .ogg and .mp3 (free tools like Audacity do both; add an .m4a too if you can, it loops more cleanly than .mp3 on older iPhones) and paste:
+```
+Change the background music: <keep the included theme / I put my own song in public/assets/audio/ as mysong.ogg + mysong.mp3 (+ mysong.m4a if I have it) / describe music to make in code>. The music is set up in src/main.js with registerMusic('theme', fileMusic([...ogg, ...m4a, ...mp3], { loopEnd: <song length in seconds> })) and playMusic('theme') from src/audio.js: point the file list at my files (best format first; .ogg loops with no gap, .m4a is for older iPhones, .mp3 last). For music made in code, use registerMusic('theme', (ctx, out) => { ...connect nodes to out...; return () => { stop them } }) instead. For a different song per scene, registerMusic each one and call playMusic('<key>') in that scene's create(). Never play music any other way: playMusic respects the OPTIONS Music switch, waits for the first click / tap / key, and plays at MUSIC_VOLUME (in audio.js) under the sound effects. Update CREDITS.md with where the music came from.
 ```
 
 **Tune the feel**
