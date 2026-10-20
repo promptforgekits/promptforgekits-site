@@ -61,9 +61,9 @@ Test: Stand on a moving platform. You move with it and don't slide off. The firs
 
 **P4. Stomp enemies**
 ```
-Let the player defeat an enemy by landing on it from above (player falling and above the enemy). The enemy disappears, the player bounces up, and score increases by 25. Touching it from the side still ends the game. Name the first enemy on screen ("Enemy: stomp it +25", text in INFO in config.js).
+Let the player defeat an enemy by landing on it from above (player falling and above the enemy). The enemy disappears, the player bounces up, and score increases by 25. Touching it from the side still ends the game. The starter keeps walkers and spikes in one hazards group: only walkers can be stomped, spikes still end the run from every side (also when landing on them). Name the first enemy on screen ("Enemy: stomp it +25", text in INFO in config.js).
 ```
-Test: Jump on a spike from above = it vanishes and you bounce. Walk into one = game over. The enemy has a name above it.
+Test: Jump on an enemy from above = it vanishes and you bounce. Walk into one = game over. Spikes still hurt from any side. The enemy has a name above it.
 
 **P5. Lives and respawn**
 ```
@@ -85,9 +85,10 @@ Test: Beat level 1, level 2 loads with your score kept. Beating level 3 shows YO
 
 **P8. Level indicator and transitions**
 ```
-Show "Level N" in the HUD, and a short fade-out/fade-in camera transition between levels.
+Show "Level N" in the HUD, and a short fade-out/fade-in camera transition between levels (about 300 ms each).
+The goal overlap fires every frame while the player touches the flag, so start the transition only once: in the goal handler return early if a transitioning flag (e.g. this.isOver) is already set, then set it, call this.physics.pause(), and make update() return early while it is set. During the fade the player must not move, collect coins, lose a life (no pit or enemy deaths) or trigger the goal again. Register the fade-complete listener with this.cameras.main.once('camerafadeoutcomplete', ...) and load the next level only from there, passing levelIndex + 1, score and lives explicitly. The new level starts with this.cameras.main.fadeIn().
 ```
-Test: The screen fades between levels and the HUD label updates.
+Test: Reach the flag: the screen fades out and back in, and the HUD goes from Level 1 to Level 2 (not Level 3), with your score and lives kept. Hold an arrow key while it fades: the player does not move and no life is lost.
 
 **P9. Juice**
 ```

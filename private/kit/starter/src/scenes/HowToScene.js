@@ -31,7 +31,8 @@ export default class HowToScene extends Phaser.Scene {
     rows.forEach(([label, text, color], i) => {
       const y = (140 + i * 72) * S;
       const chip = this.add.rectangle(130 * S, y, 130 * S, 34 * S, color).setStrokeStyle(OUTLINE, PALETTE.ink);
-      addText(this, chip.x, y, label, 17 * S, css(PALETTE.ink), { stroke: css(color), strokeThickness: 0, shadow: undefined });
+      // Plain dark label on the colored chip: no outline or shadow (set after addText, since some ui.js versions ignore extra style)
+      addText(this, chip.x, y, label, 17 * S, css(PALETTE.ink)).setStroke(css(color), 0).setShadow(0, 0, css(color), 0, false, false);
       addText(this, 215 * S, y, text, 17 * S, '#ffffff', { align: 'left', wordWrap: { width: 480 * S } }).setOrigin(0, 0.5);
     });
 
