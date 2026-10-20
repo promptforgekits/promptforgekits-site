@@ -2,7 +2,7 @@
 // THEME.md, PROMPTS.md, FIX-LOOP.md, PUBLISH.md). Keep it factual.
 
 export const included = [
-  ['A working Phaser 3 + Vite starter game', 'A playable platformer with menu, gameplay, and game-over scenes, plus a high score. Clean, commented code built to be extended by AI. Art is drawn in code, so there are no image files to license.'],
+  ['A working Phaser 3 + Vite starter game', 'A playable platformer with menu, gameplay, and game-over scenes, plus a high score. Clean, commented code built to be extended by AI. Art is drawn in code, so there are no image files to license. Every game opens with a How to play screen and has an Options menu with separate Music and Sound FX switches, plus an original background music loop you may use in your own games.'],
   ['AI rules files', '`.cursorrules`, `CLAUDE.md`, and `AGENTS.md`. Your AI tool reads the architecture and the "small steps, test after each change" rules, so it makes focused changes instead of rewriting your game.'],
   ['Prompt Playbook: 6 genres, 60+ prompts', 'Platformer, top-down roguelite, idle/clicker, endless runner, puzzle, and tower defense. Each genre has a kickoff prompt plus ordered prompts, with a test checkpoint after every step.'],
   ['Grow Your Game chapter', 'What to do after v1: data tables so adding a level, enemy, weapon, or item is adding a row, the one-prompt-per-feature rule, theme and balance tips, a playtest loop, and example prompts for every genre.'],
@@ -87,7 +87,7 @@ export const faq = [
   ['Which AI tools does it work with?', 'It\u2019s designed for tools that open a local project folder: Cursor, Claude Code, Windsurf, and GitHub Copilot. Lovable and Bolt run in the browser and work differently; the guide explains how to use the rules with them, but an editor-based tool gives the best results.'],
   ['Why Phaser?', 'It\u2019s a mature, free, browser-first 2D engine with lots of training data, so AI tools write good Phaser code. Games run on any device with a browser.'],
   ['Can I sell games I make with it?', 'Yes. You can use the starter code in your own games, including commercial ones. You can\u2019t resell or redistribute the kit itself (the starter as a template, the prompts, or the guides). Full terms are on the license page.'],
-  ['Is there art or sound included?', 'No image or sound files, and nothing to license. The starter\u2019s art is drawn in code, so it\u2019s part of the starter code you can use in your games. The one bundled file is the Lilita One font, under the SIL Open Font License, which allows use in commercial games. The prompts show how to generate sound effects in code, and the guide shows how to swap in your own or CC0 art.'],
+  ['Is there art or sound included?', 'Yes, one original music track, and no image files. The starter\u2019s art is drawn in code, so it\u2019s part of the starter code you can use in your games. The kit includes PFK Theme, a looping background music track made by Prompt Forge Kits (.ogg, .m4a and .mp3). You may use it in your own games, including commercial ones, but not sell or share it on its own (see LICENSE-MUSIC.txt in the kit). Sound effects are generated in code, and an Options menu has separate Music and Sound FX on/off switches. The one bundled font is Lilita One, under the SIL Open Font License, which allows use in commercial games. The guide shows how to swap in your own music or CC0 art.'],
   ['Mac, Windows, or Linux?', 'All three. You need Node.js 18 or newer, plus Git and an AI coding tool.'],
   ['What if it doesn\u2019t work for me?', 'If the kit didn\u2019t work for you, request a refund within 7 days of purchase and you get your money back. Refunds may be declined if the kit has clearly been copied or reused. Updates stay free either way.'],
   ['Will it be updated?', 'Yes. Updates are free for life. When a new version ships, we email you the new download link.'],
@@ -100,6 +100,7 @@ export const licenseMay = [
   'Use, modify, and build on the starter code (everything in `starter/`) in any number of your own games, including commercial games you sell, publish, or monetize (itch.io, Steam, web portals, ads, etc.).',
   'Publish the source code of your finished game, even if it contains parts of the starter code, as long as it is a game and not a kit, template, or tutorial.',
   'Use the prompts, templates, and guides to make your own games.',
+  'Use the included background music (PFK Theme, original work by Prompt Forge Kits) in your own games, including commercial ones, and edit or loop it; just don\u2019t sell or share it on its own as music or as part of an asset pack (see `LICENSE-MUSIC.txt`).',
 ];
 export const licenseMayNot = [
   'Resell, share, or redistribute the kit itself, or any part of it as a kit: the starter project as a template, the prompt playbook, the guides, or `GUIDE.pdf`. This includes uploading it for free.',

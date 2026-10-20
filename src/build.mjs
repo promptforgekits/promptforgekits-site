@@ -445,7 +445,8 @@ const factsTxt = `## Facts
 - Refund: 7-day refund if the kit didn't work for you; may be declined if the kit has clearly been copied or reused; free updates
 - Updates: free for life
 - Requirements: Mac, Windows, or Linux; Node.js 18+; Git; an AI coding tool that opens a local folder (Cursor, Claude Code, Windsurf, or VS Code + Copilot). Lovable and Bolt are supported with caveats.
-- Assets: no image or sound files; art is drawn in code; bundled Lilita One font (SIL OFL 1.1)
+- Assets: no image files (art is drawn in code); one original background music track, PFK Theme by Prompt Forge Kits (.ogg/.m4a/.mp3, 37.5 s loop), usable in your own games including commercial ones but not resold on its own (LICENSE-MUSIC.txt); sound effects generated in code; bundled Lilita One font (SIL OFL 1.1)
+- In every game: a How to play screen with the controls and a Start button before play; an Options menu with separate Music and Sound FX on/off switches
 - Where to buy: directly at ${cfg.siteUrl}/#pricing (secure checkout by Stripe)
 - Support: ${cfg.supportEmail || 'X @' + cfg.xHandle + ' (support email coming soon)'}
 `;
