@@ -289,9 +289,10 @@ Test: All three types appear and each is passable.
 
 **P7. Coins and pickups**
 ```
-Spawn coin lines (3-5 coins in an arc) between obstacles. Coins add +5 to a separate coin counter. Every 10 coins grants a 3-second shield that absorbs one hit (shown as a circle around the player). Show the counter as "Coins: 3   (shield in 7)" and "SHIELD ON" while it lasts, and name the first coin arc ("Coin: 10 = shield").
+Spawn coin lines (3-5 coins in an arc) between obstacles. Each coin adds 1 to a separate coin counter (coins don't change the distance score). Every 10 coins (the 10th, 20th, ... coin) grants a 3-second shield that absorbs one hit (shown as a circle around the player); put coinsPerShield and shieldMs in config.js. Show the counter as "Coins: 3   (shield in 7)" and "SHIELD ON" while it lasts, and name the first coin arc ("Coin: 10 = shield").
+When a shielded player hits an obstacle: turn the shield off and destroy that obstacle in the same overlap callback. The overlap fires every frame, so if the obstacle stays, the next frame counts as a second hit and ends the run anyway.
 ```
-Test: Collect 10 coins, get a shield, hit an obstacle and survive once.
+Test: Collect 1 coin: the HUD says "Coins: 1   (shield in 9)". There is no shield at 9 coins; the ring and "SHIELD ON" appear on the 10th. Run into an obstacle while shielded: it disappears, the ring goes away and the run goes on. The next hit ends the run.
 
 **P8. Parallax background**
 ```
