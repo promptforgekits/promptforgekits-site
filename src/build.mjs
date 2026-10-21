@@ -182,13 +182,17 @@ const GENRE_LD = { platformer: 'Platformer', roguelite: 'Roguelite', idle: 'Idle
 const playListLd = () => ({
   '@context': 'https://schema.org', '@type': 'ItemList', name: 'Free browser game demos built with the Browser Game Starter Kit', url: url('/play/'),
   numberOfItems: publicDemos().length,
-  itemListElement: publicDemos().map((g, i) => ({ '@type': 'ListItem', position: i + 1, item: {
+  itemListElement: publicDemos().map((g, i) => ({ '@type': 'ListItem', position: i + 1, item: demoGameLd(g) })),
+});
+// One VideoGame object per public demo: used in the /play/ ItemList and on the demo page itself (/play/<demo>/)
+function demoGameLd(g) {
+  return {
     '@type': 'VideoGame', name: `${g.game} demo`, url: url(`/play/${g.demo}/`), description: plain(g.summary), genre: GENRE_LD[g.demo] || g.name,
     gamePlatform: 'Web browser', applicationCategory: 'Game', operatingSystem: 'Any (web browser)', playMode: 'SinglePlayer', isAccessibleForFree: true,
     image: url(`/img/g-${g.demo}-1280.webp`), publisher: { '@id': url('/#org') },
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: url(`/play/${g.demo}/`) },
-  } })),
-});
+  };
+}
 
 // ── pages ──────────────────────────────────────────────────────────────────
 const pages = [];
@@ -593,9 +597,22 @@ fs.writeFileSync(path.join(ROOT, 'scripts/freepack-print.html'), PRINT);
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.cpSync(PUB, OUT, { recursive: true });
 // Demo pages under /play/<demo>/ are raw game builds titled "My Browser Game": give each a real title, description and canonical (dist only).
+// Public demos also get a share card (Open Graph + X card with the game's own screenshot) and their VideoGame JSON-LD,
+// so a demo link posted on X/Discord shows a preview and search/AI crawlers can read what the page is.
 for (const g of C.genres.filter((x) => demoAvailable(x.demo))) {
   const f = path.join(OUT, 'play', g.demo, 'index.html');
-  const head = `<title>${esc(g.game)} demo: free browser game built with AI prompts | ${esc(cfg.brand)}</title>\n    <meta name="description" content="${esc(`Play the free ${g.game.toLowerCase()} demo in your browser. It was built by following the ${g.name} prompt sequence in the Browser Game Starter Kit.`)}" />\n    <link rel="canonical" href="${url(`/play/${g.demo}/`)}" />`;
+  const dTitle = `${g.game} demo: free browser game built with AI prompts | ${cfg.brand}`;
+  const dDesc = `Play the free ${g.game.toLowerCase()} demo in your browser. It was built by following the ${g.name} prompt sequence in the Browser Game Starter Kit.`;
+  const img = url(`/img/g-${g.demo}-1280.webp`);
+  const share = g.demo === GATED ? '' : `
+    <meta property="og:type" content="website" /><meta property="og:site_name" content="${esc(cfg.brand)}" />
+    <meta property="og:title" content="${esc(dTitle)}" /><meta property="og:description" content="${esc(dDesc)}" />
+    <meta property="og:url" content="${url(`/play/${g.demo}/`)}" /><meta property="og:image" content="${img}" />
+    <meta property="og:image:width" content="1280" /><meta property="og:image:height" content="720" /><meta property="og:image:alt" content="${esc(`Screenshot of the ${g.game.toLowerCase()} demo`)}" />
+    <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="@${cfg.xHandle}" />
+    <meta name="twitter:title" content="${esc(dTitle)}" /><meta name="twitter:description" content="${esc(dDesc)}" /><meta name="twitter:image" content="${img}" />
+    <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...demoGameLd(g), publisher: { '@type': 'Organization', '@id': url('/#org'), name: cfg.brand, url: url('/') } }).replace(/</g, '\\u003c')}</script>`;
+  const head = `<title>${esc(dTitle)}</title>\n    <meta name="description" content="${esc(dDesc)}" />\n    <link rel="canonical" href="${url(`/play/${g.demo}/`)}" />${share}`;
   fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/<title>[\s\S]*?<\/title>/, head));
 }
 for (const pg of pages) {
