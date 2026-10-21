@@ -104,9 +104,12 @@ function dlSecret() {
   return secret;
 }
 const dlSig = (payload) => crypto.createHmac('sha256', dlSecret()).update('dl:' + payload).digest('base64url');
-export function downloadToken(email, order, { now = Date.now(), days = DOWNLOAD_TTL_DAYS } = {}) {
+// s = product sku. Omitted for the original kit (bgsk), so its tokens/links are exactly as before 2026-10-21.
+export function downloadToken(email, order, { now = Date.now(), days = DOWNLOAD_TTL_DAYS, sku } = {}) {
   const i = Math.floor(now / 1000);
-  const payload = b64u(JSON.stringify({ e: String(email).toLowerCase(), o: String(order || ''), i, x: i + Math.round(days * 86400) }));
+  const data = { e: String(email).toLowerCase(), o: String(order || ''), i, x: i + Math.round(days * 86400) };
+  if (sku && sku !== 'bgsk') data.s = String(sku);
+  const payload = b64u(JSON.stringify(data));
   return `${payload}.${dlSig(payload)}`;
 }
 export function verifyDownloadToken(token, { now = Date.now() } = {}) {
@@ -194,6 +197,52 @@ https://promptforgekits.com`;
 <p style="margin:14px 0;font-size:15px;line-height:22px;">This link is personal to you and expires in ${days} days. Your copy is stamped with your email, so please don't share it. If it expires, reply to this email and I'll send a fresh one. To start: unzip it and open README.md, then QUICKSTART.md.</p>
 <p style="margin:18px 0 6px;font-size:15px;line-height:22px;font-weight:bold;">Receipt note (keep this email)</p>
 <p style="margin:0 0 14px;font-size:14px;line-height:21px;">Item: Browser Game Starter Kit by Prompt Forge Kits (v1.0, free updates)<br>Amount: ${paid}, one-time<br>Order: ${order}<br>Date: ${date}<br>Billed to: ${email}<br>Payment by Stripe. Any sales tax or VAT shown at checkout is included in your total.</p>
+<p style="margin:0;font-size:15px;line-height:22px;"><strong>Refunds:</strong> you have ${refund}. Just reply to this email.</p>
+<p style="margin:14px 0 0;font-size:14px;line-height:21px;">Support: <a href="mailto:${SUPPORT_EMAIL}" style="color:#1b1f2e;">${SUPPORT_EMAIL}</a></p>
+</td></tr></table></td></tr></table></body></html>`;
+  return { subject, text, html };
+}
+
+// Delivery email for the newer products (atsk, bundle). The bgsk email above is unchanged.
+// links: [{ name, url, start }] one per kit (the bundle has two).
+export function purchaseEmailMulti({ email, order, amount, currency, date, itemName, version = '1.0', links }) {
+  const days = DOWNLOAD_TTL_DAYS;
+  const paid = amount != null ? `${(amount / 100).toFixed(2)} ${String(currency || 'usd').toUpperCase()}` : '';
+  const two = links.length > 1;
+  const refund = `a 7-day refund if ${two ? 'the kits' : 'the kit'} didn't work for you; may be declined if clearly copied or reused`;
+  const subject = two ? 'Your Prompt Forge Kits downloads (2 kits)' : `Your ${links[0].name} download`;
+  const text = `Thanks for buying ${two ? 'the bundle' : 'the ' + links[0].name}.
+
+${links.map((l) => `Download the ${l.name}: ${l.url}\nStart here: unzip it and open ${l.start}.`).join('\n\n')}
+
+${two ? 'These links are' : 'This link is'} personal to you and expire${two ? '' : 's'} in ${days} days. Your copy is stamped with your email, so please don't share it. If a link expires, just reply to this email and I'll send a fresh one.
+
+Receipt note (keep this email)
+Item: ${itemName} (v${version}, free updates)
+Amount: ${paid ? paid + ', one-time' : 'one-time'}
+Order: ${order}
+Date: ${date}
+Billed to: ${email}
+Payment by Stripe. Any sales tax or VAT shown at checkout is included in your total.
+
+Refunds: you have ${refund}. Just reply to this email.
+
+Support: ${SUPPORT_EMAIL}
+
+Prompt Forge Kits
+https://promptforgekits.com`;
+  const btn = (l) => `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px;"><tr><td bgcolor="#ffc93c" style="background-color:#ffc93c;border:3px solid #1b1f2e;border-radius:10px;"><a href="${l.url}" style="display:inline-block;padding:12px 22px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:bold;color:#1b1f2e;text-decoration:none;">Download the ${l.name}</a></td></tr></table><p style="margin:0 0 14px;font-size:14px;line-height:21px;">Start here: unzip it and open ${l.start}.</p>`;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#e9edf5;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#e9edf5"><tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;">
+<tr><td bgcolor="#1b1f2e" style="background-color:#1b1f2e;padding:22px 26px;font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:30px;color:#ffc93c;font-weight:bold;">Prompt Forge Kits</td></tr>
+<tr><td bgcolor="#ffffff" style="background-color:#ffffff;padding:28px 26px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#1b1f2e;">
+<p style="margin:0 0 14px;font-size:22px;line-height:28px;font-weight:bold;">Thanks for buying ${two ? 'the bundle' : 'the ' + links[0].name}</p>
+${links.map(btn).join('\n')}
+<p style="margin:14px 0;font-size:15px;line-height:22px;">${two ? 'These links are' : 'This link is'} personal to you and expire${two ? '' : 's'} in ${days} days. Your copy is stamped with your email, so please don't share it. If a link expires, reply to this email and I'll send a fresh one.</p>
+<p style="margin:18px 0 6px;font-size:15px;line-height:22px;font-weight:bold;">Receipt note (keep this email)</p>
+<p style="margin:0 0 14px;font-size:14px;line-height:21px;">Item: ${itemName} (v${version}, free updates)<br>Amount: ${paid ? paid + ', one-time' : 'one-time'}<br>Order: ${order}<br>Date: ${date}<br>Billed to: ${email}<br>Payment by Stripe. Any sales tax or VAT shown at checkout is included in your total.</p>
 <p style="margin:0;font-size:15px;line-height:22px;"><strong>Refunds:</strong> you have ${refund}. Just reply to this email.</p>
 <p style="margin:14px 0 0;font-size:14px;line-height:21px;">Support: <a href="mailto:${SUPPORT_EMAIL}" style="color:#1b1f2e;">${SUPPORT_EMAIL}</a></p>
 </td></tr></table></td></tr></table></body></html>`;

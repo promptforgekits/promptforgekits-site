@@ -1,7 +1,10 @@
-import { FROM, REPLY_TO, EMAIL_RE, resend, stripe, verifyStripeSignature, downloadUrl, purchaseEmail } from './_lib.js';
+import { FROM, REPLY_TO, EMAIL_RE, resend, stripe, verifyStripeSignature, downloadUrl, purchaseEmail, purchaseEmailMulti } from './_lib.js';
+import { PRODUCTS, deliverables } from './_products.js';
 
 // Stripe webhook: on checkout.session.completed (paid), email the buyer a signed, expiring link to
 // /api/download (which builds their watermarked kit on demand) and add them to the Resend "Customers" segment.
+// Product = session.metadata.sku: bgsk (or missing/unknown, as before 2026-10-21) -> the original email + one link;
+// atsk -> one Assistant Team Starter Kit link; bundle -> one email with both links.
 // Idempotent: Resend Idempotency-Key per session (24h) + a durable fulfilled marker on the PaymentIntent metadata.
 export const config = { api: { bodyParser: false }, maxDuration: 30 };
 
@@ -49,16 +52,22 @@ export async function fulfill(session, { livemode }) {
 
   // 2) delivery email (must succeed, otherwise 500 so Stripe retries)
   const date = new Date((session.created || Date.now() / 1000) * 1000).toISOString().slice(0, 10);
-  const m = purchaseEmail({ email, order: session.id, amount: session.amount_total, currency: session.currency, date, url: downloadUrl(email, session.id, { now: (session.created || Math.floor(Date.now() / 1000)) * 1000 }) });
+  const now = (session.created || Math.floor(Date.now() / 1000)) * 1000;
+  const metaSku = String(session.metadata?.sku || '');
+  const sku = metaSku !== 'bgsk' && PRODUCTS[metaSku] && deliverables(metaSku).length ? metaSku : 'bgsk';
+  const m = sku === 'bgsk'
+    ? purchaseEmail({ email, order: session.id, amount: session.amount_total, currency: session.currency, date, url: downloadUrl(email, session.id, { now }) })
+    : purchaseEmailMulti({ email, order: session.id, amount: session.amount_total, currency: session.currency, date, itemName: PRODUCTS[sku].fullName, version: PRODUCTS[sku].version,
+      links: deliverables(sku).map((k) => ({ name: PRODUCTS[k].name, start: PRODUCTS[k].start, url: downloadUrl(email, session.id, { now, sku: k }) })) });
   const sent = await resend('POST', '/emails', {
     from: FROM, to: [email], reply_to: REPLY_TO, subject: m.subject, html: m.html, text: m.text,
-    tags: [{ name: 'type', value: 'purchase' }],
+    tags: sku === 'bgsk' ? [{ name: 'type', value: 'purchase' }] : [{ name: 'type', value: 'purchase' }, { name: 'sku', value: sku }],
   }, { 'Idempotency-Key': `kit-delivery-${session.id}` });
   // 409 = this session's email was already sent (Resend idempotency): treat as delivered
   if (!sent.ok && sent.status !== 409) { console.error('delivery email failed', sent.status, sent.data?.message); return { status: 500, body: { error: 'email failed' } }; }
 
   if (haveKey) await stripe('POST', `/v1/payment_intents/${pi}`, { metadata: { pfk_fulfilled: sent.data?.id || '1' } });
-  return { status: 200, body: { ok: true, delivered: true } };
+  return { status: 200, body: { ok: true, delivered: true, ...(sku === 'bgsk' ? {} : { sku }) } };
 }
 
 export default async function handler(req, res) {

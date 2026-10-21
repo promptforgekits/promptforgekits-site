@@ -7,6 +7,8 @@ import * as C from './content.mjs';
 import { posts } from './posts.mjs';
 import * as FP from './freepack.mjs';
 import { createLastmod } from './lastmod.mjs';
+import { AK, akTeam, akIncluded, akSteps, akFaq } from './assistant-kit.mjs';
+import { listings as ARCADE } from './arcade.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'dist');
@@ -38,6 +40,12 @@ function heroButtons() {
 const directLive = !!cfg.stores.direct?.live;
 const directEndpoint = cfg.stores.direct?.endpoint || '/api/checkout/';
 const buyNowForm = (label = `Buy now · ${PRICE}`) => `<form class="buy-direct" method="post" action="${esc(directEndpoint)}"><button class="btn buy-big" type="submit">${esc(label)}</button> <span class="note" style="display:block;margin-top:8px">Secure checkout by Stripe. Instant email download. 7-day refund if the kit didn't work for you.</span></form>`;
+// Newer products: same direct Stripe checkout, product picked by ?sku= (api/_products.js). One big button per product.
+const buyFormFor = (sku, label, note) => `<form class="buy-direct" method="post" action="${esc(directEndpoint)}?sku=${esc(sku)}"><input type="hidden" name="sku" value="${esc(sku)}"><button class="btn buy-big" type="submit">${esc(label)}</button> <span class="note" style="display:block;margin-top:8px">${esc(note)}</span></form>`;
+const AK_NOTE = "Secure checkout by Stripe. Instant email download. 7-day refund if the kit didn't work for you.";
+const BUNDLE_NOTE = "Secure checkout by Stripe. Both downloads by email. 7-day refund if the kits didn't work for you.";
+const akBuy = () => buyFormFor('atsk', `Buy now · $${AK.price}`, AK_NOTE);
+const bundleBuy = () => buyFormFor('bundle', `Buy both · $${AK.bundle.price}`, BUNDLE_NOTE);
 function buyButtons() {
   return `<div class="btns buy-wrap">${buyNowForm()}</div>`;
 }
@@ -60,10 +68,23 @@ const productLd = {
     hasMerchantReturnPolicy: { '@type': 'MerchantReturnPolicy', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 7, refundType: 'https://schema.org/FullRefund', merchantReturnLink: url('/license/') },
   },
 };
+const returnLd = (link) => ({ '@type': 'MerchantReturnPolicy', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 7, refundType: 'https://schema.org/FullRefund', merchantReturnLink: link });
+const akProductLd = {
+  '@context': 'https://schema.org', '@type': 'Product', '@id': url('/assistant-kit/#product'), name: AK.name,
+  description: 'Four AI assistant job descriptions, seven workflows (skills and routines), approval and true-claims rules, a business profile and six shared notebooks for running a small online product business with a team of AI assistants. Written for Grok Bot.',
+  image: [url('/img/og-cover.jpg')], brand: { '@type': 'Brand', name: cfg.brand }, sku: 'atsk-v1',
+  offers: { '@type': 'Offer', price: String(AK.price), priceCurrency: 'USD', url: url('/assistant-kit/#pricing'), availability: 'https://schema.org/InStock', seller: { '@id': url('/#org') }, hasMerchantReturnPolicy: returnLd(url('/assistant-kit/#license')) },
+};
+const bundleProductLd = {
+  '@context': 'https://schema.org', '@type': 'Product', '@id': url('/assistant-kit/#bundle'), name: `Bundle: ${AK.bundle.name}`,
+  description: 'Both kits by Prompt Forge Kits: the Browser Game Starter Kit and the Assistant Team Starter Kit, two separate downloads.',
+  image: [url('/img/og-cover.jpg')], brand: { '@type': 'Brand', name: cfg.brand }, sku: 'bundle-bgsk-atsk-v1',
+  offers: { '@type': 'Offer', price: String(AK.bundle.price), priceCurrency: 'USD', url: url('/assistant-kit/#bundle'), availability: 'https://schema.org/InStock', seller: { '@id': url('/#org') }, hasMerchantReturnPolicy: returnLd(url('/assistant-kit/#license')) },
+};
 const faqLd = (items) => ({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })) });
 const crumbLd = (trail) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: trail.map(([n, p], i) => ({ '@type': 'ListItem', position: i + 1, name: n, item: url(p) })) });
 
-const NAV = [['/play/', 'Play demos'], ['/genres/', 'Genres'], ['/faq/', 'FAQ'], ['/license/', 'License'], ['/blog/', 'Blog']];
+const NAV = [['/play/', 'Play demos'], ['/arcade/', 'Arcade'], ['/genres/', 'Genres'], ['/faq/', 'FAQ'], ['/license/', 'License'], ['/blog/', 'Blog']];
 
 function layout({ path: p, title, description, body, jsonld = [], ogType = 'website', noindex = false }) {
   const nav = NAV.map(([h, l]) => `<a href="${h}"${p === h || (h !== '/' && p.startsWith(h)) ? ' aria-current="page"' : ''}>${l}</a>`).join('');
@@ -103,7 +124,7 @@ ${body}
 </main>
 <footer class="ftr"><div class="wrap">
 <div><h2>${esc(cfg.brand)}</h2><p>${esc(cfg.description)}</p><p><strong class="gold">${esc(cfg.tagline)}</strong></p></div>
-<nav aria-label="Footer"><h2>Site</h2><ul><li><a href="/">Home</a></li><li><a href="/play/">Play demos</a></li><li><a href="/genres/">Genres</a></li><li><a href="/faq/">FAQ</a></li><li><a href="/license/">License</a></li><li><a href="/blog/">Blog</a></li></ul></nav>
+<nav aria-label="Footer"><h2>Site</h2><ul><li><a href="/">Home</a></li><li><a href="/play/">Play demos</a></li><li><a href="/genres/">Genres</a></li><li><a href="/faq/">FAQ</a></li><li><a href="/license/">License</a></li><li><a href="/blog/">Blog</a></li><li><a href="/assistant-kit/">Assistant Team Starter Kit</a></li><li><a href="/arcade/">Arcade</a></li></ul></nav>
 <div><h2>Contact</h2><ul><li><a href="https://x.com/${cfg.xHandle}">X: @${cfg.xHandle}</a></li><li><a href="${cfg.githubUrl}">GitHub</a></li><li>${cfg.supportEmail ? support : 'Support email: coming soon'}</li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
 <p class="legal">© 2026 ${esc(cfg.brand)}. Demos and screenshots are built with the kit. Phaser is MIT-licensed; Lilita One is SIL OFL 1.1 (<a href="/fonts/OFL.txt">license</a>).</p>
 </div></footer>
@@ -251,6 +272,22 @@ ${buyButtons()}
 ${storeLive ? '' : '<p class="note" style="margin:14px 0 0">Store pages are launching soon. <a href="#newsletter">Get the free Core Keepers demo</a>.</p>'}
 </div></div></section>
 
+<section id="assistant-kit" class="band" aria-labelledby="ak-h"><div class="wrap">
+<p class="eyebrow">New from ${esc(cfg.brand)}</p>
+<h2 id="ak-h">Run your shop with an <span class="gold">AI assistant team</span></h2>
+<p class="lead">The ${esc(AK.shortName)}: ${esc(AK.tagline.charAt(0).toLowerCase() + AK.tagline.slice(1))} You approve anything public, anything sent, and anything that costs money.</p>
+<p class="note">${esc(AK.writtenFor)} A Grok Bot account is a separate subscription.</p>
+<ul class="chips" aria-label="The team">${akTeam.map(([n, c]) => `<li class="chip ${c === 'gold' || c === 'cyan' ? c : 'slate'}">${esc(n)}</li>`).join('')}</ul>
+<div class="grid g2" style="gap:28px;align-items:stretch">
+<div class="price-card"><p class="eyebrow" style="margin:0 0 8px">${esc(AK.shortName)}</p><p class="amt">$${AK.price}</p><p class="note">USD, one-time · free lifetime updates</p>
+<ul class="checks"><li>4 Bot job descriptions, 7 workflows</li><li>Approval rules + true-claims check</li><li>Business profile + 6 shared notebooks</li><li>GUIDE.pdf</li></ul>
+${akBuy()}
+<p class="note" style="margin:12px 0 0"><a href="/assistant-kit/">See what's inside →</a></p></div>
+<div class="price-card"><p class="eyebrow" style="margin:0 0 8px">Bundle: both kits</p><p class="amt">$${AK.bundle.price}</p><p class="note">USD, one-time · instead of $${AK.bundle.separate} separately</p>
+<ul class="checks"><li>${esc(P.shortName)}</li><li>${esc(AK.shortName)}</li><li>Two downloads, emailed right after payment</li><li>Free lifetime updates for both</li></ul>
+${bundleBuy()}</div>
+</div></div></section>
+
 ${factsBlock()}
 
 <section class="band" aria-labelledby="faq-h"><div class="wrap prose" style="max-width:860px">
@@ -387,6 +424,122 @@ ${newsletterBlock()}`,
   });
 }
 
+add('/assistant-kit/', {
+  title: `${AK.shortName}: AI assistant team templates for your online shop | ${cfg.brand}`,
+  description: 'Four assistant job descriptions, seven routines and approval rules to run a small online product business with AI assistants. Written for Grok Bot. $39.',
+  sources: ['src/assistant-kit.mjs', 'src/build.mjs'],
+  jsonld: [akProductLd, bundleProductLd, faqLd(akFaq), crumbLd([['Home', '/'], [AK.shortName, '/assistant-kit/']])],
+  body: `<section class="page-hero"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / ${esc(AK.shortName)}</nav>
+<p class="eyebrow">For non-coders who sell online</p>
+<h1>Assistant Team <span class="gold">Starter Kit</span></h1>
+<p class="lead">${esc(AK.tagline)} You stay the one who approves anything public, anything sent to a person, and anything that costs money.</p>
+<p class="note"><strong>${esc(AK.writtenFor)}</strong> A Grok Bot account is a separate subscription and not included.</p>
+<ul class="chips" aria-label="Highlights"><li class="chip gold">4 assistants</li><li class="chip cyan">7 workflows</li><li class="chip">Approval first</li><li class="chip slate">Duplicate guard</li><li class="chip slate">No coding</li></ul>
+<p class="price-tag">$${AK.price} <small>one-time · free lifetime updates · 7-day refund</small></p>
+<div class="btns"><a class="btn" href="#pricing">See what you get and buy</a><a class="btn alt" href="#bundle">Both kits for $${AK.bundle.price}</a></div>
+</div></section>
+
+<section class="band" aria-labelledby="team-h"><div class="wrap">
+<p class="eyebrow">The team</p><h2 id="team-h">Four assistants, <span class="gold">one job each</span></h2>
+<p class="sub">Each assistant is a Grok Bot with one job, the same approval rules, and the same shared notebooks. Start with one (Shop Ops) and add the others when you're ready.</p>
+<div class="grid g4">${akTeam.map(([n, c, d], i) => `<article class="card"><div class="ico ${['bg-gold', 'bg-cyan', 'bg-purple', 'bg-green'][i]}" aria-hidden="true">${i + 1}</div><h3>${esc(n)}</h3><p>${esc(d)}</p></article>`).join('')}</div>
+</div></section>
+
+<section aria-labelledby="akin-h"><div class="wrap">
+<p class="eyebrow">What's inside</p><h2 id="akin-h">Everything is <span class="gold">ready to paste</span></h2>
+<div class="grid g4">${akIncluded.map(([t, d], i) => `<article class="card"><div class="ico ${['bg-cyan', 'bg-gold', 'bg-purple', 'bg-green', 'bg-red', 'bg-blue', 'bg-gold', 'bg-cyan'][i]}" aria-hidden="true">${i + 1}</div><h3>${esc(t)}</h3><p>${esc(d)}</p></article>`).join('')}</div>
+</div></section>
+
+<section class="band" aria-labelledby="akhow-h"><div class="wrap grid g2" style="gap:40px">
+<div><p class="eyebrow">How it works</p><h2 id="akhow-h">Set up in an <span class="gold">afternoon</span></h2>
+<ol class="steps">${akSteps.map(([t, d]) => `<li><div><h3>${esc(t)}</h3><p>${esc(d)}</p></div></li>`).join('')}</ol>
+<p class="sub">Plan on one to two hours for setup, then about ten minutes a day to read and approve.</p></div>
+<div><p class="eyebrow">Approval first</p><h2>Nothing goes out <span class="gold">without you</span></h2>
+<ul class="checks"><li>Every assistant asks before posting, sending, publishing, spending, deleting, or replying to a customer.</li><li>Posts go through one queue: drafted, approved by you, then posted exactly as written.</li><li>The duplicate guard checks your profile before every post and after any error, so a post doesn't go out twice.</li><li>A true-claims check on every public draft: no made-up numbers, reviews or deadlines.</li><li>Every job is run once by hand, and checked by you, before it gets a schedule.</li></ul>
+<h3>What it is not</h3><ul class="checks no"><li>Not a promise of sales or income.</li><li>Not autopilot: you approve the important steps.</li><li>Not an official Grok Bot product.</li></ul></div>
+</div></section>
+
+<section id="pricing" aria-labelledby="akprice-h"><div class="wrap pricing">
+<div><p class="eyebrow">Pricing</p><h2 id="akprice-h">One kit. One price. <span class="gold">Yours to keep.</span></h2>
+<p class="lead">Pay once and get every future update free. If the kit didn't work for you, ask for a refund within 7 days (refunds may be declined if the kit has clearly been copied or reused).</p>
+<h3 id="license">License in one minute</h3>
+<ul class="checks"><li>Use and change every template for your own businesses, including commercially.</li><li>Keep using your edited assistants, skills and routines for as long as you like.</li></ul>
+<ul class="checks no"><li>Don't resell, share or give away the kit or its templates, including as a public Bot template.</li></ul>
+<p class="note">The full license is <code>LICENSE.md</code> in your download.</p></div>
+<div class="price-card"><p class="eyebrow" style="margin:0 0 8px">${esc(AK.name)}</p><p class="amt">$${AK.price}</p><p class="note">USD, one-time</p>
+<ul class="checks"><li>4 Bot job descriptions</li><li>7 workflows, each with a skill and a routine</li><li>Approval rules and true-claims check</li><li>Business profile and 6 shared notebooks</li><li>Lessons from running our own shop</li><li>GUIDE.pdf</li><li><strong>Free lifetime updates</strong></li><li><strong>7-day refund if the kit didn't work for you (may be declined if clearly copied or reused)</strong></li></ul>
+${akBuy()}
+</div></div></section>
+
+<section id="bundle" class="band" aria-labelledby="bundle-h"><div class="wrap pricing">
+<div><p class="eyebrow">Bundle</p><h2 id="bundle-h">Make a game. <span class="gold">Run the shop.</span></h2>
+<p class="lead">Get the ${esc(P.shortName)} and the ${esc(AK.shortName)} together for $${AK.bundle.price} instead of $${AK.bundle.separate}. Build and publish a browser game with AI, then let an assistant team help you run its launch, posts and feedback.</p>
+<p class="sub">Two separate downloads, emailed right after payment. Each kit keeps its own license, free updates and 7-day refund.</p></div>
+<div class="price-card"><p class="eyebrow" style="margin:0 0 8px">Bundle: both kits</p><p class="amt">$${AK.bundle.price}</p><p class="note">USD, one-time · instead of $${AK.bundle.separate}</p>
+<ul class="checks"><li>${esc(P.name)}</li><li>${esc(AK.name)}</li><li><strong>Free lifetime updates for both</strong></li></ul>
+${bundleBuy()}
+</div></div></section>
+
+<section aria-labelledby="akfaq-h"><div class="wrap prose" style="max-width:860px">
+<h2 id="akfaq-h">FAQ</h2>
+${faqBlock(akFaq)}
+<p class="note">Questions? ${support} or ${xLink}.</p>
+</div></section>`,
+});
+
+const SUBMIT_TO = cfg.supportEmail || 'support@promptforgekits.com';
+const arcadeLd = () => ({
+  '@context': 'https://schema.org', '@type': 'ItemList', name: 'Prompt Forge Kits Arcade: free browser games', url: url('/arcade/'), numberOfItems: ARCADE.length,
+  itemListElement: ARCADE.map((g, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'VideoGame', name: g.title, url: url(g.url), description: g.blurb, genre: g.genre, gamePlatform: 'Web browser', playMode: 'SinglePlayer', isAccessibleForFree: true, author: { '@type': 'Organization', name: g.maker } } })),
+});
+add('/arcade/', {
+  title: `Free browser games to play now: the Arcade | ${cfg.brand}`,
+  description: 'Free browser games you can play right now, no download. Link-only listings with our own descriptions. Suggest your game, and get the Arcade weekly email.',
+  sources: ['src/arcade.mjs', 'src/build.mjs'],
+  jsonld: [arcadeLd(), crumbLd([['Home', '/'], ['Arcade', '/arcade/']])],
+  body: `<section class="page-hero"><div class="wrap">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Arcade</nav>
+<h1>The <span class="gold">Arcade</span></h1>
+<p class="lead">Free browser games you can play right now, no download or sign-up. We link to each game where its maker publishes it and describe it in our own words.</p>
+<p class="note">Starting small: today the arcade lists our own ${ARCADE.length} free demos, each built with the Browser Game Starter Kit. Games from other makers are added only with the maker's OK.</p>
+<div class="btns"><a class="btn" href="#arcade-weekly">Get Arcade weekly</a><a class="btn alt" href="#submit">Suggest a game</a></div>
+</div></section>
+<section style="padding-top:20px" aria-labelledby="list-h"><div class="wrap">
+<h2 id="list-h" class="sr">Games</h2>
+<div class="grid g3">${ARCADE.map((g) => `<article class="card genre">${g.ownImage ? img(g.ownImage, `${g.title}: screenshot of our own demo`, { sizes: '(max-width: 640px) 100vw, (max-width: 900px) 50vw, 370px' }) : ''}<div class="body"><h3><a class="stretch" href="${esc(g.url)}">${esc(g.title)}</a></h3><p class="note" style="margin:0 0 6px">${esc(g.genre)} · by ${esc(g.maker)}${g.madeWithKit ? ' · made with the Browser Game Starter Kit' : ''}</p><p>${esc(g.blurb)}</p><span class="more cyan">Play free →</span></div></article>`).join('')}</div>
+</div></section>
+<section id="arcade-weekly" class="band" aria-labelledby="aw-h"><div class="wrap news">
+<div><h2 id="aw-h">Get <span class="gold">Arcade weekly</span></h2><p class="sub">At most one short email a week: free browser games worth playing (link only) and one tip for building your own game with AI. Unsubscribe anytime with one click. This is a separate list from the Core Keepers demo emails.</p></div>
+<form action="/api/arcade-subscribe/" method="post" data-newsletter data-endpoint="/api/arcade-subscribe/" data-ok="You're on the list. Check your inbox for a short confirmation (and spam, just in case)." novalidate>
+<label for="aw-email">Email address</label>
+<input id="aw-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+<input type="hidden" name="source" value="arcade"><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0">
+<button class="btn" type="submit">Sign me up</button>
+<p class="msg" role="status" aria-live="polite"></p>
+</form></div></section>
+<section id="submit" aria-labelledby="submit-h"><div class="wrap grid g2" style="gap:40px;align-items:start">
+<div><h2 id="submit-h">Suggest a <span class="gold">game</span></h2>
+<p class="sub">Made a free browser game, with our kit or anything else? Tell us about it. We review every suggestion by hand. Nothing is listed automatically.</p>
+<ul class="checks"><li>Free to play in the browser, no download.</li><li>Family-friendly: no gambling or adult content.</li><li>You made it, or the maker said we may list it.</li></ul>
+<h3>How listings work</h3>
+<ul class="checks"><li>Link only: we never host, embed or copy your game.</li><li>We write a short description in our own words and use no images unless you send one and say we may use it.</li><li>Credit and the link always go to the maker.</li></ul>
+<h3 id="removal">Removal on request</h3>
+<p>Want your game removed or a listing changed? Email ${support} from the address on your game page or profile, with the listing's link and we'll take it down, no questions asked, usually within two days.</p></div>
+<form class="card" data-mailto="${esc(SUBMIT_TO)}" novalidate style="display:grid;gap:10px">
+<label for="s-title">Game title</label><input id="s-title" name="title" required maxlength="80">
+<label for="s-link">Link to play it (https://)</label><input id="s-link" name="link" type="url" required placeholder="https://">
+<label for="s-maker">Maker name</label><input id="s-maker" name="maker" required maxlength="80">
+<label for="s-genre">Genre (optional)</label><input id="s-genre" name="genre" maxlength="60">
+<label for="s-notes">Anything else (optional)</label><textarea id="s-notes" name="notes" rows="3" maxlength="600"></textarea>
+<label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" name="permission" style="margin-top:4px"> <span>I made this game, or the maker said it may be listed. It's free to play in the browser.</span></label>
+<button class="btn" type="submit">Open my email to send it</button>
+<p class="msg" role="status" aria-live="polite"></p>
+<p class="note" style="margin:0">This opens your email app with the details filled in, addressed to ${esc(SUBMIT_TO)}. No email app? Send the same details to that address.</p>
+</form>
+</div></section>`,
+});
+
 // Hidden pages for the Stripe checkout: linked nowhere, noindex, not in the sitemap.
 add('/buy-test/', {
   title: `Checkout preview | ${cfg.brand}`, description: 'Private checkout preview.', noindex: true, noSitemap: true,
@@ -400,8 +553,9 @@ add('/thanks/', {
   title: `Thank you | ${cfg.brand}`, description: 'Thanks for your purchase.', noindex: true, noSitemap: true,
   body: `<section class="page-hero"><div class="wrap prose">
 <h1>Thank <span class="gold">you</span></h1>
-<p class="lead">Payment received. Check your inbox: your download starts automatically (or use the button below), and a personal link for the Browser Game Starter Kit is also on its way to your inbox (it usually arrives within a minute; check spam if not).</p>
+<p class="lead">Payment received. Check your inbox: your download starts automatically (or use the button below), and your personal download link is also on its way to your inbox (it usually arrives within a minute; check spam if not).</p>
 <p id="dl" hidden><a class="btn" id="dl-btn" href="#">Download your kit (.zip)</a></p>
+<p class="note">Bought the bundle? You get two downloads: both links are on the next page and in your email.</p>
 <script>(function(){var m=location.search.match(/[?&]session_id=(cs_[A-Za-z0-9_]+)/);if(!m)return;var u='/api/claim/?session_id='+m[1];document.getElementById('dl-btn').href=u;document.getElementById('dl').hidden=false;setTimeout(function(){location.href=u},600)})();</script>
 <p>Your purchase includes free updates and a 7-day refund if the kit didn't work for you (may be declined if clearly copied or reused). Reply to the email if you need anything.</p>
 <p><a href="/">Back to the home page</a></p>
@@ -479,16 +633,29 @@ const factsTxt = `## Facts
 - Where to buy: directly at ${cfg.siteUrl}/#pricing (secure checkout by Stripe)
 - Support: ${cfg.supportEmail || 'X @' + cfg.xHandle + ' (support email coming soon)'}
 `;
+const akFactsTxt = `## Second product: ${AK.name}
+- Price: $${AK.price} USD, one-time purchase; bundle with the ${P.shortName}: $${AK.bundle.price} USD for both (instead of $${AK.bundle.separate})
+- What it is: text templates for running a small online product business with a team of AI assistants: 4 Bot job descriptions (Lead, Content, Community & Launch, Shop Ops), 7 workflows (daily ops check, fact sync check, feedback watch, post approved posts with a duplicate guard, weekly report, weekly newsletter draft, launch week), approval rules, a true-claims check, a business profile template, 6 shared notebook templates, lessons, GUIDE.pdf
+- Platform: ${AK.writtenFor} A Grok Bot account is a separate subscription.
+- Approval first: the assistants ask before posting, sending, publishing, spending, deleting or replying to customers
+- License: use and change the templates for your own businesses; do not resell or share the kit or its templates
+- Refund: 7-day refund if the kit didn't work for you; may be declined if the kit has clearly been copied or reused; free updates
+- No income or results claims
+- Page: ${url('/assistant-kit/')}
+`;
 const llms = `# ${cfg.brand}
 
 > ${cfg.description} Tagline: "${cfg.tagline}" First product: the ${P.name}, ${PRICE}.
 
 ${factsTxt}
+${akFactsTxt}
 ## Pages
 - [Home](${url('/')}): what the kit is, what's inside, who it's for, how it works, pricing
 - [Play demos](${url('/play/')}): five free on-site demos (platformer, roguelite, idle, runner, puzzle); Core Keepers tower defense is free by email
 - [Genres](${url('/genres/')}): overview of the six prompt sequences
 ${C.genres.map((g) => `- [${g.name}](${url(`/genres/${g.slug}/`)}): ${plain(g.summary)}`).join('\n')}
+- [Arcade](${url('/arcade/')}): free browser games, link only (today: our own five demos); Arcade weekly email signup; suggest a game
+- [Assistant Team Starter Kit](${url('/assistant-kit/')}): AI assistant team templates for a small online product business ($${AK.price}; bundle with the game kit $${AK.bundle.price})
 - [FAQ](${url('/faq/')})
 - [License](${url('/license/')})
 - [Blog](${url('/blog/')})
@@ -502,6 +669,7 @@ const full = `# ${cfg.brand}: ${P.name}
 > ${cfg.description} Tagline: "${cfg.tagline}"
 
 ${factsTxt}
+${akFactsTxt}
 ## What's inside
 ${C.included.map(([t, d]) => `- **${t}**: ${plain(d)}`).join('\n')}
 

@@ -7,7 +7,10 @@ import crypto from 'node:crypto';
 import { zipSync } from 'fflate';
 import { PDFDocument, StandardFonts, rgb, PDFName, PDFString } from 'pdf-lib';
 
+import { PRODUCTS } from './_products.js';
+
 export const KIT_DIR = path.join(process.cwd(), 'private', 'kit');
+export const kitDirFor = (sku = 'bgsk') => path.join(process.cwd(), 'private', PRODUCTS[sku]?.kitDir || 'kit');
 const EXCLUDE = new Set(['scripts', 'node_modules', '.git', '.DS_Store', 'dist', 'out']);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -46,7 +49,10 @@ function walk(dir, base = '') {
 }
 
 // date: YYYY-MM-DD stamped into the files (the purchase date, so re-downloads are identical)
-export async function buildWatermarkedZip(email, { kit = KIT_DIR, order = '', date = new Date().toISOString().slice(0, 10) } = {}) {
+// sku: which kit (bgsk default = the original kit in private/kit, zip root browser-game-starter-kit/; atsk = private/assistant-kit)
+export async function buildWatermarkedZip(email, { sku = 'bgsk', kit = sku === 'bgsk' ? KIT_DIR : kitDirFor(sku), order = '', date = new Date().toISOString().slice(0, 10) } = {}) {
+  const root = PRODUCTS[sku]?.zipRoot;
+  if (!root || PRODUCTS[sku].includes) throw new Error('Unknown kit sku');
   email = String(email || '').trim().toLowerCase();
   if (!EMAIL_RE.test(email)) throw new Error('Invalid buyer email');
   const id = buyerId(email) + (order ? '-' + order.replace(/[^\w-]/g, '').slice(0, 20) : '');
@@ -55,7 +61,7 @@ export async function buildWatermarkedZip(email, { kit = KIT_DIR, order = '', da
     let data = fs.readFileSync(path.join(kit, rel));
     if (rel === 'GUIDE.pdf') data = await stampPdf(data, email, id, date);
     else if (rel === 'LICENSE.md' || rel === 'README.md') data = Buffer.from(stampText(data.toString('utf8'), email, id, date));
-    files[`browser-game-starter-kit/${rel}`] = [new Uint8Array(data), { level: 6 }];
+    files[`${root}/${rel}`] = [new Uint8Array(data), { level: 6 }];
   }
   return { zip: Buffer.from(zipSync(files)), id, count: Object.keys(files).length };
 }

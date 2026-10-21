@@ -1,6 +1,14 @@
 {
   "/": {
-    "hash": "23add45e8fc580d2",
+    "hash": "446087b8bdec785d",
+    "date": "2026-10-21"
+  },
+  "/arcade/": {
+    "hash": "b86d5e990e3efb17",
+    "date": "2026-10-21"
+  },
+  "/assistant-kit/": {
+    "hash": "e3b95ee5941c9b83",
     "date": "2026-10-21"
   },
   "/blog/": {

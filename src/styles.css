@@ -134,3 +134,8 @@ section{padding:84px 0}main>section:not(.hero):not(.page-hero):not(#facts){conte
 .btn.buy-big{display:flex;justify-content:center;width:100%;font-size:1.7rem;padding:22px 36px;box-shadow:0 7px 0 var(--ink)}
 .btn.buy-big:hover{box-shadow:0 9px 0 var(--ink)}
 @media (max-width:640px){.btn.buy-big{font-size:1.45rem;padding:20px 24px;min-height:64px}}
+/* Arcade submit form (2026-10-21) */
+form[data-mailto] input:not([type=checkbox]),form[data-mailto] textarea{width:100%;box-sizing:border-box;font:inherit;padding:10px 14px;border-radius:12px;border:3px solid var(--ink);background:var(--cloud);color:var(--ink)}
+form[data-mailto] label{font-weight:700}
+form[data-mailto] input[type=checkbox]{flex:none;min-width:0;width:18px;height:18px}
+form[data-mailto] .msg{min-height:1.4em;margin:0;font-weight:600;color:var(--gold)}

@@ -80,7 +80,7 @@
       "includeFiles": "private/core-keepers/**"
     },
     "api/download.js": {
-      "includeFiles": "private/kit/**",
+      "includeFiles": "private/{kit,assistant-kit}/**",
       "maxDuration": 30
     },
     "api/stripe-webhook.js": {
