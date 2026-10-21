@@ -25,7 +25,7 @@
       ]
     },
     {
-      "source": "/play/:genre/(.*)",
+      "source": "/play/:genre/assets/(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",

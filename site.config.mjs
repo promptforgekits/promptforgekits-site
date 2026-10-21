@@ -41,6 +41,12 @@ export default {
     live: true,
   },
 
+  // Google Search Console: paste ONLY the content="..." value of the HTML-tag verification code here
+  // (e.g. 'abc123...'). Empty = no tag is emitted. Rebuild + deploy after setting it.
+  searchConsole: {
+    googleVerification: '',
+  },
+
   // PLACEHOLDER: analytics, OFF by default. Paste the provider's snippet
   // (Plausible, Fathom, Vercel Web Analytics, etc.) and set enabled: true.
   analytics: {

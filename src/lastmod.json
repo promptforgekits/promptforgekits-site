@@ -1,0 +1,78 @@
+{
+  "/": {
+    "hash": "23add45e8fc580d2",
+    "date": "2026-10-21"
+  },
+  "/blog/": {
+    "hash": "d5f21807f7cb0d1e",
+    "date": "2026-10-15"
+  },
+  "/blog/four-rules-vibe-coded-games-ship/": {
+    "hash": "7c673df8c944781c",
+    "date": "2026-10-15"
+  },
+  "/blog/grow-your-game-after-v1/": {
+    "hash": "99547a5a8d2af8f6",
+    "date": "2026-10-15"
+  },
+  "/faq/": {
+    "hash": "d801e4fcfa4232af",
+    "date": "2026-10-20"
+  },
+  "/genres/": {
+    "hash": "19310702e10a7c86",
+    "date": "2026-10-21"
+  },
+  "/genres/endless-runner/": {
+    "hash": "a86e90fdf122f6c6",
+    "date": "2026-10-21"
+  },
+  "/genres/idle-clicker/": {
+    "hash": "8bb70afb09421d29",
+    "date": "2026-10-21"
+  },
+  "/genres/platformer/": {
+    "hash": "65abf4751f47a0d7",
+    "date": "2026-10-21"
+  },
+  "/genres/puzzle/": {
+    "hash": "7bb58c5365d3e6cb",
+    "date": "2026-10-21"
+  },
+  "/genres/roguelite/": {
+    "hash": "ed27fbd33f65ccdf",
+    "date": "2026-10-21"
+  },
+  "/genres/tower-defense/": {
+    "hash": "e096c24bfc78ce76",
+    "date": "2026-10-21"
+  },
+  "/license/": {
+    "hash": "4247f6a2c3d9b580",
+    "date": "2026-10-20"
+  },
+  "/play/": {
+    "hash": "a85cf4f667f4de71",
+    "date": "2026-10-21"
+  },
+  "/play/idle/": {
+    "hash": "6d894d03466a3515",
+    "date": "2026-10-19"
+  },
+  "/play/platformer/": {
+    "hash": "51e666aa1e4ab177",
+    "date": "2026-10-19"
+  },
+  "/play/puzzle/": {
+    "hash": "f25d46501ddb1279",
+    "date": "2026-10-19"
+  },
+  "/play/roguelite/": {
+    "hash": "919993a84dccdb35",
+    "date": "2026-10-19"
+  },
+  "/play/runner/": {
+    "hash": "cbaf4568a8e620dd",
+    "date": "2026-10-19"
+  }
+}

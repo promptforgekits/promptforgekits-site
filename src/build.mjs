@@ -6,6 +6,7 @@ import cfg from '../site.config.mjs';
 import * as C from './content.mjs';
 import { posts } from './posts.mjs';
 import * as FP from './freepack.mjs';
+import { createLastmod } from './lastmod.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'dist');
@@ -74,6 +75,7 @@ function layout({ path: p, title, description, body, jsonld = [], ogType = 'webs
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${url(p)}">
+${cfg.searchConsole?.googleVerification ? `<meta name="google-site-verification" content="${esc(cfg.searchConsole.googleVerification)}">` : '<!-- google-site-verification: empty (set searchConsole.googleVerification in site.config.mjs) -->'}
 ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta name="theme-color" content="#1b1f2e">
 <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -138,8 +140,11 @@ const newsletterBlock = () => `<section id="newsletter" class="band" aria-labell
 </form></div></section>
 
 `;
-const genreCards = () => `<div class="grid g3">${C.genres.map((g) => `<article class="card genre">${img('g-' + g.demo, `${g.name} demo built with the kit`, { sizes: '(max-width: 640px) 100vw, (max-width: 900px) 50vw, 370px' })}<div class="body"><h3><a class="stretch" href="/genres/${g.slug}/">${esc(g.name)}</a></h3><p>${md(g.summary)}</p><span class="more cyan">${g.prompts.length}${g.optional ? ` + ${g.optional.length} optional` : ''} prompts →</span></div></article>`).join('')}</div>`;
+const genreCards = () => `<div class="grid g3">${C.genres.map((g) => `<article class="card genre">${img('g-' + g.demo, `${g.name} demo built with the kit`, { sizes: '(max-width: 640px) 100vw, (max-width: 900px) 50vw, 370px' })}<div class="body"><h3><a class="stretch" href="/genres/${g.slug}/">${esc(g.name)}</a></h3><p>${md(g.summary)}</p><span class="more cyan">${esc(countLabel(g)[0].toUpperCase() + countLabel(g).slice(1))} →</span></div></article>`).join('')}</div>`;
 
+// Honest step counts (kit PROMPTS.md): Prompt 0 kickoff + N numbered prompts (+ optional ones).
+const countLabel = (g) => `kickoff + ${g.prompts.length} prompts${g.optional ? ` + ${g.optional.length} optional` : ''}`;
+const stepTotal = (g) => 1 + g.prompts.length + (g.optional?.length || 0);
 const GATED = 'towerdefense'; // Core Keepers: served privately via /api/demo/ with a signed link from the welcome email
 const demoEmbed = (g, { eager = false } = {}) => {
   if (g.demo === GATED) return `<div class="demo">${img('g-' + g.demo, `${g.game} screenshot`, { eager, sizes: '(max-width: 1160px) 100vw, 1116px' })}<a class="btn play" href="#newsletter">Get the free ${esc(g.game)} demo</a></div>`;
@@ -148,6 +153,21 @@ const demoEmbed = (g, { eager = false } = {}) => {
     ? `<button class="btn play" type="button" data-demo="/play/${g.demo}/" data-title="${esc(g.game)} demo">▶ Play ${esc(g.game)}</button>`
     : '<p class="unavail">Demo coming soon</p>'}</div>`;
 };
+
+// /play/: 150-160 chars, and an ItemList of VideoGame entries for the five public demos (no ratings: we have none)
+const PLAY_DESC = 'Play five free browser games made with AI prompts: platformer, roguelite, idle clicker, runner and puzzle. Plus Core Keepers tower defense, free by email.';
+const publicDemos = () => C.genres.filter((g) => g.demo !== GATED && demoAvailable(g.demo));
+const GENRE_LD = { platformer: 'Platformer', roguelite: 'Roguelite', idle: 'Idle game', runner: 'Endless runner', puzzle: 'Puzzle' };
+const playListLd = () => ({
+  '@context': 'https://schema.org', '@type': 'ItemList', name: 'Free browser game demos built with the Browser Game Starter Kit', url: url('/play/'),
+  numberOfItems: publicDemos().length,
+  itemListElement: publicDemos().map((g, i) => ({ '@type': 'ListItem', position: i + 1, item: {
+    '@type': 'VideoGame', name: `${g.game} demo`, url: url(`/play/${g.demo}/`), description: plain(g.summary), genre: GENRE_LD[g.demo] || g.name,
+    gamePlatform: 'Web browser', applicationCategory: 'Game', operatingSystem: 'Any (web browser)', playMode: 'SinglePlayer', isAccessibleForFree: true,
+    image: url(`/img/g-${g.demo}-1280.webp`), publisher: { '@id': url('/#org') },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: url(`/play/${g.demo}/`) },
+  } })),
+});
 
 // ── pages ──────────────────────────────────────────────────────────────────
 const pages = [];
@@ -204,7 +224,7 @@ ${genreCards()}
 <section aria-labelledby="play-h"><div class="wrap">
 <p class="eyebrow">Free demo</p>
 <h2 id="play-h">Play <span class="gold">Core Keepers</span> right now</h2>
-<p class="sub">${md(td.summary)} It's the tower defense game the kit's 13-prompt sequence builds.</p>
+<p class="sub">${md(td.summary)} It's the game the kit's tower defense sequence builds (kickoff + ${td.prompts.length} prompts; the 2 optional prompts are not in the demo).</p>
 ${demoEmbed(td)}
 <div class="demo-meta"><p class="note" style="margin:0">Best with a mouse and keyboard. Click the game to give it focus.</p><a class="btn ghost" href="/play/">All 6 demos →</a></div>
 </div></section>
@@ -244,8 +264,8 @@ ${newsletterBlock()}`,
 
 add('/play/', {
   title: `Play free browser game demos built with AI prompts | ${cfg.brand}`,
-  description: 'Five free playable browser game demos (platformer, roguelite, idle, runner, puzzle) plus Core Keepers tower defense free by email — all built with the Browser Game Starter Kit prompt sequences.',
-  jsonld: [crumbLd([['Home', '/'], ['Play', '/play/']])],
+  description: PLAY_DESC,
+  jsonld: [crumbLd([['Home', '/'], ['Play', '/play/']]), playListLd()],
   body: `<section class="page-hero"><div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Play</nav>
 <h1>Play the <span class="gold">demos</span></h1>
@@ -256,7 +276,7 @@ ${C.genres.map((g, i) => `<section aria-labelledby="d-${g.demo}"${i % 2 ? '' : '
 <h2 id="d-${g.demo}">${esc(g.game)} <span class="note" style="font-family:var(--body);font-size:1rem;text-shadow:none">${esc(g.name)}</span></h2>
 <p class="sub">${md(g.summary)}</p>
 ${demoEmbed(g, { eager: i === 0 })}
-<div class="demo-meta"><a href="/genres/${g.slug}/">See the ${esc(g.name.toLowerCase())} prompt sequence →</a>${demoAvailable(g.demo) ? `<a class="note" href="/play/${g.demo}/" rel="nofollow">Open full window ↗</a>` : ''}</div>
+<div class="demo-meta"><a href="/genres/${g.slug}/">See the ${esc(g.name.toLowerCase())} prompt sequence →</a>${demoAvailable(g.demo) ? `<a class="note" href="/play/${g.demo}/">Open full window ↗</a>` : ''}</div>
 </div></section>`).join('')}
 ${newsletterBlock()}`,
 });
@@ -276,8 +296,8 @@ add('/genres/', {
 for (const g of C.genres) {
   const n = g.prompts.length;
   add(`/genres/${g.slug}/`, {
-    title: `${g.name} game prompt sequence (${n} prompts) | ${cfg.brand}`,
-    description: `The ${g.name.replace(/ \(.*\)/, '').toLowerCase()} prompt sequence in the Browser Game Starter Kit: ${n} step-by-step prompts with a test after each, plus a free playable demo.`,
+    title: `${g.name} game with AI: ${countLabel(g)} | ${cfg.brand}`,
+    description: `Build your own ${g.name.replace(/ \(.*\)/, '').toLowerCase()} browser game with AI in ${stepTotal(g)} steps (${countLabel(g)}), each with a test checkpoint. ${g.demo === GATED ? `The ${g.game} demo is free by email.` : 'Play the free demo on this page.'}`,
     jsonld: [crumbLd([['Home', '/'], ['Genres', '/genres/'], [g.name, `/genres/${g.slug}/`]])],
     body: `<section class="page-hero"><div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/genres/">Genres</a> / ${esc(g.name)}</nav>
@@ -287,13 +307,13 @@ for (const g of C.genres) {
 </div></section>
 <section style="padding-top:20px"><div class="wrap">
 ${demoEmbed(g, { eager: true })}
-<div class="demo-meta"><p class="note" style="margin:0">This demo was built by following the sequence below.</p>${demoAvailable(g.demo) ? `<a class="note" href="/play/${g.demo}/" rel="nofollow">Open full window ↗</a>` : ''}</div>
+<div class="demo-meta"><p class="note" style="margin:0">This demo was built by following the sequence below.</p>${demoAvailable(g.demo) ? `<a class="note" href="/play/${g.demo}/">Open full window ↗</a>` : ''}</div>
 </div></section>
 <section class="band"><div class="wrap grid g2" style="gap:40px;align-items:start">
 <div><h2>What the sequence builds</h2><ul class="checks">${g.details.map((d) => `<li>${md(d)}</li>`).join('')}</ul>
 <h3>How each step works</h3><p class="sub">Paste one prompt. Do its <strong>Test</strong> checkpoint in the browser. If it passes, commit. If it fails, use the Fix Loop: three tries, then roll back.</p>
 <p class="note">This page lists the step titles only. The full prompt text, test checkpoints, and tuning numbers are in the kit's <code>PROMPTS.md</code> and <code>GUIDE.pdf</code>.</p></div>
-<div><h2>The ${n + 1 + (g.optional?.length || 0)} steps</h2>
+<div><h2>The ${stepTotal(g)} steps <span class="note" style="font-family:var(--body);font-size:1rem;text-shadow:none">${esc(countLabel(g))}</span></h2>
 <ol class="prompts" aria-label="Prompt titles"><li><b>P0</b>Kickoff: plan with your AI, no code yet</li>${g.prompts.map((t, i) => `<li><b>P${i + 1}</b>${esc(t)}</li>`).join('')}${(g.optional || []).map((t, i) => `<li class="opt"><b>P${n + i + 1}</b>Optional: ${esc(t)}</li>`).join('')}</ol></div>
 </div></section>
 <section><div class="wrap pricing">
@@ -429,8 +449,17 @@ for (const pg of pages) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, layout(pg));
 }
-const sm = pages.filter((p) => !p.noSitemap);
-fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sm.map((p) => `  <url><loc>${url(p.path)}</loc><lastmod>${today}</lastmod></url>`).join('\n')}\n</urlset>\n`);
+// sitemap: real last-changed dates per page (src/lastmod.mjs), not the build date
+const LM = createLastmod(ROOT, { today });
+const SRC = { page: ['src/content.mjs', 'site.config.mjs', 'src/build.mjs'], blog: ['src/posts.mjs'] };
+const sm = pages.filter((p) => !p.noSitemap).map((p) => ({ loc: p.path, lastmod: LM.date(p.path, JSON.stringify([p.title, p.description, p.body, p.jsonld || []]), p.path.startsWith('/blog/') ? SRC.blog : (p.sources || SRC.page)) }));
+// the five public demo pages (/play/<demo>/) are indexable and listed; the gated Core Keepers demo never is
+for (const g of C.genres.filter((x) => x.demo !== GATED && demoAvailable(x.demo))) {
+  const f = path.join(OUT, 'play', g.demo, 'index.html');
+  sm.splice(sm.findIndex((x) => x.loc === '/play/') + 1 + C.genres.filter((x) => x.demo !== GATED && demoAvailable(x.demo)).indexOf(g), 0, { loc: `/play/${g.demo}/`, lastmod: LM.date(`/play/${g.demo}/`, fs.readFileSync(f, 'utf8'), [`public/play/${g.demo}`]) });
+}
+fs.writeFileSync(path.join(OUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sm.map((p) => `  <url><loc>${url(p.loc)}</loc><lastmod>${p.lastmod}</lastmod></url>`).join('\n')}\n</urlset>\n`);
+LM.save();
 fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /demo/\nDisallow: /api/\nDisallow: /buy-test/\nDisallow: /thanks/\n\nSitemap: ${url('/sitemap.xml')}\n`);
 fs.writeFileSync(path.join(OUT, 'blog/rss.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>${esc(cfg.brand)} blog</title><link>${url('/blog/')}</link><description>${esc(cfg.description)}</description>\n${posts.map((po) => `<item><title>${esc(po.title)}</title><link>${url(`/blog/${po.slug}/`)}</link><guid>${url(`/blog/${po.slug}/`)}</guid><pubDate>${new Date(po.date + 'T12:00:00Z').toUTCString()}</pubDate><description>${esc(po.description)}</description></item>`).join('\n')}\n</channel></rss>\n`);
 
@@ -491,8 +520,8 @@ ${C.genres.map((g) => `
 ### ${g.name}${g.game !== g.name ? ` ("${g.game}")` : ''}
 ${plain(g.summary)}
 ${g.details.map((d) => `- ${plain(d)}`).join('\n')}
-Prompts: ${g.prompts.map((t, i) => `P${i + 1} ${t}`).join('; ')}${g.optional ? `; optional: ${g.optional.map((t, i) => `P${g.prompts.length + i + 1} ${t}`).join('; ')}` : ''}
-Page: ${url(`/genres/${g.slug}/`)} · Demo: ${url(`/play/${g.demo}/`)}`).join('\n')}
+Prompts (${countLabel(g)}): P0 Kickoff; ${g.prompts.map((t, i) => `P${i + 1} ${t}`).join('; ')}${g.optional ? `; optional: ${g.optional.map((t, i) => `P${g.prompts.length + i + 1} ${t}`).join('; ')}` : ''}
+Page: ${url(`/genres/${g.slug}/`)} · Demo: ${g.demo === GATED ? 'free by email (signup at ' + url('/#newsletter') + ')' : url(`/play/${g.demo}/`)}`).join('\n')}
 
 ## Demos
 Each demo on ${url('/play/')} was built by following that genre's prompt sequence one step at a time, with an automated browser test after each step.
