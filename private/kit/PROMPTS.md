@@ -139,7 +139,7 @@ Test: Kill all enemies, door opens; the door is closed while enemies are alive.
 ```
 Walking through the open door loads a new room with a bigger wave (room number * 2 + 2 enemies, but never more than 14 on screen; the spare budget turns into elites in P6). The player's current HP carries over to the next room; pass it in the scene data. Show the room number in the HUD with labels ("Room: 2   Cleared: 1"). Score = rooms cleared. Starting a new run from GameOverScene or the menu must pass fresh data explicitly (room 1, full HP), because scene.start() without data reuses the old data.
 
-Put all difficulty scaling in one pure file src/balance.js (no Phaser imports) with functions of the room number: hpMult(room) = 1 + 0.14 * (room - 3) + 0.003 * (room - 3)^2 for rooms after 3 (1.0 up to room 3, so rooms 1-3 stay as friendly as now), speedMult(room) = min(1.4, 1 + 0.02 * (room - 1)), and wavePlan(room) returning one spec {type, elite, hp, speed, dmg} per enemy. Read the numbers from a BALANCE object in config.js. Every enemy you spawn from now on takes its HP and speed from wavePlan(), never from a hard-coded number.```
+Put all difficulty scaling in one pure file src/balance.js (no Phaser imports) with functions of the room number: hpMult(room) = 1 + 0.14 * (room - 3) + 0.003 * (room - 3)^2 for rooms after 3 (1.0 up to room 3, so rooms 1-3 stay as friendly as now), speedMult(room) = min(1.4, 1 + 0.02 * (room - 1)), and wavePlan(room) returning one spec {type, elite, hp, speed, dmg} per enemy. Read the numbers from a BALANCE object in config.js. Every enemy you spawn from now on takes its HP and speed from wavePlan(), never from a hard-coded number.
 ```
 Test: Room 2 has more enemies than room 1; the HUD counter goes up. In the console `wavePlan(1)` is 4 chasers with 3 HP; `wavePlan(12)` has 14 entries with HP above 10.
 
@@ -157,9 +157,9 @@ Test: Every card has a name and a one-line description. Clicking a card highligh
 
 **P8. Run summary**
 ```
-Pass rooms cleared and upgrades taken to GameOverScene and display them. Save best rooms cleared as the high score.
+When the run ends, pass the summary to GameOverScene in the scene data: { score: rooms cleared, won, upgrades: stats.taken }. Show "Rooms cleared: N   Best: B". N is rooms CLEARED, not the room you died in (die in room 3 after clearing 2 = "Rooms cleared: 2"). List the upgrades grouped with a count, in the order first taken ("Upgrades: Rapid Fire x3, Heavy Rounds x2, Quick Feet"; "Upgrades: none" if empty), never one entry per pick, so a long run still fits the panel without overlapping the other lines. Save the best through storage.js and only when this run beats it (best = max(old, N)), and show "NEW BEST!" when it does. Pitfall: the player is usually still clicking to shoot when they die, so that click would skip the summary at once. Ignore clicks and keys for the first 800 ms (summaryLockMs in config.js) and only then show "SPACE / click: play again     M: menu" and register the restart. Play again starts a fresh run with explicit data { room: 1 } (see P5).
 ```
-Test: Die; the summary lists your upgrades and rooms reached.
+Test: Clear room 1, take a card, walk into room 2 and die there while clicking: the summary stays up and says "Rooms cleared: 1" (not 2), lists the card, and says "NEW BEST!". A click about 1 s later starts a fresh room 1 with no upgrades. Die again at once: "Rooms cleared: 0" and Best is still 1. A long run shows "Rapid Fire x6", not six "Rapid Fire" entries.
 
 **P9. Boss room**
 ```
