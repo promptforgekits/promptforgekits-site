@@ -334,12 +334,25 @@ add('/genres/', {
 <section style="padding-top:24px"><div class="wrap">${genreCards()}</div></section>`,
 });
 
+// Genre pages: the visible step list as an ItemList (P0 kickoff, P1..Pn, optional steps), part of the kit Product.
+// Gives crawlers and AI assistants a quotable, page-matching answer to "what does the <genre> sequence build, step by step?"
+// Titles only (the prompt text stays in the paid kit); no price here (added 2026-10-22).
+const genreSteps = (g) => ['Kickoff: plan with your AI, no code yet', ...g.prompts, ...(g.optional || []).map((t) => `Optional: ${t}`)];
+const genreLd = (g) => ({
+  '@context': 'https://schema.org', '@type': 'ItemList', '@id': url(`/genres/${g.slug}/#steps`),
+  name: `${g.name} prompt sequence (${countLabel(g)})`,
+  description: `${plain(g.summary)} Each step is one prompt with a browser Test checkpoint.`,
+  url: url(`/genres/${g.slug}/`), numberOfItems: genreSteps(g).length, itemListOrder: 'https://schema.org/ItemListOrderAscending',
+  isPartOf: { '@type': 'Product', '@id': url('/#product'), name: P.name },
+  itemListElement: genreSteps(g).map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: `P${i}. ${t}` })),
+});
+
 for (const g of C.genres) {
   const n = g.prompts.length;
   add(`/genres/${g.slug}/`, {
     title: `${g.name} game with AI: ${countLabel(g)} | ${cfg.brand}`,
     description: `Build your own ${g.name.replace(/ \(.*\)/, '').toLowerCase()} browser game with AI in ${stepTotal(g)} steps (${countLabel(g)}), each with a test checkpoint. ${g.demo === GATED ? `The ${g.game} demo is free by email.` : 'Play the free demo on this page.'}`,
-    jsonld: [crumbLd([['Home', '/'], ['Genres', '/genres/'], [g.name, `/genres/${g.slug}/`]])],
+    jsonld: [genreLd(g), crumbLd([['Home', '/'], ['Genres', '/genres/'], [g.name, `/genres/${g.slug}/`]])],
     body: `<section class="page-hero"><div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/genres/">Genres</a> / ${esc(g.name)}</nav>
 <p class="eyebrow">Prompt sequence overview</p>
