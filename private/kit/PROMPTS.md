@@ -347,9 +347,16 @@ Test: Solve level 1 and level 2 loads. After the last level, play again starts a
 
 **P5. Undo and restart**
 ```
-Add Undo (Z) that reverses the last move including box pushes, using a history stack of states. Add Restart (R) to reset the current level.
+Add Undo (Z) that reverses the last move including box pushes, using a history stack of states, and Restart (R) that resets the current level.
+- Push a copy of the state (player col/row and every box col/row as new objects, not references to the live arrays) only when a move really happens. A bump into a wall or a blocked crate adds nothing, so Z always undoes a real move.
+- Z with an empty history does nothing (check before you pop, so no console error).
+- Undo while the 100 ms move tween is still running must stop that tween first (and clear the moving flag), then snap the player and crate sprites to the restored tiles. Otherwise the tween finishes later and leaves the sprite one tile away from where the game thinks the player is.
+- After an undo, recolor the crates (a crate pulled off its target is no longer green).
+- Ignore Z and R once the level is solved (the second before the next level loads), so an undo can't take the crate off its target while the level still counts as solved.
+- R restarts with scene.restart({ levelIndex }) and starts with an empty history (Z right after R does nothing).
+- Add both keys to HOWTO.keyboard in config.js (e.g. "Arrows / WASD: move, Z: undo, R: restart") so the HOW TO PLAY panel lists them.
 ```
-Test: Push a box, press Z: both player and box go back. R resets.
+Test: Press Z at the start: nothing happens and the console stays clean. Push a crate onto a target (it turns green), press Z: player and crate go back one step and the crate is no longer green. Bump a wall, press Z: it undoes your last real move, not the bump. Tap an arrow and Z at once: the player ends on the tile it started from, not between tiles. Press R, then Z: nothing changes. Solve a level and press Z at once: the crate stays on its target. The HOW TO PLAY panel lists Z and R.
 
 **P6. Move counter**
 ```
