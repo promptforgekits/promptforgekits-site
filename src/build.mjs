@@ -673,6 +673,8 @@ const akFactsTxt = `## Second product: ${AK.name}
 - No income or results claims
 - Page: ${url('/assistant-kit/')}
 `;
+// every public demo page (indexable, in the sitemap) gets its own llms.txt line; the gated Core Keepers demo never does
+const llmsDemos = C.genres.filter((x) => x.demo !== GATED && demoAvailable(x.demo));
 const llms = `# ${cfg.brand}
 
 > ${cfg.description} Tagline: "${cfg.tagline}" First product: the ${P.name}, ${PRICE}.
@@ -682,6 +684,7 @@ ${akFactsTxt}
 ## Pages
 - [Home](${url('/')}): what the kit is, what's inside, who it's for, how it works, pricing
 - [Play demos](${url('/play/')}): five free on-site demos (platformer, roguelite, idle, runner, puzzle); Core Keepers tower defense is free by email
+${llmsDemos.map((g) => `- [${g.name} demo](${url(`/play/${g.demo}/`)}): ${plain(g.summary)} Free to play in the browser, no signup; built by following the ${g.name} prompt sequence (${countLabel(g)}).`).join('\n')}
 - [Genres](${url('/genres/')}): overview of the six prompt sequences
 ${C.genres.map((g) => `- [${g.name}](${url(`/genres/${g.slug}/`)}): ${plain(g.summary)}`).join('\n')}
 - [Arcade](${url('/arcade/')}): free browser games, link only (today: our own five demos); Arcade weekly email signup; suggest a game
@@ -689,6 +692,7 @@ ${C.genres.map((g) => `- [${g.name}](${url(`/genres/${g.slug}/`)}): ${plain(g.su
 - [FAQ](${url('/faq/')})
 - [License](${url('/license/')})
 - [Blog](${url('/blog/')})
+${posts.map((po) => `- [${po.title}](${url(`/blog/${po.slug}/`)}): ${plain(po.description)}`).join('\n')}
 - [Free Core Keepers demo](${url('/#newsletter')}): email signup; the demo link is sent by email (not public)
 
 ## Optional
@@ -723,6 +727,7 @@ Page: ${url(`/genres/${g.slug}/`)} · Demo: ${g.demo === GATED ? 'free by email 
 
 ## Demos
 Each demo on ${url('/play/')} was built by following that genre's prompt sequence one step at a time, with an automated browser test after each step.
+${llmsDemos.map((g) => `- ${g.name} demo: ${url(`/play/${g.demo}/`)}`).join('\n')}
 
 ## FAQ
 ${C.faq.map(([q, a]) => `**${q}**\n${plain(a)}`).join('\n\n')}
