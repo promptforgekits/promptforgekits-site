@@ -1,15 +1,15 @@
 {
   "/": {
-    "hash": "446087b8bdec785d",
-    "date": "2026-10-21"
+    "hash": "8dd173a81ae15dbd",
+    "date": "2026-10-24"
   },
   "/arcade/": {
     "hash": "b86d5e990e3efb17",
     "date": "2026-10-21"
   },
   "/assistant-kit/": {
-    "hash": "e3b95ee5941c9b83",
-    "date": "2026-10-21"
+    "hash": "93d58e27db8bb438",
+    "date": "2026-10-24"
   },
   "/blog/": {
     "hash": "d5f21807f7cb0d1e",
@@ -24,8 +24,8 @@
     "date": "2026-10-15"
   },
   "/faq/": {
-    "hash": "d801e4fcfa4232af",
-    "date": "2026-10-20"
+    "hash": "1a773e9d4c3c8b0c",
+    "date": "2026-10-24"
   },
   "/genres/": {
     "hash": "19310702e10a7c86",
@@ -64,23 +64,27 @@
     "date": "2026-10-21"
   },
   "/play/idle/": {
-    "hash": "40df25c9f8399f2a",
-    "date": "2026-10-21"
+    "hash": "33dc864e09a92c10",
+    "date": "2026-10-24"
   },
   "/play/platformer/": {
-    "hash": "aa67dfddfec05342",
-    "date": "2026-10-21"
+    "hash": "95f994547ba1989e",
+    "date": "2026-10-24"
   },
   "/play/puzzle/": {
-    "hash": "883597561133e94a",
-    "date": "2026-10-21"
+    "hash": "52f15585e6614bf9",
+    "date": "2026-10-24"
   },
   "/play/roguelite/": {
-    "hash": "4b2cf8072456b766",
-    "date": "2026-10-23"
+    "hash": "cc47a960ffa9d5e3",
+    "date": "2026-10-24"
   },
   "/play/runner/": {
-    "hash": "7214089f12085e5c",
-    "date": "2026-10-21"
+    "hash": "933f9e42c018fd93",
+    "date": "2026-10-24"
+  },
+  "/whats-new/": {
+    "hash": "4cee51d7131fdc89",
+    "date": "2026-10-24"
   }
 }

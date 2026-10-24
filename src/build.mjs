@@ -9,6 +9,7 @@ import * as FP from './freepack.mjs';
 import { createLastmod } from './lastmod.mjs';
 import { AK, akTeam, akIncluded, akSteps, akFaq } from './assistant-kit.mjs';
 import { listings as ARCADE } from './arcade.mjs';
+import { WN, whatsNew } from './whatsnew.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'dist');
@@ -124,7 +125,7 @@ ${body}
 </main>
 <footer class="ftr"><div class="wrap">
 <div><h2>${esc(cfg.brand)}</h2><p>${esc(cfg.description)}</p><p><strong class="gold">${esc(cfg.tagline)}</strong></p></div>
-<nav aria-label="Footer"><h2>Site</h2><ul><li><a href="/">Home</a></li><li><a href="/play/">Play demos</a></li><li><a href="/genres/">Genres</a></li><li><a href="/faq/">FAQ</a></li><li><a href="/license/">License</a></li><li><a href="/blog/">Blog</a></li><li><a href="/assistant-kit/">Assistant Team Starter Kit</a></li><li><a href="/arcade/">Arcade</a></li></ul></nav>
+<nav aria-label="Footer"><h2>Site</h2><ul><li><a href="/">Home</a></li><li><a href="/play/">Play demos</a></li><li><a href="/genres/">Genres</a></li><li><a href="/faq/">FAQ</a></li><li><a href="/license/">License</a></li><li><a href="/blog/">Blog</a></li><li><a href="/assistant-kit/">Assistant Team Starter Kit</a></li><li><a href="/arcade/">Arcade</a></li><li><a href="/whats-new/">What's new</a></li></ul></nav>
 <div><h2>Contact</h2><ul><li><a href="https://x.com/${cfg.xHandle}">X: @${cfg.xHandle}</a></li><li><a href="${cfg.githubUrl}">GitHub</a></li><li>${cfg.supportEmail ? support : 'Support email: coming soon'}</li><li><a href="/llms.txt">llms.txt</a></li></ul></div>
 <p class="legal">© 2026 ${esc(cfg.brand)}. Demos and screenshots are built with the kit. Phaser is MIT-licensed; Lilita One is SIL OFL 1.1 (<a href="/fonts/OFL.txt">license</a>).</p>
 </div></footer>
@@ -142,7 +143,7 @@ const factsBlock = () => `<section id="facts" aria-labelledby="facts-h"><div cla
 <dt>Genres</dt><dd>Platformer, top-down roguelite, idle/clicker, endless runner, puzzle, tower defense</dd>
 <dt>License</dt><dd>Use the starter code in your own games, including commercial ones. Don't resell or redistribute the kit. <a href="/license/">Full terms</a></dd>
 <dt>Refund</dt><dd>7-day refund if the kit didn't work for you (may be declined if the kit has clearly been copied or reused)</dd>
-<dt>Updates</dt><dd>Free for life</dd>
+<dt>Updates</dt><dd>Free for life (<a href="/whats-new/">what's new</a>)</dd>
 <dt>Requirements</dt><dd>Mac, Windows, or Linux; Node.js 18+; Git; an AI coding tool (Cursor, Claude Code, Windsurf, or Copilot work best)</dd>
 <dt>Where to buy</dt><dd>Direct from this site (secure checkout by Stripe)</dd>
 <dt>Seller</dt><dd>${esc(cfg.brand)}, ${esc(cfg.siteUrl.replace('https://', ''))}, ${xLink}</dd>
@@ -413,6 +414,27 @@ add('/license/', {
 </div></section>`,
 });
 
+// What's new in the kit: dated changes to both kits, from ops/CHANGELOG.md + git log (src/whatsnew.mjs). No prices, no store links.
+const wnKit = { bgsk: [P.shortName, '/'], atsk: [AK.shortName, '/assistant-kit/'] };
+const wnMd = (x) => md(x).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+const wnDate = (d) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+add('/whats-new/', {
+  title: `What's new in the kit | ${cfg.brand}`,
+  description: `Dated list of every change to the ${P.shortName} and the ${AK.shortName}: new prompts, fixes, music, menus and guide updates. Updates are free for life.`,
+  sources: ['src/whatsnew.mjs'],
+  jsonld: [crumbLd([['Home', '/'], ["What's new", '/whats-new/']])],
+  body: `<section class="page-hero"><div class="wrap prose">
+<nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / What's new</nav>
+<h1>What's new in <span class="gold">the kit</span></h1>
+<p class="lead">${esc(WN.intro)}</p>
+</div></section>
+<section style="padding-top:12px"><div class="wrap prose">
+${whatsNew.map((e) => `<article class="wn" id="d-${e.date}"><h2 style="font-size:1.5rem"><time datetime="${e.date}">${wnDate(e.date)}</time></h2>
+${e.groups.map((g) => `<p class="eyebrow" style="margin:14px 0 4px"><a href="${wnKit[g.kit][1]}">${esc(wnKit[g.kit][0])}</a></p><ul class="checks">${g.items.map((x) => `<li>${wnMd(x)}</li>`).join('')}</ul>`).join('\n')}</article>`).join('\n')}
+<p class="note">Questions about an update? Reach us at ${xLink} (${support}).</p>
+</div></section>`,
+});
+
 add('/blog/', {
   title: `Blog: shipping games with AI coding tools | ${cfg.brand}`,
   description: 'Notes from Prompt Forge Kits on building and shipping real projects with AI coding tools, starting with browser games.',
@@ -492,7 +514,7 @@ ${akBuy()}
 <section id="bundle" class="band" aria-labelledby="bundle-h"><div class="wrap pricing">
 <div><p class="eyebrow">Bundle</p><h2 id="bundle-h">Make a game. <span class="gold">Run the shop.</span></h2>
 <p class="lead">Get the ${esc(P.shortName)} and the ${esc(AK.shortName)} together for $${AK.bundle.price} instead of $${AK.bundle.separate}. Build and publish a browser game with AI, then let an assistant team help you run its launch, posts and feedback.</p>
-<p class="sub">Two separate downloads, emailed right after payment. Each kit keeps its own license, free updates and 7-day refund.</p></div>
+<p class="sub">Two separate downloads, emailed right after payment. Each kit keeps its own license, free updates (<a href="/whats-new/">see what's new</a>) and 7-day refund.</p></div>
 <div class="price-card"><p class="eyebrow" style="margin:0 0 8px">Bundle: both kits</p><p class="amt">$${AK.bundle.price}</p><p class="note">USD, one-time · instead of $${AK.bundle.separate}</p>
 <ul class="checks"><li>${esc(P.name)}</li><li>${esc(AK.name)}</li><li><strong>Free lifetime updates for both</strong></li></ul>
 ${bundleBuy()}
@@ -626,7 +648,11 @@ for (const g of C.genres.filter((x) => demoAvailable(x.demo))) {
     <meta name="twitter:title" content="${esc(dTitle)}" /><meta name="twitter:description" content="${esc(dDesc)}" /><meta name="twitter:image" content="${img}" />
     <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...demoGameLd(g), publisher: { '@type': 'Organization', '@id': url('/#org'), name: cfg.brand, url: url('/') } }).replace(/</g, '\\u003c')}</script>`;
   const head = `<title>${esc(dTitle)}</title>\n    <meta name="description" content="${esc(dDesc)}" />\n    <link rel="canonical" href="${url(`/play/${g.demo}/`)}" />${share}`;
-  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/<title>[\s\S]*?<\/title>/, head));
+  // Analytics on the demo page too, but only when the demo is opened on its own: inside the /play/ page's
+  // iframe the parent page is already counted, so the framed copy stays silent (no double page view).
+  const demoAnalytics = cfg.analytics.enabled && cfg.analytics.headSnippet && g.demo !== GATED ? `
+    <script>if(window.top===window){window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};window.va('beforeSend',function(e){return Object.assign({},e,{url:e.url.split(/[?#]/)[0]})});var s=document.createElement('script');s.defer=true;s.src='/_vercel/insights/script.js';document.head.appendChild(s)}</script>` : '';
+  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/<title>[\s\S]*?<\/title>/, head + demoAnalytics));
 }
 for (const pg of pages) {
   const file = pg.path.endsWith('.html') ? path.join(OUT, pg.path) : path.join(OUT, pg.path, 'index.html');
@@ -689,6 +715,7 @@ ${llmsDemos.map((g) => `- [${g.name} demo](${url(`/play/${g.demo}/`)}): ${plain(
 ${C.genres.map((g) => `- [${g.name}](${url(`/genres/${g.slug}/`)}): ${plain(g.summary)}`).join('\n')}
 - [Arcade](${url('/arcade/')}): free browser games, link only (today: our own five demos); Arcade weekly email signup; suggest a game
 - [Assistant Team Starter Kit](${url('/assistant-kit/')}): AI assistant team templates for a small online product business ($${AK.price}; bundle with the game kit $${AK.bundle.price})
+- [What's new](${url('/whats-new/')}): dated changes to both kits (new prompts, fixes, music, menus, guide updates)
 - [FAQ](${url('/faq/')})
 - [License](${url('/license/')})
 - [Blog](${url('/blog/')})

@@ -47,10 +47,16 @@ export default {
     googleVerification: '',
   },
 
-  // PLACEHOLDER: analytics, OFF by default. Paste the provider's snippet
-  // (Plausible, Fathom, Vercel Web Analytics, etc.) and set enabled: true.
+  // Analytics: Vercel Web Analytics (cookieless, no personal data; counts page views).
+  // Plain-HTML snippet from Vercel's docs; the script only answers once Web Analytics is switched on for the
+  // project in the Vercel dashboard (Project -> Analytics -> Enable). Until then /_vercel/insights/script.js 404s.
+  // beforeSend drops ?query and #hash from every URL, so Stripe's /thanks/?session_id=... is never recorded.
+  // Speed Insights is NOT used. Set enabled:false to remove the snippet from every page.
   analytics: {
-    enabled: false,
-    headSnippet: '', // e.g. '<script defer data-domain="promptforgekits.com" src="https://plausible.io/js/script.js"></script>'
+    enabled: true,
+    headSnippet:
+      '<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};' +
+      "window.va('beforeSend',function(e){return Object.assign({},e,{url:e.url.split(/[?#]/)[0]})});</script>" +
+      '<script defer src="/_vercel/insights/script.js"></script>',
   },
 };
