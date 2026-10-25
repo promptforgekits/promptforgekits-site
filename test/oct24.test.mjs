@@ -42,18 +42,18 @@ test("What's new: in the sitemap with a real lastmod, linked from the footer of 
   assert.match(d('llms.txt'), /\[What's new\]\(https:\/\/promptforgekits\.com\/whats-new\/\)/);
 });
 
-test('Analytics: Vercel Web Analytics snippet on every HTML page (incl. the 5 demos), no Speed Insights', () => {
-  const files = htmlFiles(DIST);
-  assert.ok(files.length >= 20);
+test('Analytics: OFF (Gibs, Oct 25: skipped). No Vercel Insights / Speed Insights script anywhere in the built output', () => {
+  const cfg = fs.readFileSync(new URL('../site.config.mjs', import.meta.url), 'utf8');
+  assert.match(cfg, /analytics: \{\s*enabled: false/);
+  const all = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? all(path.join(dir, e.name)) : [path.join(dir, e.name)]);
+  const files = all(DIST).filter((f) => /\.(html|js|txt|xml|json)$/.test(f));
+  assert.ok(files.length >= 25);
   for (const f of files) {
     const h = fs.readFileSync(f, 'utf8');
-    assert.equal((h.match(/\/_vercel\/insights\/script\.js/g) || []).length, 1, f);
-    assert.match(h, /window\.va\('beforeSend'/, `${f}: strips ?query/#hash`);
-    assert.doesNotMatch(h, /speed-insights/i, f);
-    assert.doesNotMatch(h, /analytics: off/, f);
+    assert.doesNotMatch(h, /_vercel\/insights|vercel-insights|speed-insights|window\.va\b|window\.vaq/i, f);
   }
-  for (const g of PUBLIC) assert.match(d(`play/${g}/index.html`), /if\(window\.top===window\)/, `${g}: only counted when not framed by /play/`);
-  assert.ok(!fs.existsSync(path.join(DIST, '_vercel')), 'no local stand-in for the Vercel script in dist');
+  for (const f of htmlFiles(DIST).filter((f) => !f.includes(`${path.sep}play${path.sep}`))) assert.match(fs.readFileSync(f, 'utf8'), /<!-- analytics: off/, f);
+  assert.ok(!fs.existsSync(path.join(DIST, '_vercel')), 'no _vercel folder in dist');
 });
 
 test('Made with link: in each public demo bundle, points at the kit site in a new tab; Core Keepers stays private', () => {
@@ -64,8 +64,11 @@ test('Made with link: in each public demo bundle, points at the kit site in a ne
     assert.match(js, /https:\/\/promptforgekits\.com\//, g);
     assert.match(js, /pfk-made-with/, g);
     assert.match(js, /_blank/, g);
+    assert.match(js, /pause/, g); // hidden while Options is open
     assert.match(js, /noopener/, g);
   }
+  const idleSrc = '/workspace/prompt-tests/idle/src/scenes/MenuScene.js'; // game source lives outside this repo (checked when present)
+  if (fs.existsSync(idleSrc)) assert.match(fs.readFileSync(idleSrc, 'utf8'), /showMadeWithLink\(this, \{ delayMs: 300, align: 'left'/, 'idle menu link (idle has no game over)');
   assert.ok(!fs.existsSync(path.join(DIST, 'play', 'towerdefense')), 'towerdefense not public');
   assert.ok(!fs.existsSync(new URL('../public/play/towerdefense', import.meta.url)), 'towerdefense not in public/');
 });

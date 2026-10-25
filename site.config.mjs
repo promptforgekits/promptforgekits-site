@@ -53,7 +53,7 @@ export default {
   // beforeSend drops ?query and #hash from every URL, so Stripe's /thanks/?session_id=... is never recorded.
   // Speed Insights is NOT used. Set enabled:false to remove the snippet from every page.
   analytics: {
-    enabled: true,
+    enabled: false, // Gibs Oct 25: analytics skipped (not enabled in Vercel). Set true only after enabling Web Analytics there.
     headSnippet:
       '<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};' +
       "window.va('beforeSend',function(e){return Object.assign({},e,{url:e.url.split(/[?#]/)[0]})});</script>" +
