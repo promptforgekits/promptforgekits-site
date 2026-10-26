@@ -418,11 +418,23 @@ add('/license/', {
 const wnKit = { bgsk: [P.shortName, '/'], atsk: [AK.shortName, '/assistant-kit/'] };
 const wnMd = (x) => md(x).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 const wnDate = (d) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+// Machine-readable freshness (2026-10-26): when the kits last changed and what each dated entry covers.
+// Dates come only from whatsNew (newest first); each entry links to its #d-<date> anchor on the page.
+const wnLd = () => ({
+  '@context': 'https://schema.org', '@type': 'WebPage', '@id': url('/whats-new/#page'), url: url('/whats-new/'),
+  name: WN.title, inLanguage: 'en',
+  datePublished: whatsNew[whatsNew.length - 1].date, dateModified: whatsNew[0].date,
+  publisher: { '@id': url('/#org') },
+  about: [{ '@id': url('/#product') }, { '@id': url('/assistant-kit/#product') }],
+  mainEntity: { '@type': 'ItemList', name: `${WN.title}: dated updates`, itemListOrder: 'https://schema.org/ItemListOrderDescending', numberOfItems: whatsNew.length,
+    itemListElement: whatsNew.map((e, i) => ({ '@type': 'ListItem', position: i + 1, url: url(`/whats-new/#d-${e.date}`),
+      name: `${wnDate(e.date)}: ${[...new Set(e.groups.map((g) => wnKit[g.kit][0]))].join(' and ')} (${e.groups.reduce((n, g) => n + g.items.length, 0)} changes)` })) },
+});
 add('/whats-new/', {
   title: `What's new in the kit | ${cfg.brand}`,
   description: `Dated list of every change to the ${P.shortName} and the ${AK.shortName}: new prompts, fixes, music, menus and guide updates. Updates are free for life.`,
   sources: ['src/whatsnew.mjs'],
-  jsonld: [crumbLd([['Home', '/'], ["What's new", '/whats-new/']])],
+  jsonld: [crumbLd([['Home', '/'], ["What's new", '/whats-new/']]), wnLd()],
   body: `<section class="page-hero"><div class="wrap prose">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / What's new</nav>
 <h1>What's new in <span class="gold">the kit</span></h1>
@@ -682,7 +694,7 @@ const factsTxt = `## Facts
 - Genres: platformer, top-down roguelite, idle/clicker, endless runner, Sokoban-style puzzle, tower defense ("Core Keepers")
 - License: use the starter code in your own games, including commercial games; do not resell, share, or redistribute the kit, prompts, or guides, or repackage them into another kit, template, course, or prompt pack
 - Refund: 7-day refund if the kit didn't work for you; may be declined if the kit has clearly been copied or reused; free updates
-- Updates: free for life
+- Updates: free for life; last kit update ${whatsNew[0].date}, every change dated at ${url('/whats-new/')}
 - Requirements: Mac, Windows, or Linux; Node.js 18+; Git; an AI coding tool that opens a local folder (Cursor, Claude Code, Windsurf, or VS Code + Copilot). Lovable and Bolt are supported with caveats.
 - Assets: no image files (art is drawn in code); one original background music track, PFK Theme by Prompt Forge Kits (.ogg/.m4a/.mp3, 37.5 s loop), usable in your own games including commercial ones but not resold on its own (LICENSE-MUSIC.txt); sound effects generated in code; bundled Lilita One font (SIL OFL 1.1)
 - In every game: a How to play screen with the controls and a Start button before play; an Options menu with separate Music and Sound FX on/off switches
