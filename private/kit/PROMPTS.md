@@ -507,9 +507,12 @@ WAVES = { total: 20, countBase: 6, countPerWave: 2, countCap: 40, hpGrowth: 1.17
 - Before wave 1 nothing spawns until the player clicks the "Next wave" chip. After a wave is cleared, a countdown of countdown seconds starts; at 0 the next wave starts by itself.
 - The "Next wave" chip sits next to the spawn gate: a small panel with the wave number and one mini icon + count per enemy type in that wave. Hovering it lists the wave's enemies by name ("6 Grunt, 2 Dasher"). Clicking it during the countdown sends the wave early and pays +1 gold per whole second left (show "+N" in gold).
 - HUD top-left: add "Wave X/20" in white after the gold.
+- Keep one waveState: 'ready' (before wave 1), 'running', 'countdown', 'done' (after wave 20). A boss spawns 2 s after the wave's last other spawn.
+- When a wave ends (the common bug here): a wave is cleared only when its spawn list is used up AND no enemy is alive. The list has gaps on purpose (3 s after an unlock enemy, 2 s before a boss), so "no enemies on screen" alone ends the wave too early: the bonus is paid, the countdown starts, and the rest of the wave (even the boss) never comes. Pay clearBonus once per wave.
+- The chip is hidden and ignores clicks while a wave is running, so a click (or a double click) never starts two waves at once or pays the early bonus twice. After wave 20 is cleared, set 'done': no countdown and no wave 21 (P13 adds the win screen).
 Do not change unrelated code; list what you changed.
 ```
-Test: wave 1 is 8 grunts and starts only on click. The chip previews wave 2 and its countdown; sending early adds gold. Wave 4 shows the Dasher tip.
+Test: wave 1 is 8 grunts and starts only on click. The chip previews wave 2 and its countdown; sending early adds gold. Wave 4 shows the Dasher tip; kill that first Dasher within 3 s: the wave keeps going (no +10, no countdown, no chip) and the rest of wave 4 still arrives. On wave 10 the boss still comes after the others are dead. Double-click the chip in a countdown: one wave starts and one bonus is paid. Clear wave 20: no countdown starts.
 
 **P9. Recoverable Cores**
 ```
@@ -518,7 +521,7 @@ Replace "removed at the vault" with Recoverable Cores (CORES in settings.js: { f
 - If an enemy carrying a core dies, the core drops there and floats back toward the vault along the path at floatSpeed (gold dot with a soft pulse). Any enemy that is not carrying a core and touches a floating core (pickupRadius) picks it up and carries it back to the gate.
 - A core that reaches the spawn gate on an enemy is lost for good (flash the gate red). A floating core that reaches the vault is returned.
 - HUD top-left: the first item is "cores at home / cores not lost" with a gold hexagon icon, e.g. "6/8". Update the vault's ring of dots to show how many are home.
-- Game over (GameOverScene, won: false) when every core is lost for good. A wave only counts as cleared when no enemies are left alive (floating cores may still be on their way home).
+- Game over (GameOverScene, won: false) when every core is lost for good. A wave still only counts as cleared when its spawn list is used up and no enemies are left alive (floating cores may still be on their way home).
 Do not change unrelated code; list what you changed.
 ```
 Test: let a grunt through: the HUD shows 7/8 and it walks back with a core. Kill it on the way back: the core floats home and the HUD shows 8/8 again. Let one escape: 7/7.
