@@ -1,7 +1,7 @@
 {
   "/": {
-    "hash": "8dd173a81ae15dbd",
-    "date": "2026-10-24"
+    "hash": "cb9c28ea2b04a06e",
+    "date": "2026-10-26"
   },
   "/arcade/": {
     "hash": "b86d5e990e3efb17",
@@ -24,8 +24,8 @@
     "date": "2026-10-15"
   },
   "/faq/": {
-    "hash": "1a773e9d4c3c8b0c",
-    "date": "2026-10-24"
+    "hash": "ff89fb6ce1038828",
+    "date": "2026-10-26"
   },
   "/genres/": {
     "hash": "19310702e10a7c86",
@@ -84,7 +84,7 @@
     "date": "2026-10-25"
   },
   "/whats-new/": {
-    "hash": "10e5f1a82fefba15",
+    "hash": "4518aed84ff63b0f",
     "date": "2026-10-26"
   }
 }

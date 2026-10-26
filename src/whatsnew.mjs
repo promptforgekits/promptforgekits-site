@@ -10,6 +10,15 @@ export const WN = {
 // kit: 'bgsk' = Browser Game Starter Kit, 'atsk' = Assistant Team Starter Kit
 export const whatsNew = [
   {
+    date: '2026-10-26',
+    groups: [
+      { kit: 'bgsk', items: [
+        '**Tower Defense (Core Keepers), P8 Wave manager:** clearer prompt. A wave now only ends when all of its enemies have arrived and been beaten, so a wave can\u2019t end early and the boss waves can\u2019t be skipped. The next-wave button can\u2019t start two waves at once or pay the wave bonus twice, and no countdown starts after the final wave.',
+        'GUIDE.pdf rebuilt with the new prompt (now 49 pages).',
+      ] },
+    ],
+  },
+  {
     date: '2026-10-23',
     groups: [
       { kit: 'atsk', items: [

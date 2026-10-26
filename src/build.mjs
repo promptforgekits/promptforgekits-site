@@ -22,8 +22,9 @@ const today = new Date().toISOString().slice(0, 10);
 
 // ── helpers ────────────────────────────────────────────────────────────────
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const md = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
-const plain = (s) => String(s).replace(/`/g, '');
+// [text](/site-path/) -> internal link (site-relative paths only); plain() turns it into "text (absolute URL)".
+const md = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\[([^\]]+)\]\((\/[^)\s]*)\)/g, '<a href="$2">$1</a>');
+const plain = (s) => String(s).replace(/`/g, '').replace(/\[([^\]]+)\]\((\/[^)\s]*)\)/g, (_, t, p) => `${t} (${cfg.siteUrl}${p})`);
 const url = (p) => cfg.siteUrl + p;
 const storeLive = !!cfg.stores.direct?.live;
 const support = cfg.supportEmail
