@@ -451,7 +451,9 @@ ${e.groups.map((g) => `<p class="eyebrow" style="margin:14px 0 4px"><a href="${w
 add('/blog/', {
   title: `Blog: shipping games with AI coding tools | ${cfg.brand}`,
   description: 'Notes from Prompt Forge Kits on building and shipping real projects with AI coding tools, starting with browser games.',
-  jsonld: [crumbLd([['Home', '/'], ['Blog', '/blog/']])],
+  jsonld: [{ '@context': 'https://schema.org', '@type': 'Blog', '@id': url('/blog/#blog'), name: `${cfg.brand} blog`, url: url('/blog/'), inLanguage: 'en', publisher: { '@id': url('/#org') },
+    blogPost: posts.map((po) => ({ '@type': 'BlogPosting', headline: po.title, description: po.description, url: url(`/blog/${po.slug}/`), mainEntityOfPage: url(`/blog/${po.slug}/`), datePublished: po.date, dateModified: po.date, author: { '@id': url('/#org') } })) },
+    crumbLd([['Home', '/'], ['Blog', '/blog/']])],
   body: `<section class="page-hero"><div class="wrap prose">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Blog</nav>
 <h1>Blog</h1><p class="lead">Practical notes on building and shipping with AI coding tools.</p>
