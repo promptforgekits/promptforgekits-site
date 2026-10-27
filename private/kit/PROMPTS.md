@@ -68,8 +68,12 @@ Test: Jump on an enemy from above = it vanishes and you bounce. Walk into one = 
 **P5. Lives and respawn**
 ```
 Give the player 3 lives. Losing a life respawns them at the level start (or last checkpoint later) instead of ending the game. Show lives in the HUD with a label ("Lives: 3"). Game over only at 0 lives.
+Put every life loss (walker, spikes, pit) in one loseLife() method:
+- Respawn by moving the player back (setPosition and setVelocity(0, 0)), not by restarting the scene, so score, collected coins, defeated enemies and (later) the checkpoint stay as they are.
+- One touch costs exactly one life. Overlaps fire every frame and once per hazard touched, so touching two at once (a walker over spikes, two spikes side by side) would cost two. After losing a life the player blinks and is safe for 1 second (hurtGraceMs in config.js): walker and spike hits in that time are ignored. Stomping still works.
+- A pit always costs a life and respawns, even in the safe time (otherwise the player hangs below the screen until it ends).
 ```
-Test: Die twice: you respawn and the HUD shows 1 life left. Die a third time: game over screen.
+Test: Die twice: you respawn and the HUD shows 1 life left, with your score and collected coins kept. Touch two hazards at once: only 1 life is lost and the player blinks. Die a third time: game over screen.
 
 **P6. Checkpoints**
 ```
