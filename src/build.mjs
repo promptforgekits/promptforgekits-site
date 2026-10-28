@@ -327,7 +327,19 @@ ${newsletterBlock()}`,
 add('/genres/', {
   title: `6 genre prompt sequences for AI game dev | ${cfg.brand}`,
   description: 'Overview of the six genre prompt sequences in the Browser Game Starter Kit: tower defense, platformer, top-down roguelite, idle/clicker, endless runner, and Sokoban-style puzzle.',
-  jsonld: [crumbLd([['Home', '/'], ['Genres', '/genres/']])],
+  // ItemList of the six sequences in the visible card order; each entry points at its genre page's #steps list
+  // (same name and step count as that page). No price (added 2026-10-28).
+  jsonld: [{
+    '@context': 'https://schema.org', '@type': 'ItemList', '@id': url('/genres/#sequences'),
+    name: `The ${C.genres.length} genre prompt sequences in the ${P.name}`,
+    description: 'Every sequence starts with the same kickoff prompt (Prompt 0), then one prompt at a time, each with a browser test checkpoint.',
+    url: url('/genres/'), numberOfItems: C.genres.length, itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    isPartOf: { '@type': 'Product', '@id': url('/#product'), name: P.name },
+    itemListElement: C.genres.map((g, i) => ({
+      '@type': 'ListItem', position: i + 1, name: `${g.name} prompt sequence (${countLabel(g)})`, url: url(`/genres/${g.slug}/`),
+      item: { '@type': 'ItemList', '@id': url(`/genres/${g.slug}/#steps`), numberOfItems: stepTotal(g) },
+    })),
+  }, crumbLd([['Home', '/'], ['Genres', '/genres/']])],
   body: `<section class="page-hero"><div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Genres</nav>
 <h1>Six genres, <span class="gold">one workflow</span></h1>
