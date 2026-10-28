@@ -269,9 +269,10 @@ Test: Obstacles come steadily; hitting one goes to game over. Check with console
 
 **P3. Distance score**
 ```
-Score = distance in meters (world speed * time / 50). Show it in the HUD as "Distance: N m"; pass it to GameOverScene and keep the high score logic.
+Score = distance in meters: every frame add world speed * delta / 1000 to a distance total and show floor(distance / 50), not world speed * total time (once P4 speeds the world up, that makes the score jump). Show it in the HUD as "Distance: N m"; pass it to GameOverScene and keep the high score logic (Best saved through storage.js only when beaten, "NEW BEST!" when it is).
+Pitfall: the player is clicking, tapping or holding Space to jump when they die, so that press would skip the game over screen at once. In GameOverScene ignore clicks and keys for the first 800 ms (gameOverLockMs in config.js), only then show "SPACE / click: play again     M: menu" and register the restart, and restart only on a new key press (ignore keydown events with event.repeat: a held key repeats).
 ```
-Test: Score climbs smoothly; game over shows it and Best updates.
+Test: Score climbs smoothly; game over shows it and Best updates. Die while clicking fast, then again while holding Space: both times the game over screen stays up with your distance. A click or a new Space press about 1 s later starts a new run at 0 m.
 
 **P4. Speed ramp**
 ```
