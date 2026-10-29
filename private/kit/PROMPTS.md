@@ -150,8 +150,9 @@ Test: Room 2 has more enemies than room 1; the HUD counter goes up. In the conso
 **P6. Second enemy type**
 ```
 Add a shooter enemy that keeps its distance and fires slow bullets at the player every 2 seconds. Mix it into waves starting from room 3 (every 3rd slot of wavePlan). Name the first shooter on screen ("Shooter: dodge its shots"). Keep up with the player: its fire interval shrinks by 60 ms per room after room 3 (never below 1100 ms) and its bullet speed grows 4 per room (max 240). Also add two more enemy types to wavePlan so late rooms are not just more chasers: a Dasher (red triangle, 2 HP; walks, pauses 0.6 s flashing white, dashes at where you were, recovers; from room 4; name "Dasher: dodge the rush") and a Brute (red square, scaled 1.7x, 9 HP, slow, touch = -2 HP; from room 8; name "Brute: slow, tough, -2 HP"). From room 7, spare enemy budget (room*2+2 minus the 14 cap) makes Elites: a normal enemy with 2.5x HP, 1.15x speed, 1.3x size, purple tint, touch = -2 HP, name "Elite: purple = tougher, -2 HP"; from room 10 there is always at least one more elite every 3rd room.
+Enemy bullets: put them in one enemyBullets group that collides with the walls (destroy on hit) and also destroy each one after 4 s, so missed shots never fly through the walls or pile up off-screen. Pitfall: a looping time.addEvent per shooter keeps firing after the shooter dies (ghost shots from where it died). Instead give each shooter a nextShotAt time and fire from update() only for shooters that are still alive (from P7 on, update() skips this while the upgrade cards are open). When the last enemy of a room dies, clear enemyBullets at once, so a shot still in the air can't hit you after the room is cleared (from P7: right after you Confirm a card).
 ```
-Test: From room 3, some enemies shoot at you; their bullets damage you.
+Test: From room 3, some enemies shoot at you; their bullets damage you. Shots that miss vanish on the walls. Kill a shooter: it never fires again. Kill the last enemy while a shot is flying at you: the shot vanishes and never hits you (after P7: not even right after you Confirm a card).
 
 **P7. Upgrade choice**
 ```
