@@ -661,6 +661,7 @@ fs.cpSync(PUB, OUT, { recursive: true });
 // Demo pages under /play/<demo>/ are raw game builds titled "My Browser Game": give each a real title, description and canonical (dist only).
 // Public demos also get a share card (Open Graph + X card with the game's own screenshot) and their VideoGame JSON-LD,
 // so a demo link posted on X/Discord shows a preview and search/AI crawlers can read what the page is.
+// Plus a BreadcrumbList (Home > Play > <game> demo, same trail as the /play/ hub) so the demo pages sit under /play/ in search (2026-10-29).
 for (const g of C.genres.filter((x) => demoAvailable(x.demo))) {
   const f = path.join(OUT, 'play', g.demo, 'index.html');
   const dTitle = `${g.game} demo: free browser game built with AI prompts | ${cfg.brand}`;
@@ -673,7 +674,8 @@ for (const g of C.genres.filter((x) => demoAvailable(x.demo))) {
     <meta property="og:image:width" content="1280" /><meta property="og:image:height" content="720" /><meta property="og:image:alt" content="${esc(`Screenshot of the ${g.game.toLowerCase()} demo`)}" />
     <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="@${cfg.xHandle}" />
     <meta name="twitter:title" content="${esc(dTitle)}" /><meta name="twitter:description" content="${esc(dDesc)}" /><meta name="twitter:image" content="${img}" />
-    <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...demoGameLd(g), publisher: { '@type': 'Organization', '@id': url('/#org'), name: cfg.brand, url: url('/') } }).replace(/</g, '\\u003c')}</script>`;
+    <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...demoGameLd(g), publisher: { '@type': 'Organization', '@id': url('/#org'), name: cfg.brand, url: url('/') } }).replace(/</g, '\\u003c')}</script>
+    <script type="application/ld+json">${JSON.stringify(crumbLd([['Home', '/'], ['Play', '/play/'], [`${g.game} demo`, `/play/${g.demo}/`]])).replace(/</g, '\\u003c')}</script>`;
   const head = `<title>${esc(dTitle)}</title>\n    <meta name="description" content="${esc(dDesc)}" />\n    <link rel="canonical" href="${url(`/play/${g.demo}/`)}" />${share}`;
   // Analytics on the demo page too, but only when the demo is opened on its own: inside the /play/ page's
   // iframe the parent page is already counted, so the framed copy stays silent (no double page view).
