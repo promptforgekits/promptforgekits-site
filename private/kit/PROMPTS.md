@@ -68,8 +68,12 @@ Test: Jump on an enemy from above = it vanishes and you bounce. Walk into one = 
 **P5. Lives and respawn**
 ```
 Give the player 3 lives. Losing a life respawns them at the level start (or last checkpoint later) instead of ending the game. Show lives in the HUD with a label ("Lives: 3"). Game over only at 0 lives.
+Put every life loss (walker, spikes, pit) in one loseLife() method:
+- Respawn by moving the player back (setPosition and setVelocity(0, 0)), not by restarting the scene, so score, collected coins, defeated enemies and (later) the checkpoint stay as they are.
+- One touch costs exactly one life. Overlaps fire every frame and once per hazard touched, so touching two at once (a walker over spikes, two spikes side by side) would cost two. After losing a life the player blinks and is safe for 1 second (hurtGraceMs in config.js): walker and spike hits in that time are ignored. Stomping still works.
+- A pit always costs a life and respawns, even in the safe time (otherwise the player hangs below the screen until it ends).
 ```
-Test: Die twice: you respawn and the HUD shows 1 life left. Die a third time: game over screen.
+Test: Die twice: you respawn and the HUD shows 1 life left, with your score and collected coins kept. Touch two hazards at once: only 1 life is lost and the player blinks. Die a third time: game over screen.
 
 **P6. Checkpoints**
 ```
@@ -146,8 +150,9 @@ Test: Room 2 has more enemies than room 1; the HUD counter goes up. In the conso
 **P6. Second enemy type**
 ```
 Add a shooter enemy that keeps its distance and fires slow bullets at the player every 2 seconds. Mix it into waves starting from room 3 (every 3rd slot of wavePlan). Name the first shooter on screen ("Shooter: dodge its shots"). Keep up with the player: its fire interval shrinks by 60 ms per room after room 3 (never below 1100 ms) and its bullet speed grows 4 per room (max 240). Also add two more enemy types to wavePlan so late rooms are not just more chasers: a Dasher (red triangle, 2 HP; walks, pauses 0.6 s flashing white, dashes at where you were, recovers; from room 4; name "Dasher: dodge the rush") and a Brute (red square, scaled 1.7x, 9 HP, slow, touch = -2 HP; from room 8; name "Brute: slow, tough, -2 HP"). From room 7, spare enemy budget (room*2+2 minus the 14 cap) makes Elites: a normal enemy with 2.5x HP, 1.15x speed, 1.3x size, purple tint, touch = -2 HP, name "Elite: purple = tougher, -2 HP"; from room 10 there is always at least one more elite every 3rd room.
+Enemy bullets: put them in one enemyBullets group that collides with the walls (destroy on hit) and also destroy each one after 4 s, so missed shots never fly through the walls or pile up off-screen. Pitfall: a looping time.addEvent per shooter keeps firing after the shooter dies (ghost shots from where it died). Instead give each shooter a nextShotAt time and fire from update() only for shooters that are still alive (from P7 on, update() skips this while the upgrade cards are open). When the last enemy of a room dies, clear enemyBullets at once, so a shot still in the air can't hit you after the room is cleared (from P7: right after you Confirm a card).
 ```
-Test: From room 3, some enemies shoot at you; their bullets damage you.
+Test: From room 3, some enemies shoot at you; their bullets damage you. Shots that miss vanish on the walls. Kill a shooter: it never fires again. Kill the last enemy while a shot is flying at you: the shot vanishes and never hits you (after P7: not even right after you Confirm a card).
 
 **P7. Upgrade choice**
 ```
@@ -265,9 +270,10 @@ Test: Obstacles come steadily; hitting one goes to game over. Check with console
 
 **P3. Distance score**
 ```
-Score = distance in meters (world speed * time / 50). Show it in the HUD as "Distance: N m"; pass it to GameOverScene and keep the high score logic.
+Score = distance in meters: every frame add world speed * delta / 1000 to a distance total and show floor(distance / 50), not world speed * total time (once P4 speeds the world up, that makes the score jump). Show it in the HUD as "Distance: N m"; pass it to GameOverScene and keep the high score logic (Best saved through storage.js only when beaten, "NEW BEST!" when it is).
+Pitfall: the player is clicking, tapping or holding Space to jump when they die, so that press would skip the game over screen at once. In GameOverScene ignore clicks and keys for the first 800 ms (gameOverLockMs in config.js), only then show "SPACE / click: play again     M: menu" and register the restart, and restart only on a new key press (ignore keydown events with event.repeat: a held key repeats).
 ```
-Test: Score climbs smoothly; game over shows it and Best updates.
+Test: Score climbs smoothly; game over shows it and Best updates. Die while clicking fast, then again while holding Space: both times the game over screen stays up with your distance. A click or a new Space press about 1 s later starts a new run at 0 m.
 
 **P4. Speed ramp**
 ```

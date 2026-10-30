@@ -327,7 +327,19 @@ ${newsletterBlock()}`,
 add('/genres/', {
   title: `6 genre prompt sequences for AI game dev | ${cfg.brand}`,
   description: 'Overview of the six genre prompt sequences in the Browser Game Starter Kit: tower defense, platformer, top-down roguelite, idle/clicker, endless runner, and Sokoban-style puzzle.',
-  jsonld: [crumbLd([['Home', '/'], ['Genres', '/genres/']])],
+  // ItemList of the six sequences in the visible card order; each entry points at its genre page's #steps list
+  // (same name and step count as that page). No price (added 2026-10-28).
+  jsonld: [{
+    '@context': 'https://schema.org', '@type': 'ItemList', '@id': url('/genres/#sequences'),
+    name: `The ${C.genres.length} genre prompt sequences in the ${P.name}`,
+    description: 'Every sequence starts with the same kickoff prompt (Prompt 0), then one prompt at a time, each with a browser test checkpoint.',
+    url: url('/genres/'), numberOfItems: C.genres.length, itemListOrder: 'https://schema.org/ItemListOrderAscending',
+    isPartOf: { '@type': 'Product', '@id': url('/#product'), name: P.name },
+    itemListElement: C.genres.map((g, i) => ({
+      '@type': 'ListItem', position: i + 1, name: `${g.name} prompt sequence (${countLabel(g)})`, url: url(`/genres/${g.slug}/`),
+      item: { '@type': 'ItemList', '@id': url(`/genres/${g.slug}/#steps`), numberOfItems: stepTotal(g) },
+    })),
+  }, crumbLd([['Home', '/'], ['Genres', '/genres/']])],
   body: `<section class="page-hero"><div class="wrap">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Genres</nav>
 <h1>Six genres, <span class="gold">one workflow</span></h1>
@@ -451,7 +463,9 @@ ${e.groups.map((g) => `<p class="eyebrow" style="margin:14px 0 4px"><a href="${w
 add('/blog/', {
   title: `Blog: shipping games with AI coding tools | ${cfg.brand}`,
   description: 'Notes from Prompt Forge Kits on building and shipping real projects with AI coding tools, starting with browser games.',
-  jsonld: [crumbLd([['Home', '/'], ['Blog', '/blog/']])],
+  jsonld: [{ '@context': 'https://schema.org', '@type': 'Blog', '@id': url('/blog/#blog'), name: `${cfg.brand} blog`, url: url('/blog/'), inLanguage: 'en', publisher: { '@id': url('/#org') },
+    blogPost: posts.map((po) => ({ '@type': 'BlogPosting', headline: po.title, description: po.description, url: url(`/blog/${po.slug}/`), mainEntityOfPage: url(`/blog/${po.slug}/`), datePublished: po.date, dateModified: po.date, author: { '@id': url('/#org') } })) },
+    crumbLd([['Home', '/'], ['Blog', '/blog/']])],
   body: `<section class="page-hero"><div class="wrap prose">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Blog</nav>
 <h1>Blog</h1><p class="lead">Practical notes on building and shipping with AI coding tools.</p>
@@ -647,6 +661,7 @@ fs.cpSync(PUB, OUT, { recursive: true });
 // Demo pages under /play/<demo>/ are raw game builds titled "My Browser Game": give each a real title, description and canonical (dist only).
 // Public demos also get a share card (Open Graph + X card with the game's own screenshot) and their VideoGame JSON-LD,
 // so a demo link posted on X/Discord shows a preview and search/AI crawlers can read what the page is.
+// Plus a BreadcrumbList (Home > Play > <game> demo, same trail as the /play/ hub) so the demo pages sit under /play/ in search (2026-10-29).
 for (const g of C.genres.filter((x) => demoAvailable(x.demo))) {
   const f = path.join(OUT, 'play', g.demo, 'index.html');
   const dTitle = `${g.game} demo: free browser game built with AI prompts | ${cfg.brand}`;
@@ -659,7 +674,8 @@ for (const g of C.genres.filter((x) => demoAvailable(x.demo))) {
     <meta property="og:image:width" content="1280" /><meta property="og:image:height" content="720" /><meta property="og:image:alt" content="${esc(`Screenshot of the ${g.game.toLowerCase()} demo`)}" />
     <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:site" content="@${cfg.xHandle}" />
     <meta name="twitter:title" content="${esc(dTitle)}" /><meta name="twitter:description" content="${esc(dDesc)}" /><meta name="twitter:image" content="${img}" />
-    <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...demoGameLd(g), publisher: { '@type': 'Organization', '@id': url('/#org'), name: cfg.brand, url: url('/') } }).replace(/</g, '\\u003c')}</script>`;
+    <script type="application/ld+json">${JSON.stringify({ '@context': 'https://schema.org', ...demoGameLd(g), publisher: { '@type': 'Organization', '@id': url('/#org'), name: cfg.brand, url: url('/') } }).replace(/</g, '\\u003c')}</script>
+    <script type="application/ld+json">${JSON.stringify(crumbLd([['Home', '/'], ['Play', '/play/'], [`${g.game} demo`, `/play/${g.demo}/`]])).replace(/</g, '\\u003c')}</script>`;
   const head = `<title>${esc(dTitle)}</title>\n    <meta name="description" content="${esc(dDesc)}" />\n    <link rel="canonical" href="${url(`/play/${g.demo}/`)}" />${share}`;
   // Analytics on the demo page too, but only when the demo is opened on its own: inside the /play/ page's
   // iframe the parent page is already counted, so the framed copy stays silent (no double page view).
