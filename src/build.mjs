@@ -681,7 +681,11 @@ for (const g of C.genres.filter((x) => demoAvailable(x.demo))) {
   // iframe the parent page is already counted, so the framed copy stays silent (no double page view).
   const demoAnalytics = cfg.analytics.enabled && cfg.analytics.headSnippet && g.demo !== GATED ? `
     <script>if(window.top===window){window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};window.va('beforeSend',function(e){return Object.assign({},e,{url:e.url.split(/[?#]/)[0]})});var s=document.createElement('script');s.defer=true;s.src='/_vercel/insights/script.js';document.head.appendChild(s)}</script>` : '';
-  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/<title>[\s\S]*?<\/title>/, head + demoAnalytics));
+  // The demo body is an empty <div id="game"> filled by JS, so crawlers and AI chatbots that read HTML without
+  // running scripts saw no text at all. A <noscript> block gives them a heading, the plain description and links
+  // to the prompt sequence and the /play/ hub; players with JS never see it (2026-10-30). Gated demo: unchanged.
+  const noscript = g.demo === GATED ? '' : `<noscript><h1>${esc(`${g.game} demo`)}</h1><p>${esc(dDesc)} ${esc(plain(g.summary))}</p><p>This demo needs JavaScript to run. <a href="/genres/${g.slug}/">See the ${esc(g.name.toLowerCase())} prompt sequence</a> or <a href="/play/">play the other free demos</a>.</p></noscript>`;
+  fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(/<title>[\s\S]*?<\/title>/, head + demoAnalytics).replace(/<body>/, `<body>\n    ${noscript}`));
 }
 for (const pg of pages) {
   const file = pg.path.endsWith('.html') ? path.join(OUT, pg.path) : path.join(OUT, pg.path, 'index.html');

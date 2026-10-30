@@ -64,24 +64,24 @@
     "date": "2026-10-21"
   },
   "/play/idle/": {
-    "hash": "dbfe9d66ade67ca0",
-    "date": "2026-10-29"
+    "hash": "65ffb0da743418f9",
+    "date": "2026-10-30"
   },
   "/play/platformer/": {
-    "hash": "b3b662e9bd8421f9",
-    "date": "2026-10-29"
+    "hash": "26af33c75dae5381",
+    "date": "2026-10-30"
   },
   "/play/puzzle/": {
-    "hash": "ded23629240d488d",
-    "date": "2026-10-29"
+    "hash": "cf4bff6976d9a9d3",
+    "date": "2026-10-30"
   },
   "/play/roguelite/": {
-    "hash": "fb9ef8d85369a248",
-    "date": "2026-10-29"
+    "hash": "049cdf74325e1461",
+    "date": "2026-10-30"
   },
   "/play/runner/": {
-    "hash": "bc227859e29c4994",
-    "date": "2026-10-29"
+    "hash": "4d60720b6f2bcf9c",
+    "date": "2026-10-30"
   },
   "/whats-new/": {
     "hash": "14659463ca144e61",
