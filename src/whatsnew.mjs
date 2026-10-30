@@ -10,6 +10,18 @@ export const WN = {
 // kit: 'bgsk' = Browser Game Starter Kit, 'atsk' = Assistant Team Starter Kit
 export const whatsNew = [
   {
+    date: '2026-10-30',
+    groups: [
+      { kit: 'bgsk', items: [
+        '**Platformer, P5 Lives and respawn:** one hit now costs exactly one life, with a short blink after you respawn. Touching two hazards at once no longer costs two lives, and your score and coins are kept.',
+        '**Endless Runner, P3 Score and distance:** the game over screen now waits a moment before a click or key restarts, so the jump you were pressing when you crashed no longer skips your score. The score counts distance frame by frame, and the game over screen shows NEW BEST! when you beat your best.',
+        '**Top-Down Roguelite, P6 Enemy shooters:** dead shooters stop shooting, missed shots vanish on the walls, and clearing a room removes shots still in the air, so nothing hits you right after you pick an upgrade.',
+        'GUIDE.pdf rebuilt with the new prompts (still 49 pages).',
+        'The Platformer, Runner and Roguelite demos on this site got the same fixes.',
+      ] },
+    ],
+  },
+  {
     date: '2026-10-26',
     groups: [
       { kit: 'bgsk', items: [
