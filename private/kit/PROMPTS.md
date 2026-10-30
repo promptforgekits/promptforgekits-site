@@ -367,8 +367,13 @@ Test: Press Z at the start: nothing happens and the console stays clean. Push a 
 **P6. Move counter**
 ```
 Count moves per level and show them in the HUD with labels ("Moves: 12   Best: 9"; Undo takes one move back). Save the best move count per level with the `storage` helper from src/storage.js (never raw localStorage) and show it.
+- Count only moves that really happen: a bump into a wall or a blocked crate is not a move. Undo takes one move back (never below 0), and R starts the level again at Moves: 0.
+- Best means the fewest moves. Save it only when the level is solved, and only if it beats the saved one (or none is saved yet), so a slower replay never overwrites it.
+- Read the saved best as a number with storage.getNumber(key, Infinity) (the helper stores strings). A default of 0 would mean no solve ever beats it, so Best would never be saved.
+- Until a level has been solved once, show "Best: -" (never 0, Infinity, null or NaN).
+- Use one key per level (e.g. bgsk-puzzle-best-<levelIndex>), so the level select in P7 can show the same number.
 ```
-Test: Solve a level; the best moves saves and shows on replay.
+Test: Bump a wall: Moves doesn't change. Before the first solve the HUD shows "Best: -". Solve level 1 with a few extra steps, then replay it in fewer: Best drops to the lower number. Replay it again in 10 or more moves: Best stays the lower one. Reload the page: Best is still there.
 
 **P7. Level select**
 ```
