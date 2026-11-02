@@ -580,13 +580,16 @@ Test: a busy wave 10 still runs at about 60 fps; every event has a sound; M (or 
 **P13. HUD polish, speed, pause, win and lose**
 ```
 - HUD top-left: cores, gold, wave (as before). Top-right: a 1x/2x speed button (sets this.speed, which already scales tick) and a pause button (P also toggles; dims the screen and shows PAUSED). Esc first closes whatever is open (build menu, tower panel, armed Overcharge) and only toggles pause when nothing is open. Pausing must stop enemies, cooldowns, countdown and Overcharge, because they all run on tick.
-- Surviving wave 20 (all enemies gone) goes to GameOverScene with won: true. Losing all cores goes there with won: false. Pass { won, wave, cores } explicitly. GameOverScene shows "YOU WIN!" or "GAME OVER", "Wave N", "Cores saved: N" and the best wave from the `storage` helper (key 'core-keepers-best-wave', saved when higher).
+- Surviving wave 20 goes to GameOverScene with won: true. Losing all cores goes there with won: false. Pass { won, wave, cores } explicitly. GameOverScene shows "YOU WIN!" or "GAME OVER", "Wave N", "Cores saved: N" and the best wave from the `storage` helper (key 'core-keepers-best-wave').
+- How a run ends (the common bug here): one method gameOver(won) with an isOver flag. The first call sets it and later calls do nothing; update() stops calling tick() once it is set. The win comes ONLY from P8's wave-cleared rule on wave 20 (spawn list used up AND no enemy alive, so the boss came and died), never from a separate "no enemies on screen" check, which declares a win as soon as you kill wave 20's first enemies. A loss is final: if the last core leaves with the last enemy of wave 20, it is GAME OVER, never turned into YOU WIN by the "wave cleared" that follows.
+- Best wave: read it with storage.getNumber(key, 0) and save Math.max(old, wave) (the helper stores strings, and as text "9" is bigger than "10", so a string compare never saves wave 10 or higher). Show "NEW BEST!" when this run beats it.
+- The player is usually still clicking (build menu, tower panel, Q) when the run ends, so that click would skip the result screen at once. GameOverScene ignores clicks and keys for the first 800 ms (GAME_OVER_LOCK_MS in config.js), only then shows "SPACE / click: play again     M: menu" and registers them (a new key press only, ignore event.repeat).
 - Restart from GameOverScene and the menu must start a fresh run: this.scene.start('GameScene', { fresh: true }) and reset every field in create() (gold, cores, wave, towers, speed 1, paused false, Overcharge ready).
 - Menu shows "Best wave: N".
 - Remove the 1-6 debug spawn keys.
 Do not change unrelated code; list what you changed.
 ```
-Test: 2x makes everything twice as fast, including fire rate; pause freezes everything; win, lose, and restart all work and the best wave is kept after a refresh.
+Test: 2x makes everything twice as fast, including fire rate; pause freezes everything; win, lose, and restart all work and the best wave is kept after a refresh. On wave 20 kill every enemy the moment it appears: no win until the boss has come and died. Lose your last core with the last enemy of wave 20: GAME OVER, not YOU WIN. With a saved best of 9, reach wave 10: "Best wave: 10" and NEW BEST!. Click right as the game over screen appears: it stays up; a moment later a click starts a fresh run.
 
 **Optional P14. Endless mode with upgrade cards**
 ```
