@@ -10,6 +10,15 @@ export const WN = {
 // kit: 'bgsk' = Browser Game Starter Kit, 'atsk' = Assistant Team Starter Kit
 export const whatsNew = [
   {
+    date: '2026-11-02',
+    groups: [
+      { kit: 'bgsk', items: [
+        '**Tower Defense:** the result screen now waits a moment, so the click you were making when the run ended no longer skips it; a win needs the wave 20 boss beaten, and losing your last core on the final wave is never shown as a win.',
+        'GUIDE.pdf rebuilt with the new prompt: now 51 pages.',
+      ] },
+    ],
+  },
+  {
     date: '2026-10-30',
     groups: [
       { kit: 'bgsk', items: [
