@@ -59,6 +59,12 @@ const orgLd = {
   sameAs: [`https://x.com/${cfg.xHandle}`, cfg.githubUrl],
   ...(cfg.supportEmail ? { email: cfg.supportEmail, contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: cfg.supportEmail, url: url('/faq/') } } : {}),
 };
+// Offer-level refund policy (all three products). Google's merchant listing markup requires applicableCountry and
+// returnPolicyCategory (+ merchantReturnDays for a finite window). The 7-day refund applies to every buyer, wherever
+// they live, so any country list is true; these are our main buyer countries (max 50 allowed). A refund costs the
+// buyer nothing (digital download, nothing to send back): returnFees FreeReturn.
+const RETURN_COUNTRIES = ['US', 'CA', 'GB', 'AU', 'NZ', 'IE', 'DE', 'FR', 'NL', 'BE', 'AT', 'CH', 'SE', 'NO', 'DK', 'FI', 'ES', 'IT', 'PT', 'PL', 'CZ', 'JP', 'KR', 'SG', 'IN', 'BR', 'MX', 'ZA', 'PH', 'AE'];
+const returnLd = (link) => ({ '@type': 'MerchantReturnPolicy', applicableCountry: RETURN_COUNTRIES, returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 7, returnFees: 'https://schema.org/FreeReturn', refundType: 'https://schema.org/FullRefund', merchantReturnLink: link });
 const productLd = {
   '@context': 'https://schema.org', '@type': 'Product', '@id': url('/#product'), name: P.name,
   description: 'A working Phaser 3 + Vite starter game, rules files for your AI coding tool, and 60+ copy-paste prompts across 6 genres to take you from idea to a published browser game.',
@@ -67,10 +73,9 @@ const productLd = {
     '@type': 'Offer', price: String(P.price), priceCurrency: P.currency, url: cfg.siteUrl + '/#pricing',
     availability: storeLive ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
     seller: { '@id': url('/#org') },
-    hasMerchantReturnPolicy: { '@type': 'MerchantReturnPolicy', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 7, refundType: 'https://schema.org/FullRefund', merchantReturnLink: url('/license/') },
+    hasMerchantReturnPolicy: returnLd(url('/license/')),
   },
 };
-const returnLd = (link) => ({ '@type': 'MerchantReturnPolicy', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow', merchantReturnDays: 7, refundType: 'https://schema.org/FullRefund', merchantReturnLink: link });
 const akProductLd = {
   '@context': 'https://schema.org', '@type': 'Product', '@id': url('/assistant-kit/#product'), name: AK.name,
   description: 'Four AI assistant job descriptions, seven workflows (skills and routines), approval and true-claims rules, a business profile and six shared notebooks for running a small online product business with a team of AI assistants. Written for Grok Bot.',
