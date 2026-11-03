@@ -10,6 +10,14 @@ export const WN = {
 // kit: 'bgsk' = Browser Game Starter Kit, 'atsk' = Assistant Team Starter Kit
 export const whatsNew = [
   {
+    date: '2026-11-03',
+    groups: [
+      { kit: 'bgsk', items: [
+        "Platformer: checkpoints are sturdier. A checkpoint only ever moves your respawn forward, you respawn standing on the ground at the flag, and each new level or new run starts at the level start. In the demo's Level 2 a walker no longer patrols over the checkpoint.",
+      ] },
+    ],
+  },
+  {
     date: '2026-11-02',
     groups: [
       { kit: 'bgsk', items: [
