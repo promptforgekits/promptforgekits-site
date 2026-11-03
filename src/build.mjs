@@ -201,6 +201,14 @@ function demoGameLd(g) {
   };
 }
 
+// Site name for Google results (site names use WebSite markup on the home page: name, alternateName, url)
+// and one entity for AI tools: the site, its publisher (#org) and its language.
+const websiteLd = {
+  '@context': 'https://schema.org', '@type': 'WebSite', '@id': url('/#website'), name: cfg.brand,
+  alternateName: ['PromptForgeKits', 'promptforgekits.com'], url: url('/'), inLanguage: 'en',
+  publisher: { '@id': url('/#org') },
+};
+
 // ── pages ──────────────────────────────────────────────────────────────────
 const pages = [];
 const add = (p, o) => pages.push({ path: p, ...o });
@@ -211,7 +219,7 @@ const td = C.genres[0];
 add('/', {
   title: `${P.shortName}: ship a browser game with AI | ${cfg.brand}`,
   description: `A Phaser 3 starter game, AI rules files, and 60+ tested prompts across 6 genres to build and publish your first browser game with Cursor or Claude Code. ${PRICE}.`,
-  jsonld: [productLd, faqLd(landingFaq), { '@context': 'https://schema.org', '@type': 'WebSite', name: cfg.brand, url: url('/') }],
+  jsonld: [productLd, faqLd(landingFaq), websiteLd],
   body: `<section class="hero" aria-labelledby="hero-h"><div class="wrap">
 <div>
 <p class="eyebrow">Phaser 3 + Vite · AI-ready</p>
