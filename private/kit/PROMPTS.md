@@ -78,8 +78,11 @@ Test: Die twice: you respawn and the HUD shows 1 life left, with your score and 
 **P6. Checkpoints**
 ```
 Add a checkpoint object (a small flag drawn in textures.js). Touching it saves it as the respawn point and tints it green. Add one to the middle of the level and name it the first time it is on screen ("Checkpoint: respawn here").
+- The overlap fires every frame: a checkpoint only counts on its first touch (an activated flag), and the respawn point only moves forward. A checkpoint left of the current respawn point (one you jumped over, then walked back to) never moves it back.
+- Keep the respawn point in the scene only (this.respawnPoint, set to the level start in create()). Never put it in storage, the registry or scene data: every new level, new run and page reload starts at the level start.
+- Respawn the player standing on the ground at the flag: setPosition a little above the flag's base (not at or below it, or the player drops through the floor), then setVelocity(0, 0). Place each checkpoint on solid ground, away from pits, spikes and walkers' patrol paths, so a respawn never lands on a hazard.
 ```
-Test: Touch the checkpoint, die, respawn there.
+Test: Touch the checkpoint and fall in a pit: you respawn standing at the flag, and nothing hits you while you stand still. Skip a checkpoint, touch a later one, walk back to the first: you still respawn at the later one. Reach the next level, or lose all lives and restart, or reload the page: dying before the checkpoint puts you back at the level start.
 
 **P7. Multiple levels**
 ```
