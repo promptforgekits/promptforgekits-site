@@ -25,7 +25,7 @@ const { buildWatermarkedZip } = await import('../api/_kit.js');
 const mkRes = () => { const r = { code: 200, headers: {}, body: undefined, status(c) { r.code = c; return r; }, setHeader(k, v) { r.headers[k] = v; return r; }, json(b) { r.body = b; return r; }, send(b) { r.body = b; return r; }, end() { return r; } }; return r; };
 const sign = (raw, t = Math.floor(Date.now() / 1000)) => `t=${t},v1=${crypto.createHmac('sha256', 'whsec_test').update(`${t}.${raw}`).digest('hex')}`;
 const mkReq = (raw) => ({ method: 'POST', headers: { 'stripe-signature': sign(raw) }, body: Buffer.from(raw) });
-const ev = (o = {}) => JSON.stringify({ id: 'evt_1', type: 'checkout.session.completed', livemode: false, data: { object: { id: 'cs_test_multi123456', payment_status: 'paid', customer_details: { email: 'gregvirag@gmail.com' }, amount_total: 2900, currency: 'usd', created: 1792600000, payment_intent: 'pi_1', ...o } } });
+const ev = (o = {}) => JSON.stringify({ id: 'evt_1', type: 'checkout.session.completed', livemode: false, data: { object: { id: 'cs_test_multi123456', payment_status: 'paid', customer_details: { email: 'gregvirag@gmail.com' }, amount_total: 2900, currency: 'usd', created: Math.floor(Date.now() / 1000) - 60, payment_intent: 'pi_1', ...o } } });
 const decode = (b) => decodeURIComponent(b.replace(/\+/g, ' '));
 const okSeg = () => ({ ok: true, status: 200, data: { id: 'em_1', data: [{ id: 'seg_c', name: 'Customers' }] } });
 const links = (text) => [...text.matchAll(/https:\/\/promptforgekits\.com\/api\/download\/\?token=([\w.-]+)/g)].map((m) => lib.verifyDownloadToken(m[1]));
@@ -109,7 +109,7 @@ test('download: atsk token -> stamped assistant-team-starter-kit zip; bgsk token
 
 test('claim: bgsk/atsk 302 to their own link; bundle -> page with two download buttons; unpaid 402', async () => {
   process.env.STRIPE_SECRET_KEY = 'sk_test_x';
-  const sess = (o) => () => ({ ok: true, status: 200, data: { id: 'cs_test_claim123456', payment_status: 'paid', customer_details: { email: 'x@y.co' }, created: 1792600000, ...o } });
+  const sess = (o) => () => ({ ok: true, status: 200, data: { id: 'cs_test_claim123456', payment_status: 'paid', customer_details: { email: 'x@y.co' }, created: Math.floor(Date.now() / 1000) - 60, ...o } });
   const go = async () => { const r = mkRes(); await claim({ method: 'GET', query: { session_id: 'cs_test_claim123456' } }, r); return r; };
   respond = sess({ metadata: { sku: 'bgsk' } }); let r = await go(); assert.equal(r.code, 302); assert.equal(lib.verifyDownloadToken(r.headers.Location.split('token=')[1]).s, undefined);
   respond = sess({ metadata: { sku: 'atsk' } }); r = await go(); assert.equal(r.code, 302); assert.equal(lib.verifyDownloadToken(r.headers.Location.split('token=')[1]).s, 'atsk');
