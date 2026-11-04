@@ -317,9 +317,11 @@ Test: Open dev tools device mode (Ctrl+Shift+M) and play with clicks as taps.
 
 **P10. Juice**
 ```
-Add juice: dust particles while running, screen shake on death, a slow-motion (timeScale 0.3 for 400 ms) moment before the game over screen, and Web Audio beeps for jump and coin.
+Add juice: dust particles while running, screen shake on death, a slow-motion moment before the game over screen, and beeps for jump and coin.
+Sounds: make them in src/sfx.js with beep() from src/audio.js (never a new AudioContext), so M and the OPTIONS Sound FX switch mute them.
+Slow motion: this.time.timeScale = 0.3 and this.physics.world.timeScale = 1 / 0.3 (Arcade's scale is inverse: 0.3 would make physics 3x faster). End it after 400 ms of real time (window.setTimeout; a 400 ms delayedCall on the 0.3x clock lasts 1.3 s), set both back to 1, then show GameOverScene.
 ```
-Test: Death feels dramatic, not abrupt.
+Test: Die: the screen shakes, everything slows down (nothing speeds up) and the game over screen follows in under a second. Press M (or OPTIONS > Sound FX OFF): jumps and coins are silent; M again brings them back. The next run plays at normal speed.
 
 **Ship check:** Play 5 runs; the difficulty curve feels fair.
 
