@@ -10,6 +10,14 @@ export const WN = {
 // kit: 'bgsk' = Browser Game Starter Kit, 'atsk' = Assistant Team Starter Kit
 export const whatsNew = [
   {
+    date: '2026-11-04',
+    groups: [
+      { kit: 'bgsk', items: [
+        "Endless Runner: the juice prompt now keeps jump and coin sounds on the Sound FX switch (and M), and makes the death slow-motion actually slow (not 3x faster) and short.",
+      ] },
+    ],
+  },
+  {
     date: '2026-11-03',
     groups: [
       { kit: 'bgsk', items: [
