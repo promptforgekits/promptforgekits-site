@@ -477,7 +477,7 @@ add('/blog/', {
   title: `Blog: shipping games with AI coding tools | ${cfg.brand}`,
   description: 'Notes from Prompt Forge Kits on building and shipping real projects with AI coding tools, starting with browser games.',
   jsonld: [{ '@context': 'https://schema.org', '@type': 'Blog', '@id': url('/blog/#blog'), name: `${cfg.brand} blog`, url: url('/blog/'), inLanguage: 'en', publisher: { '@id': url('/#org') },
-    blogPost: posts.map((po) => ({ '@type': 'BlogPosting', headline: po.title, description: po.description, url: url(`/blog/${po.slug}/`), mainEntityOfPage: url(`/blog/${po.slug}/`), datePublished: po.date, dateModified: po.date, author: { '@id': url('/#org') } })) },
+    blogPost: posts.map((po) => ({ '@type': 'BlogPosting', '@id': url(`/blog/${po.slug}/#post`), headline: po.title, description: po.description, url: url(`/blog/${po.slug}/`), mainEntityOfPage: url(`/blog/${po.slug}/`), datePublished: po.date, dateModified: po.date, author: { '@id': url('/#org') } })) },
     crumbLd([['Home', '/'], ['Blog', '/blog/']])],
   body: `<section class="page-hero"><div class="wrap prose">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Blog</nav>
@@ -492,7 +492,7 @@ for (const po of posts) {
     title: `${po.title} | ${cfg.brand}`,
     description: po.description,
     ogType: 'article',
-    jsonld: [{ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: po.title, description: po.description, datePublished: po.date, dateModified: po.date, image: url('/img/og-cover.jpg'), author: { '@id': url('/#org') }, publisher: { '@id': url('/#org') }, mainEntityOfPage: url(`/blog/${po.slug}/`) },
+    jsonld: [{ '@context': 'https://schema.org', '@type': 'BlogPosting', '@id': url(`/blog/${po.slug}/#post`), url: url(`/blog/${po.slug}/`), headline: po.title, description: po.description, inLanguage: 'en', datePublished: po.date, dateModified: po.date, image: url('/img/og-cover.jpg'), author: { '@id': url('/#org') }, publisher: { '@id': url('/#org') }, isPartOf: { '@id': url('/blog/#blog') }, mainEntityOfPage: url(`/blog/${po.slug}/`) },
       crumbLd([['Home', '/'], ['Blog', '/blog/'], [po.title, `/blog/${po.slug}/`]])],
     body: `<article><section class="page-hero"><div class="wrap prose">
 <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/blog/">Blog</a></nav>
