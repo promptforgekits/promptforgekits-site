@@ -191,10 +191,14 @@ const playListLd = () => ({
   numberOfItems: publicDemos().length,
   itemListElement: publicDemos().map((g, i) => ({ '@type': 'ListItem', position: i + 1, item: demoGameLd(g) })),
 });
-// One VideoGame object per public demo: used in the /play/ ItemList and on the demo page itself (/play/<demo>/)
+// One VideoGame object per public demo: used in the /play/ ItemList and on the demo page itself (/play/<demo>/).
+// Same @id in both places, so a list entry joins its demo page; isBasedOn links the demo to the genre's prompt
+// sequence (/genres/<slug>/#steps) and to the kit (/#product) it was built with.
 function demoGameLd(g) {
   return {
-    '@type': 'VideoGame', name: `${g.game} demo`, url: url(`/play/${g.demo}/`), description: plain(g.summary), genre: GENRE_LD[g.demo] || g.name,
+    '@type': 'VideoGame', '@id': url(`/play/${g.demo}/#game`), name: `${g.game} demo`, url: url(`/play/${g.demo}/`), inLanguage: 'en',
+    description: plain(g.summary), genre: GENRE_LD[g.demo] || g.name,
+    isBasedOn: [{ '@type': 'ItemList', '@id': url(`/genres/${g.slug}/#steps`) }, { '@type': 'Product', '@id': url('/#product') }],
     gamePlatform: 'Web browser', applicationCategory: 'Game', operatingSystem: 'Any (web browser)', playMode: 'SinglePlayer', isAccessibleForFree: true,
     image: url(`/img/g-${g.demo}-1280.webp`), publisher: { '@id': url('/#org') },
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: url(`/play/${g.demo}/`) },
