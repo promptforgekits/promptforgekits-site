@@ -10,6 +10,14 @@ export const WN = {
 // kit: 'bgsk' = Browser Game Starter Kit, 'atsk' = Assistant Team Starter Kit
 export const whatsNew = [
   {
+    date: '2026-11-05',
+    groups: [
+      { kit: 'bgsk', items: [
+        "Top-Down Roguelite: the juice prompt now makes the boss hit-stop a short physics pause that always ends, and never wakes the game up behind the upgrade cards or after you die.",
+      ] },
+    ],
+  },
+  {
     date: '2026-11-04',
     groups: [
       { kit: 'bgsk', items: [
