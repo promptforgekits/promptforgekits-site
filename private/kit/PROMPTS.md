@@ -178,8 +178,9 @@ Test: Room 5 has the boss with a health bar; beating it opens the door. In the c
 **P10. Juice**
 ```
 Add juice: screen shake when the player is hit, small knockback on enemies when shot (read the bullet's velocity before destroying the bullet), particle burst on enemy death, and a brief hit-stop (50 ms pause) on boss hits.
+Hit-stop: this.physics.pause(), then resume with this.time.delayedCall(50, ...). Never this.scene.pause() or this.time.timeScale = 0 for it: they also stop the timer that ends the hit-stop, so the game freezes. Skip a new hit-stop while one is running. Pitfall: the boss's killing blow starts a hit-stop too, right before the upgrade cards (P7) or a death pause the game for good, so the resume must only call physics.resume() if the cards are not open (choosing) and the run is not over (isOver). Otherwise physics wakes up behind the cards and you slide on under them.
 ```
-Test: Combat feels punchier; no slowdowns over a few rooms.
+Test: Combat feels punchier; no slowdowns over a few rooms. A boss hit stops the action for a blink, then it runs on. Hold D while you land the killing blow on a boss: the cards open and you stand still under them until you Confirm.
 
 **Ship check:** Do a full run to room 6+ without errors. Then check the difficulty curve: write a small headless script (plain Node, imports balance.js and upgrades.js, no Phaser) that simulates a bot clearing rooms 1-20 and prints, per room, the clear time and the damage taken. Rooms 1-4 should cost about 0 HP, damage taken should climb from room 6, and the room 5/10/15/20 bosses should each last longer than the one before. If late rooms stay as easy as early ones, raise BALANCE.hpPerRoom first.
 
