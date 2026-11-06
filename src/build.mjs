@@ -186,8 +186,11 @@ const demoEmbed = (g, { eager = false } = {}) => {
 const PLAY_DESC = 'Play five free browser games made with AI prompts: platformer, roguelite, idle clicker, runner and puzzle. Plus Core Keepers tower defense, free by email.';
 const publicDemos = () => C.genres.filter((g) => g.demo !== GATED && demoAvailable(g.demo));
 const GENRE_LD = { platformer: 'Platformer', roguelite: 'Roguelite', idle: 'Idle game', runner: 'Endless runner', puzzle: 'Puzzle' };
+// /play/ hub list: same shape as /genres/#sequences — one @id so demos and other pages can point at "the free demos list".
 const playListLd = () => ({
-  '@context': 'https://schema.org', '@type': 'ItemList', name: 'Free browser game demos built with the Browser Game Starter Kit', url: url('/play/'),
+  '@context': 'https://schema.org', '@type': 'ItemList', '@id': url('/play/#demos'),
+  name: 'Free browser game demos built with the Browser Game Starter Kit', url: url('/play/'), inLanguage: 'en',
+  isPartOf: { '@type': 'Product', '@id': url('/#product'), name: P.name },
   numberOfItems: publicDemos().length,
   itemListElement: publicDemos().map((g, i) => ({ '@type': 'ListItem', position: i + 1, item: demoGameLd(g) })),
 });
