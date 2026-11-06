@@ -3,7 +3,7 @@
 // no sales numbers, no results claims, no Grok name in the product title, the "not affiliated" line wherever Grok Bot is named.
 export const AK = {
   sku: 'atsk', name: 'Assistant Team Starter Kit by Prompt Forge Kits', shortName: 'Assistant Team Starter Kit', price: 29, version: '1.0',
-  bundle: { sku: 'bundle', name: 'Browser Game Starter Kit + Assistant Team Starter Kit', price: 45, separate: 48 },
+  bundle: { sku: 'bundle', name: 'Browser Game Starter Kit + Assistant Team Starter Kit', price: 39, separate: 48 },
   writtenFor: 'Written for Grok Bot. Not affiliated with or endorsed by the makers of Grok Bot.',
   tagline: 'Ready-made jobs, routines and safety rules for a small team of AI assistants that help you run a small online product business.',
 };
@@ -36,7 +36,7 @@ export const akSteps = [
 
 export const akFaq = [
   ['What is the Assistant Team Starter Kit?', 'A downloadable kit of text templates: four Bot job descriptions, seven workflows (skills and routines), approval and true-claims rules, a business profile and six shared notebooks, for running a small online product business with a team of AI assistants. It is written for Grok Bot. Prompt Forge Kits is not affiliated with or endorsed by the makers of Grok Bot.'],
-  ['How much does it cost?', 'It costs $29 (USD), a one-time purchase. Updates are free for life. Bought together with the Browser Game Starter Kit, both kits cost $45 instead of $48.'],
+  ['How much does it cost?', 'It costs $29 (USD), a one-time purchase. Updates are free for life. Bought together with the Browser Game Starter Kit, both kits cost $39 instead of $48.'],
   ['Do I need Grok Bot?', 'Yes. The templates are written for Grok Bot\u2019s Bots, skills and routines. A Grok Bot account is a separate subscription and is not included.'],
   ['Do I need to code?', 'No. Setup is copying text into a chat and answering questions. The steps are in START-HERE.md and GUIDE.pdf.'],
   ['Will the assistants post or email on their own?', 'Not unless you approve it. The approval rules make every Bot ask before posting, sending, publishing, spending money, deleting, or replying to customers. The posting Bot only posts items you marked approved, exactly as written.'],

@@ -33,8 +33,8 @@ const links = (text) => [...text.matchAll(/https:\/\/promptforgekits\.com\/api\/
 test('catalog: three skus, live price ids for the new ones, bundle delivers both kits', () => {
   assert.deepEqual(Object.keys(P.PRODUCTS), ['bgsk', 'atsk', 'bundle']);
   assert.equal(P.priceIdFor('bgsk'), 'price_test'); // still from STRIPE_PRICE_ID
-  assert.equal(P.priceIdFor('atsk'), 'price_1USyqBLgIACCBJCoe2ol9YLp');
-  assert.equal(P.priceIdFor('bundle'), 'price_1USyqBLgIACCBJCoFoebOJdc');
+  assert.equal(P.priceIdFor('atsk'), 'price_1UYruWLgIACCBJCoLdjm0oIE');
+  assert.equal(P.priceIdFor('bundle'), 'price_1UYruXLgIACCBJCoQ1z4bXID');
   process.env.STRIPE_PRICE_ID_ATSK = 'price_override'; assert.equal(P.priceIdFor('atsk'), 'price_override'); delete process.env.STRIPE_PRICE_ID_ATSK;
   assert.deepEqual(P.deliverables('bundle'), ['bgsk', 'atsk']); assert.deepEqual(P.deliverables('atsk'), ['atsk']); assert.deepEqual(P.deliverables('nope'), []);
   assert.doesNotMatch(JSON.stringify(P.PRODUCTS), /grok/i);
@@ -49,11 +49,11 @@ test('checkout: per-sku price, metadata and cancel url; bgsk params identical to
   assert.match(base.body, /line_items\[0\]\[price\]=price_test/); assert.match(base.body, /metadata\[sku\]=bgsk/); assert.match(base.body, /cancel_url=https:\/\/promptforgekits\.com\/#pricing/);
   assert.match(base.body, /payment_intent_data\[description\]=Browser Game Starter Kit&/);
   const a = await run({ query: { sku: 'atsk' } });
-  assert.equal(a.r.code, 303); assert.match(a.body, /line_items\[0\]\[price\]=price_1USyqBLgIACCBJCoe2ol9YLp/); assert.match(a.body, /metadata\[sku\]=atsk/);
+  assert.equal(a.r.code, 303); assert.match(a.body, /line_items\[0\]\[price\]=price_1UYruWLgIACCBJCoLdjm0oIE/); assert.match(a.body, /metadata\[sku\]=atsk/);
   assert.match(a.body, /cancel_url=https:\/\/promptforgekits\.com\/assistant-kit\/#pricing/); assert.match(a.body, /success_url=https:\/\/promptforgekits\.com\/thanks\/\?session_id=\{CHECKOUT_SESSION_ID\}/);
   const b2 = await run({ body: 'sku=bundle' }); // unparsed urlencoded body from the no-JS form
   assert.equal((await run({ query: { sku: 'bundle' } })).body, b2.body);
-  assert.match(b2.body, /price\]=price_1USyqBLgIACCBJCoFoebOJdc/); assert.match(b2.body, /metadata\[sku\]=bundle/); assert.match(b2.body, /both kits/); assert.match(b2.body, /cancel_url=https:\/\/promptforgekits\.com\/assistant-kit\/#bundle/);
+  assert.match(b2.body, /price\]=price_1UYruXLgIACCBJCoQ1z4bXID/); assert.match(b2.body, /metadata\[sku\]=bundle/); assert.match(b2.body, /both kits/); assert.match(b2.body, /cancel_url=https:\/\/promptforgekits\.com\/assistant-kit\/#bundle/);
   const u = await run({ query: { sku: 'evil' } }); assert.equal(u.r.code, 400); assert.equal(calls.length, 0);
   // the payment-link fallback stays bgsk-only
   delete process.env.STRIPE_SECRET_KEY; process.env.STRIPE_PAYMENT_LINK_URL = 'https://buy.stripe.com/test_link';
@@ -82,10 +82,10 @@ test('webhook: missing/unknown sku -> original bgsk email, token without sku; at
 
 test('webhook: bundle -> ONE email with both download links', async () => {
   respond = okSeg; calls.length = 0;
-  const raw = ev({ metadata: { sku: 'bundle' }, amount_total: 4500 }); const r = mkRes(); await webhook(mkReq(raw), r);
+  const raw = ev({ metadata: { sku: 'bundle' }, amount_total: 3900 }); const r = mkRes(); await webhook(mkReq(raw), r);
   assert.equal(r.code, 200); assert.equal(r.body.sku, 'bundle');
   const mails = calls.filter((x) => x.url.endsWith('/emails')); assert.equal(mails.length, 1);
-  const m = JSON.parse(mails[0].body); assert.match(m.subject, /2 kits/); assert.match(m.text, /45\.00 USD/);
+  const m = JSON.parse(mails[0].body); assert.match(m.subject, /2 kits/); assert.match(m.text, /39\.00 USD/);
   const l = links(m.text); assert.deepEqual(l.map((x) => x.s || 'bgsk'), ['bgsk', 'atsk']);
   assert.equal(links(m.html.replace(/&amp;/g, '&')).length >= 2, true);
   assert.doesNotMatch(m.text + m.html, /xAI|SpaceX|Cursor/);

@@ -1,4 +1,4 @@
-// Every Product offer (kit $19, Assistant kit $29, bundle $45) carries a complete offer-level MerchantReturnPolicy
+// Every Product offer (kit $19, Assistant kit $29, bundle $39) carries a complete offer-level MerchantReturnPolicy
 // (2026-11-02): Google's merchant listing markup requires applicableCountry + returnPolicyCategory, and
 // merchantReturnDays for a finite window. Without applicableCountry the refund policy is flagged and not shown.
 import test from 'node:test';
@@ -26,5 +26,5 @@ test('each Product offer has a complete 7-day MerchantReturnPolicy (applicableCo
     assert.match(r.merchantReturnLink, /^https:\/\/promptforgekits\.com\/(license\/|assistant-kit\/#license)$/);
   }
   // prices unchanged
-  assert.deepEqual(prices, { 'https://promptforgekits.com/#product': '19', 'https://promptforgekits.com/assistant-kit/#product': '29', 'https://promptforgekits.com/assistant-kit/#bundle': '45' });
+  assert.deepEqual(prices, { 'https://promptforgekits.com/#product': '19', 'https://promptforgekits.com/assistant-kit/#product': '29', 'https://promptforgekits.com/assistant-kit/#bundle': '39' });
 });

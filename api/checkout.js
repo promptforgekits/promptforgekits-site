@@ -4,7 +4,7 @@ import { PRODUCTS, DEFAULT_SKU, priceIdFor } from './_products.js';
 // Creates a hosted Stripe Checkout Session for one product and sends the buyer there.
 //  - HTML form POST (a "Buy now" button)    -> 303 redirect to Stripe
 //  - fetch with Accept: application/json    -> { url }
-// Product: ?sku= (or a "sku" form field): bgsk (default, the $19 kit), atsk ($29 Assistant Team Starter Kit), bundle ($45, both).
+// Product: ?sku= (or a "sku" form field): bgsk (default, the $19 kit), atsk ($29 Assistant Team Starter Kit), bundle ($39, both).
 // bgsk is unchanged: STRIPE_PRICE_ID, metadata.sku 'bgsk', cancel /#pricing. If there is no secret key but
 // STRIPE_PAYMENT_LINK_URL is set (test-mode fallback, bgsk only), it redirects to that hosted Payment Link instead.
 // Email is collected by Checkout itself. Automatic tax only when STRIPE_AUTOMATIC_TAX=1.
