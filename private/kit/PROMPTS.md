@@ -383,9 +383,13 @@ Test: Bump a wall: Moves doesn't change. Before the first solve the HUD shows "B
 
 **P7. Level select**
 ```
-Add a LevelSelectScene reachable from the menu with a button and the L key (the starter menu starts the game on any click, so make only the start text and this button clickable): a grid of level buttons, locked until the previous level is solved (progress saved with the `storage` helper). Show the best moves on solved levels. Locked buttons say "LOCKED" and a hint line says how to unlock the next one.
+Add a LevelSelectScene reachable from the menu with a button and the L key (the starter menu starts the game on any click, so make only the start text and this button clickable — a click on empty menu area must do nothing): a grid of level buttons, locked until the previous level is solved (progress saved with the `storage` helper). Show the best moves on solved levels. Locked buttons say "LOCKED" and a hint line says how to unlock the next one.
+- Save progress as a count of unlocked levels with one key (e.g. bgsk-puzzle-unlocked), default 1 so only level 1 is open on a fresh save. Read it with storage.getNumber(key, 1).
+- Unlock the next level only when a level is solved (in the win path from P4/P6), never when the player just starts or visits it. Use Math.max(unlocked, levelIndex + 2) so replaying an earlier level never decreases a higher unlock.
+- Locked buttons are not interactive. Open buttons start that level through HOW TO PLAY with `{ levelIndex }` (same startWithHowTo path as the menu).
+- Show each solved level's best moves with the same per-level keys from P6 (bgsk-puzzle-best-<levelIndex>). Locked levels show "LOCKED", not a best.
 ```
-Test: Only level 1 is unlocked at first; solving it unlocks level 2 after a refresh.
+Test: Fresh save: empty menu click does nothing; L opens the select with only level 1 unlocked and the rest LOCKED plus an unlock hint. A locked click does nothing. Starting level 1 without solving leaves level 2 locked. Solving level 1 unlocks level 2 and shows the best on the select. After a higher unlock is saved, replaying level 1 does not lock later levels. Reload keeps the unlock and the best.
 
 **P8. More levels**
 ```
