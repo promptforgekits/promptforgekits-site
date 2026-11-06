@@ -10,6 +10,14 @@ export const WN = {
 // kit: 'bgsk' = Browser Game Starter Kit, 'atsk' = Assistant Team Starter Kit
 export const whatsNew = [
   {
+    date: '2026-11-06',
+    groups: [
+      { kit: 'bgsk', items: [
+        "Puzzle: the level-select prompt now keeps unlock progress honest — only a solve opens the next level, replaying an earlier one never locks later levels, and locked buttons stay locked.",
+      ] },
+    ],
+  },
+  {
     date: '2026-11-05',
     groups: [
       { kit: 'bgsk', items: [
