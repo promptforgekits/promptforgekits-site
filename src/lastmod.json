@@ -1,15 +1,15 @@
 {
   "/": {
-    "hash": "84e61024268c427f",
-    "date": "2026-11-03"
+    "hash": "187c430e594f6e2e",
+    "date": "2026-11-06"
   },
   "/arcade/": {
     "hash": "b86d5e990e3efb17",
     "date": "2026-10-21"
   },
   "/assistant-kit/": {
-    "hash": "682bc7c513126cfc",
-    "date": "2026-11-02"
+    "hash": "0c33c05de6cb1bb7",
+    "date": "2026-11-06"
   },
   "/blog/": {
     "hash": "90c865ee894d6c7d",
@@ -24,36 +24,36 @@
     "date": "2026-10-15"
   },
   "/faq/": {
-    "hash": "ff89fb6ce1038828",
-    "date": "2026-10-26"
+    "hash": "eb4277e1973530c2",
+    "date": "2026-11-06"
   },
   "/genres/": {
     "hash": "06be5258f3605a95",
     "date": "2026-10-28"
   },
   "/genres/endless-runner/": {
-    "hash": "b1f3b09c39f33160",
-    "date": "2026-10-22"
+    "hash": "386dd15b2e0fa2ad",
+    "date": "2026-11-06"
   },
   "/genres/idle-clicker/": {
-    "hash": "6ef12fbaaa49a279",
-    "date": "2026-10-22"
+    "hash": "857d1057564ed04c",
+    "date": "2026-11-06"
   },
   "/genres/platformer/": {
-    "hash": "4234873375f7592c",
-    "date": "2026-10-22"
+    "hash": "50c7bba8998ce08d",
+    "date": "2026-11-06"
   },
   "/genres/puzzle/": {
-    "hash": "bf3e927db5a49ec3",
-    "date": "2026-10-22"
+    "hash": "7396cdf411410656",
+    "date": "2026-11-06"
   },
   "/genres/roguelite/": {
-    "hash": "0916bda9d55467bd",
-    "date": "2026-10-22"
+    "hash": "46ceae24f59de6d0",
+    "date": "2026-11-06"
   },
   "/genres/tower-defense/": {
-    "hash": "4ab63e7c638d5e61",
-    "date": "2026-10-22"
+    "hash": "015539a624da4dce",
+    "date": "2026-11-06"
   },
   "/license/": {
     "hash": "4247f6a2c3d9b580",

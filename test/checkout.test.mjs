@@ -24,7 +24,7 @@ const { buildWatermarkedZip } = await import('../api/_kit.js');
 const mkRes = () => { const r = { code: 200, headers: {}, body: undefined, status(c) { r.code = c; return r; }, setHeader(k, v) { r.headers[k] = v; return r; }, json(b) { r.body = b; return r; }, send(b) { r.body = b; return r; }, end() { return r; } }; return r; };
 const sign = (raw, secret = 'whsec_test', t = Math.floor(Date.now() / 1000)) => `t=${t},v1=${crypto.createHmac('sha256', secret).update(`${t}.${raw}`).digest('hex')}`;
 const mkReq = (raw, sig) => ({ method: 'POST', headers: { 'stripe-signature': sig }, body: Buffer.from(raw) });
-const ev = (type = 'checkout.session.completed', o = {}) => JSON.stringify({ id: 'evt_1', type, livemode: false, data: { object: { id: 'cs_test_abc123', payment_status: 'paid', customer_details: { email: 'gregvirag@gmail.com' }, amount_total: 2900, currency: 'usd', created: Math.floor(Date.now() / 1000), payment_intent: 'pi_1', ...o } } });
+const ev = (type = 'checkout.session.completed', o = {}) => JSON.stringify({ id: 'evt_1', type, livemode: false, data: { object: { id: 'cs_test_abc123', payment_status: 'paid', customer_details: { email: 'gregvirag@gmail.com' }, amount_total: 1900, currency: 'usd', created: Math.floor(Date.now() / 1000), payment_intent: 'pi_1', ...o } } });
 
 test('download token: roundtrip, tamper, expiry, not interchangeable', () => {
   const t = lib.downloadToken('A@b.co', 'cs_1');
@@ -66,7 +66,7 @@ test('webhook: completed -> Customers segment + delivery email with signed link,
   assert.deepEqual(b.to, ['gregvirag@gmail.com']); assert.equal(b.from, 'Prompt Forge Kits <hello@promptforgekits.com>');
   assert.equal(mail.headers['Idempotency-Key'], 'kit-delivery-cs_test_abc123');
   assert.match(b.text, /a 7-day refund if the kit didn't work for you; may be declined if clearly copied or reused/);
-  assert.match(b.text, /29\.00 USD/);
+  assert.match(b.text, /19\.00 USD/);
   const url = b.text.match(/https:\/\/promptforgekits\.com\/api\/download\/\?token=([\w.-]+)/); assert.ok(url);
   assert.equal(lib.verifyDownloadToken(url[1]).e, 'gregvirag@gmail.com');
 });
@@ -106,7 +106,7 @@ test('webhook: email failure -> 500 so Stripe retries; already-fulfilled marker 
   delete process.env.STRIPE_SECRET_KEY;
 });
 
-test('checkout: creates hosted session with $29 price, success /thanks/, cancel /#pricing; JSON + redirect modes; errors', async () => {
+test('checkout: creates hosted session with $19 price, success /thanks/, cancel /#pricing; JSON + redirect modes; errors', async () => {
   let r = mkRes(); await checkout({ method: 'GET', headers: {} }, r); assert.equal(r.code, 405);
   r = mkRes(); await checkout({ method: 'POST', headers: {} }, r); assert.equal(r.code, 503);
   process.env.STRIPE_PAYMENT_LINK_URL = 'https://buy.stripe.com/test_link';
@@ -154,7 +154,7 @@ test('site: Buy now button shown when stores.direct.live is true; hidden pages a
   const cfg = (await import('../site.config.mjs')).default;
   assert.equal(cfg.stores.direct.live, true);
   if (fs.existsSync(new URL('../dist/index.html', import.meta.url))) {
-    assert.match(fs.readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8'), /api\/checkout[\s\S]*Buy now · \$29/);
+    assert.match(fs.readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8'), /api\/checkout[\s\S]*Buy now · \$19/);
     for (const p of ['buy-test', 'thanks']) assert.match(fs.readFileSync(new URL(`../dist/${p}/index.html`, import.meta.url), 'utf8'), /name="robots" content="noindex"/);
     assert.doesNotMatch(fs.readFileSync(new URL('../dist/sitemap.xml', import.meta.url), 'utf8'), /buy-test|thanks/);
   }

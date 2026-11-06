@@ -82,7 +82,7 @@ export const genres = [
 
 export const faq = [
   ['What is the Browser Game Starter Kit?', 'A downloadable kit from Prompt Forge Kits: a working Phaser 3 + Vite starter game, rules files for your AI coding tool, and 60+ copy-paste prompts across 6 genres that take you from idea to a published browser game.'],
-  ['How much does it cost?', 'It costs $29 (USD), a one-time purchase. Updates are free for life.'],
+  ['How much does it cost?', 'It costs $19 (USD), a one-time purchase. Updates are free for life.'],
   ['Do I need to know how to code?', 'No. You need to install Node.js, run two commands, and paste prompts. The guide explains every step. Knowing some JavaScript helps but isn\u2019t required.'],
   ['Which AI tools does it work with?', 'It\u2019s designed for tools that open a local project folder: Cursor, Claude Code, Windsurf, and GitHub Copilot. Lovable and Bolt run in the browser and work differently; the guide explains how to use the rules with them, but an editor-based tool gives the best results.'],
   ['Why Phaser?', 'It\u2019s a mature, free, browser-first 2D engine with lots of training data, so AI tools write good Phaser code. Games run on any device with a browser.'],
@@ -92,7 +92,7 @@ export const faq = [
   ['What if it doesn\u2019t work for me?', 'If the kit didn\u2019t work for you, request a refund within 7 days of purchase and you get your money back. Refunds may be declined if the kit has clearly been copied or reused. Updates stay free either way.'],
   ['Will it be updated?', 'Yes. Updates are free for life. Your download link always gives you the latest version, so just download again to get it. New changes are listed on our [What\u2019s new page](/whats-new/). If your link has expired, reply to your purchase email and we\u2019ll send a fresh one.'],
   ['How do I get the free Core Keepers demo?', 'Enter your email in the signup form. We email you a private link to play the full Core Keepers tower defense demo, plus a short teaser guide. The link is personal; please don\u2019t share it.'],
-  ['Where can I buy it?', 'Right here on this site: click Buy now, pay $29 one-time through secure Stripe checkout, and the download arrives by email. You can also get the free Core Keepers demo by email first.'],
+  ['Where can I buy it?', 'Right here on this site: click Buy now, pay $19 one-time through secure Stripe checkout, and the download arrives by email. You can also get the free Core Keepers demo by email first.'],
   ['Are the demos on this site made with the kit?', 'Yes. Each demo was built by following that genre\u2019s prompt sequence one step at a time, with an automated browser test after each step. They show what the sequences produce; your game will be your own.'],
 ];
 

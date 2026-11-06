@@ -25,7 +25,7 @@ const { buildWatermarkedZip } = await import('../api/_kit.js');
 const mkRes = () => { const r = { code: 200, headers: {}, body: undefined, status(c) { r.code = c; return r; }, setHeader(k, v) { r.headers[k] = v; return r; }, json(b) { r.body = b; return r; }, send(b) { r.body = b; return r; }, end() { return r; } }; return r; };
 const sign = (raw, t = Math.floor(Date.now() / 1000)) => `t=${t},v1=${crypto.createHmac('sha256', 'whsec_test').update(`${t}.${raw}`).digest('hex')}`;
 const mkReq = (raw) => ({ method: 'POST', headers: { 'stripe-signature': sign(raw) }, body: Buffer.from(raw) });
-const ev = (o = {}) => JSON.stringify({ id: 'evt_1', type: 'checkout.session.completed', livemode: false, data: { object: { id: 'cs_test_multi123456', payment_status: 'paid', customer_details: { email: 'gregvirag@gmail.com' }, amount_total: 2900, currency: 'usd', created: Math.floor(Date.now() / 1000) - 60, payment_intent: 'pi_1', ...o } } });
+const ev = (o = {}) => JSON.stringify({ id: 'evt_1', type: 'checkout.session.completed', livemode: false, data: { object: { id: 'cs_test_multi123456', payment_status: 'paid', customer_details: { email: 'gregvirag@gmail.com' }, amount_total: 1900, currency: 'usd', created: Math.floor(Date.now() / 1000) - 60, payment_intent: 'pi_1', ...o } } });
 const decode = (b) => decodeURIComponent(b.replace(/\+/g, ' '));
 const okSeg = () => ({ ok: true, status: 200, data: { id: 'em_1', data: [{ id: 'seg_c', name: 'Customers' }] } });
 const links = (text) => [...text.matchAll(/https:\/\/promptforgekits\.com\/api\/download\/\?token=([\w.-]+)/g)].map((m) => lib.verifyDownloadToken(m[1]));
@@ -71,21 +71,21 @@ test('webhook: missing/unknown sku -> original bgsk email, token without sku; at
     assert.deepEqual(mail.tags, [{ name: 'type', value: 'purchase' }]);
     const l = links(mail.text); assert.equal(l.length, 1); assert.equal(l[0].s, undefined);
   }
-  calls.length = 0; const raw = ev({ metadata: { sku: 'atsk' }, amount_total: 3900 }); const r = mkRes(); await webhook(mkReq(raw), r);
+  calls.length = 0; const raw = ev({ metadata: { sku: 'atsk' }, amount_total: 2900 }); const r = mkRes(); await webhook(mkReq(raw), r);
   assert.equal(r.body.sku, 'atsk');
   const c = calls.find((x) => x.url.endsWith('/emails')); const mail = JSON.parse(c.body);
   assert.equal(c.headers['Idempotency-Key'], 'kit-delivery-cs_test_multi123456');
-  assert.match(mail.text, /Assistant Team Starter Kit/); assert.match(mail.text, /39\.00 USD/); assert.match(mail.text, /START-HERE\.md/);
+  assert.match(mail.text, /Assistant Team Starter Kit/); assert.match(mail.text, /29\.00 USD/); assert.match(mail.text, /START-HERE\.md/);
   const l = links(mail.text); assert.equal(l.length, 1); assert.equal(l[0].s, 'atsk'); assert.equal(l[0].e, 'gregvirag@gmail.com');
   assert.deepEqual(mail.tags, [{ name: 'type', value: 'purchase' }, { name: 'sku', value: 'atsk' }]);
 });
 
 test('webhook: bundle -> ONE email with both download links', async () => {
   respond = okSeg; calls.length = 0;
-  const raw = ev({ metadata: { sku: 'bundle' }, amount_total: 5500 }); const r = mkRes(); await webhook(mkReq(raw), r);
+  const raw = ev({ metadata: { sku: 'bundle' }, amount_total: 4500 }); const r = mkRes(); await webhook(mkReq(raw), r);
   assert.equal(r.code, 200); assert.equal(r.body.sku, 'bundle');
   const mails = calls.filter((x) => x.url.endsWith('/emails')); assert.equal(mails.length, 1);
-  const m = JSON.parse(mails[0].body); assert.match(m.subject, /2 kits/); assert.match(m.text, /55\.00 USD/);
+  const m = JSON.parse(mails[0].body); assert.match(m.subject, /2 kits/); assert.match(m.text, /45\.00 USD/);
   const l = links(m.text); assert.deepEqual(l.map((x) => x.s || 'bgsk'), ['bgsk', 'atsk']);
   assert.equal(links(m.html.replace(/&amp;/g, '&')).length >= 2, true);
   assert.doesNotMatch(m.text + m.html, /xAI|SpaceX|Cursor/);

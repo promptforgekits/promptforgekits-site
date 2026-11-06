@@ -69,7 +69,7 @@ Also included: a short teaser guide to the approach, with a 30-minute walkthroug
 Read it online: ${guide}
 Download the PDF: ${pdf}
 
-What's coming: in a few days I'll send one practical tip, and around day 7 a short note about the full Browser Game Starter Kit ($29, 7-day refund if it didn't work for you, free updates). That's the whole sequence. No spam.
+What's coming: in a few days I'll send one practical tip, and around day 7 a short note about the full Browser Game Starter Kit ($19, 7-day refund if it didn't work for you, free updates). That's the whole sequence. No spam.
 
 Prompt Forge Kits
 https://promptforgekits.com
@@ -86,7 +86,7 @@ Unsubscribe: ${unsub}`;
 <p style="margin-top:0;margin-bottom:14px;font-size:16px;line-height:24px;color:#1b1f2e;">Thanks for signing up. Core Keepers is a playable tower defense game built with the Browser Game Starter Kit. This link is personal to you, so please don't share it. Best on desktop with a mouse and keyboard.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#ffc93c" style="background-color:#ffc93c;border:3px solid #1b1f2e;border-radius:10px;"><a href="${demo}" style="display:inline-block;padding-top:12px;padding-bottom:12px;padding-left:22px;padding-right:22px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:bold;color:#1b1f2e;text-decoration:none;">Play Core Keepers</a></td></tr></table>
 <p style="margin-top:14px;margin-bottom:14px;font-size:15px;line-height:22px;color:#1b1f2e;">Also included: a short <a href="${guide}" style="color:#2a5bd7;">teaser guide</a> (or <a href="${pdf}" style="color:#2a5bd7;">download the PDF</a>) with a 30-minute walkthrough for getting your first Phaser 3 game running with an AI coding tool.</p>
-<p style="margin-top:0;margin-bottom:0;font-size:16px;line-height:24px;color:#1b1f2e;">What's coming: in a few days one practical tip, and around day 7 a short note about the full Browser Game Starter Kit ($29, 7-day refund if it didn't work for you, free updates). That's the whole sequence. No spam.</p>
+<p style="margin-top:0;margin-bottom:0;font-size:16px;line-height:24px;color:#1b1f2e;">What's coming: in a few days one practical tip, and around day 7 a short note about the full Browser Game Starter Kit ($19, 7-day refund if it didn't work for you, free updates). That's the whole sequence. No spam.</p>
 </td></tr>
 <tr><td style="padding-top:16px;padding-bottom:8px;padding-left:26px;padding-right:26px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#4a5373;">You're getting this because you asked for the free Core Keepers demo at promptforgekits.com. <a href="${unsub}" style="color:#4a5373;">Unsubscribe</a> anytime.</td></tr>
 </table></td></tr></table></body></html>`;
@@ -161,7 +161,7 @@ export async function stripe(method, path, params, { key = process.env.STRIPE_SE
 
 export function purchaseEmail({ email, order, amount, currency, date, url }) {
   const days = DOWNLOAD_TTL_DAYS;
-  const paid = amount != null ? `${(amount / 100).toFixed(2)} ${String(currency || 'usd').toUpperCase()}` : '29.00 USD';
+  const paid = amount != null ? `${(amount / 100).toFixed(2)} ${String(currency || 'usd').toUpperCase()}` : '19.00 USD';
   const refund = "a 7-day refund if the kit didn't work for you; may be declined if clearly copied or reused";
   const subject = 'Your Browser Game Starter Kit download';
   const text = `Thanks for buying the Browser Game Starter Kit.

@@ -1,6 +1,6 @@
 # promptforgekits.com
 
-Marketing site for **Prompt Forge Kits** and the **Browser Game Starter Kit by Prompt Forge Kits** ($29, Gumroad + itch.io).
+Marketing site for **Prompt Forge Kits** and the **Browser Game Starter Kit by Prompt Forge Kits** ($19, Gumroad + itch.io).
 
 > Tested prompts. Real projects. Shipped.
 

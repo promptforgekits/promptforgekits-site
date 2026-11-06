@@ -16,7 +16,7 @@ export default {
   product: {
     name: 'Browser Game Starter Kit by Prompt Forge Kits',
     shortName: 'Browser Game Starter Kit',
-    price: 29, // USD, one-time
+    price: 19, // USD, one-time
     currency: 'USD',
     version: '1.0',
   },

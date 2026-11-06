@@ -512,7 +512,7 @@ ${newsletterBlock()}`,
 
 add('/assistant-kit/', {
   title: `${AK.shortName}: AI assistant team templates for your online shop | ${cfg.brand}`,
-  description: 'Four assistant job descriptions, seven routines and approval rules to run a small online product business with AI assistants. Written for Grok Bot. $39.',
+  description: 'Four assistant job descriptions, seven routines and approval rules to run a small online product business with AI assistants. Written for Grok Bot. $29.',
   sources: ['src/assistant-kit.mjs', 'src/build.mjs'],
   jsonld: [akProductLd, bundleProductLd, faqLd(akFaq), crumbLd([['Home', '/'], [AK.shortName, '/assistant-kit/']])],
   body: `<section class="page-hero"><div class="wrap">

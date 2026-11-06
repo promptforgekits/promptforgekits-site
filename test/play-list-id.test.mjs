@@ -27,6 +27,6 @@ test('/play/ ItemList has @id /play/#demos, inLanguage, isPartOf kit product, an
     assert.equal(e.item?.offers?.price, '0');
   });
   const json = JSON.stringify(L);
-  assert.ok(!/\$29|\$39|\$55|gumroad|itch\.io/i.test(json), 'no paid prices or store links');
+  assert.ok(!/\$19|\$29|\$45|gumroad|itch\.io/i.test(json), 'no paid prices or store links');
   assert.ok(!fs.existsSync(new URL('play/towerdefense/index.html', dist)), 'no public towerdefense demo');
 });
